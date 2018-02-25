@@ -1,5 +1,6 @@
-package com.tommytony.war.event;
+package com.tommytony.war.listeners;
 
+import com.tommytony.war.event.WarPlayerDeathEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -96,10 +97,10 @@ public class WarEntityListener implements Listener {
 					War.war.badMsg(a, "pvp.self.respawn");
 					event.setCancelled(true);
 					return;
-				} 
-				
+				}
+
 				if(!defenderWarzone.getPvpReady()) {
-					//if the timer is still tickin we gotta handle defense! (there be notchz in virgina) 
+					//if the timer is still tickin we gotta handle defense! (there be notchz in virgina)
 					event.setCancelled(true);
 					return;
 				}

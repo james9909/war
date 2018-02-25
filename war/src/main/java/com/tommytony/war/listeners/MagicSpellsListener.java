@@ -72,7 +72,7 @@ public class MagicSpellsListener implements Listener {
                 return;
             }
 
-            LoadoutSelection casterLoadoutState = targetZone.getLoadoutSelections().get(caster.getName());
+            LoadoutSelection casterLoadoutState = casterZone.getLoadoutSelections().get(caster.getName());
             if (casterTeam.isSpawnLocation(caster.getLocation()) && casterLoadoutState.isStillInSpawn()) {
                 // Target is in spawn
                 War.war.badMsg(caster, "pvp.self.spawn");

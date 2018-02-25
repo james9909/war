@@ -14,7 +14,6 @@ import com.tommytony.war.job.ZoneTimeJob;
 import com.tommytony.war.mapper.LoadoutYmlMapper;
 import com.tommytony.war.mapper.VolumeMapper;
 import com.tommytony.war.mapper.ZoneVolumeMapper;
-import com.tommytony.war.spout.SpoutDisplayer;
 import com.tommytony.war.structure.*;
 import com.tommytony.war.utility.*;
 import com.tommytony.war.volume.Volume;
@@ -44,8 +43,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
-import org.getspout.spoutapi.SpoutManager;
-import org.getspout.spoutapi.player.SpoutPlayer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -61,7 +58,6 @@ import java.util.logging.Level;
  * @package com.tommytony.war
  */
 public class Warzone {
-
 
 	static final Comparator<Team> LEAST_PLAYER_COUNT_ORDER = new Comparator<Team>() {
 		@Override
@@ -100,12 +96,12 @@ public class Warzone {
 	private InventoryBag defaultInventories = new InventoryBag();
 
 	private Scoreboard scoreboard;
-	
+
 	private HubLobbyMaterials lobbyMaterials = null;
 	private WarzoneMaterials warzoneMaterials = new WarzoneMaterials(
 			new ItemStack(Material.OBSIDIAN), new ItemStack(Material.FENCE),
 			new ItemStack(Material.GLOWSTONE));
-	
+
 	private boolean isEndOfGame = false;
 	private boolean isReinitializing = false;
 	//private final Object gameEndLock = new Object();
@@ -529,11 +525,6 @@ public class Warzone {
 			this.getLoadoutSelections().get(player.getName()).setStillInSpawn(true);
 		}
 
-		// Spout
-		if (War.war.isSpoutServer()) {
-			SpoutManager.getPlayer(player).setTitle(team.getKind().getColor() + player.getName());
-		}
-
 		War.war.getKillstreakReward().getAirstrikePlayers().remove(player.getName());
 
 		final LoadoutResetJob job = new LoadoutResetJob(this, team, player, isFirstRespawn, false);
@@ -641,9 +632,6 @@ public class Warzone {
 		ItemStack[] contents = inventory.getContents();
 
 		String playerTitle = player.getName();
-		if (War.war.isSpoutServer()) {
-			playerTitle = SpoutManager.getPlayer(player).getTitle();
-		}
 
 		this.playerStates.put(
 				player.getName(),
@@ -674,10 +662,6 @@ public class Warzone {
 			player.setLevel(originalState.getLevel());
 			player.setExp(originalState.getExp());
 			player.setAllowFlight(originalState.canFly());
-
-			if (War.war.isSpoutServer()) {
-				SpoutManager.getPlayer(player).setTitle(originalState.getPlayerTitle());
-			}
 		}
 		player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
 	}
@@ -1002,7 +986,7 @@ public class Warzone {
 	public void setLobby(ZoneLobby lobby) {
 		this.lobby = lobby;
 	}
-	
+
 	public Team autoAssign(Player player) {
 		Collections.sort(teams, LEAST_PLAYER_COUNT_ORDER);
 		Team lowestNoOfPlayers = null;
@@ -1054,7 +1038,7 @@ public class Warzone {
 		this.tryCallDelayedPlayers();
 		return true;
 	}
-	
+
 	private void dropItems(Location location, ItemStack[] items) {
 		for (ItemStack item : items) {
 			if (item == null || item.getType() == Material.AIR) {
@@ -1063,7 +1047,7 @@ public class Warzone {
 			location.getWorld().dropItem(location, item);
 		}
 	}
-	
+
 	/**
 	 * Send death messages and process other records before passing off the
 	 * death to the {@link #handleDeath(Player)} method.
@@ -1164,7 +1148,7 @@ public class Warzone {
 				break;
 		}
 	}
-	
+
 	/**
 	 * Handle death messages before passing to {@link #handleDeath(Player)}
 	 * for post-processing. It's like
@@ -1457,7 +1441,7 @@ public class Warzone {
 	public Bomb getBombForThief(Player thief) {
 		return this.bombThieves.get(thief.getUniqueId());
 	}
-	
+
 	// Cake
 
 	public void removeBombThief(Player thief) {
@@ -1508,19 +1492,6 @@ public class Warzone {
 		War.war.getServer().getPluginManager().callEvent(event1);
 
 		for (Team t : this.getTeams()) {
-			if (War.war.isSpoutServer()) {
-				for (Player p : t.getPlayers()) {
-					SpoutPlayer sp = SpoutManager.getPlayer(p);
-					if (sp.isSpoutCraftEnabled()) {
-		                sp.sendNotification(
-		                		SpoutDisplayer.cleanForNotification("Match won! " + ChatColor.WHITE + "Winners:"),
-		                		SpoutDisplayer.cleanForNotification(SpoutDisplayer.addMissingColor(winnersStr, this)),
-		                		Material.CAKE,
-		                		(short)0,
-		                		10000);
-					}
-				}
-			}
 			String winnersStrAndExtra = "Score cap reached. Game is over! Winning team(s): " + winnersStr;
 			winnersStrAndExtra += ". Resetting warzone and your inventory...";
 			t.teamcast(winnersStrAndExtra);
@@ -1681,11 +1652,11 @@ public class Warzone {
 		// if no authors, all zonemakers can edit the zone
 		return authors.size() == 0 || authors.contains(player.getName());
 	}
-		
+
 	public void addAuthor(String playerName) {
 		authors.add(playerName);
 	}
-	
+
 	public List<String> getAuthors() {
 		return this.authors;
 	}
@@ -1701,8 +1672,8 @@ public class Warzone {
 	public void equipPlayerLoadoutSelection(Player player, Team playerTeam, boolean isFirstRespawn, boolean isToggle) {
 		LoadoutSelection selection = this.getLoadoutSelections().get(player.getName());
 		if (selection != null && !this.isRespawning(player) && playerTeam.getPlayers().contains(player)) {
-			// Make sure that inventory resets dont occur if player has already tp'ed out (due to game end, or somesuch) 
-			// - repawn timer + this method is why inventories were getting wiped as players exited the warzone. 
+			// Make sure that inventory resets dont occur if player has already tp'ed out (due to game end, or somesuch)
+			// - repawn timer + this method is why inventories were getting wiped as players exited the warzone.
 			List<Loadout> loadouts = playerTeam.getInventories().resolveNewLoadouts();
 			List<String> sortedNames = LoadoutYmlMapper.sortNames(Loadout.toLegacyFormat(loadouts));
 			sortedNames.remove("first");
@@ -1776,19 +1747,15 @@ public class Warzone {
 			if (originalState.getHelmet() != null) {
 				playerItems.put(103, originalState.getHelmet());
 			}
-			
-			if (War.war.isSpoutServer()) {
-				SpoutManager.getPlayer(player).setTitle(originalState.getPlayerTitle());
-			}
 		}
-		
+
 		return playerItems;
 	}
 
 	public WarzoneConfigBag getWarzoneConfig() {
 		return this.warzoneConfig;
 	}
-	
+
 	public TeamConfigBag getTeamDefaultConfig() {
 		return this.teamDefaultConfig;
 	}
@@ -2161,7 +2128,7 @@ public class Warzone {
 	public boolean getPvpReady() {
 		return this.pvpReady;
 	}
-	
+
 	public void setPvpReady(boolean ready) {
 		this.pvpReady = ready;
 	}

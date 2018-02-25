@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.tommytony</groupId>
   <artifactId>war</artifactId>
-  <version>1.10-SNAPSHOT</version>
+  <version>1.12-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>War</name>
   <url>http://war.tommytony.com</url>
@@ -24,12 +24,12 @@
       <url>http://ftp.cmastudios.me/maven/</url>
     </repository>
     <repository>
-      <id>tagapi-repo</id>
-      <url>http://repo.kitteh.org/content/repositories/public/</url>
-    </repository>
-    <repository>
       <id>sk89q-repo</id>
       <url>http://maven.sk89q.com/repo/</url>
+    </repository>
+    <repository>
+      <id>herocraft</id>
+      <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
     </repository>
   </repositories>
   <issueManagement>
@@ -73,20 +73,6 @@
             <goals>
               <goal>shade</goal>
             </goals>
-            <configuration>
-              <artifactSet>
-                <includes>
-                  <include>org.mcstats.bukkit:metrics</include>
-                </includes>
-              </artifactSet>
-              <minimizeJar>false</minimizeJar>
-              <relocations>
-                <relocation>
-                  <pattern>org.mcstats</pattern>
-                  <shadedPattern>com.tommytony.war.metrics</shadedPattern>
-                </relocation>
-              </relocations>
-            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -106,29 +92,25 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.spout</groupId>
-      <artifactId>spoutplugin</artifactId>
-      <version>1.5.2-R1.0</version>
-      <scope>compile</scope>
-      <type>jar</type>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit</artifactId>
-      <version>1.12-R0.1-SNAPSHOT</version>
+      <version>1.12.2-R0.1-SNAPSHOT</version>
     </dependency>
+
     <dependency>
-      <groupId>org.kitteh</groupId>
-      <artifactId>tagapi</artifactId>
-      <version>2.7.1</version>
-      <scope>compile</scope>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <version>1.12.2-R0.1-SNAPSHOT</version>
+      <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
@@ -136,22 +118,28 @@
       <type>jar</type>
       <scope>test</scope>
     </dependency>
+
     <dependency>
-      <groupId>com.sk89q</groupId>
-      <artifactId>worldedit</artifactId>
-      <version>5.5.8</version>
+      <groupId>com.sk89q.worldedit</groupId>
+      <artifactId>worldedit-bukkit</artifactId>
+      <version>6.1.5</version>
       <type>jar</type>
     </dependency>
+
     <dependency>
-      <groupId>org.mcstats.bukkit</groupId>
-      <artifactId>metrics</artifactId>
-      <version>R8-SNAPSHOT</version>
-      <scope>compile</scope>
+      <groupId>net.milkbowl</groupId>
+      <artifactId>vault</artifactId>
+      <version>1.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/Vault-1.6.6.jar</systemPath>
     </dependency>
+
     <dependency>
-      <groupId>net.milkbowl.vault</groupId>
-      <artifactId>Vault</artifactId>
-      <version>1.2.32</version>
+      <groupId>com.nisovin</groupId>
+      <artifactId>magicspells</artifactId>
+      <version>1.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/MagicSpells.jar</systemPath>
     </dependency>
   </dependencies>
 </project>

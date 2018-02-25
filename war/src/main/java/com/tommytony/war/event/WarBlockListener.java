@@ -22,8 +22,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.getspout.spoutapi.SpoutManager;
-import org.getspout.spoutapi.player.SpoutPlayer;
 
 import com.tommytony.war.Team;
 import com.tommytony.war.War;
@@ -31,7 +29,6 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.config.WarConfig;
 import com.tommytony.war.config.WarzoneConfig;
-import com.tommytony.war.spout.SpoutDisplayer;
 import com.tommytony.war.structure.Bomb;
 import com.tommytony.war.structure.Cake;
 import com.tommytony.war.structure.Monument;
@@ -64,19 +61,6 @@ public class WarBlockListener implements Listener {
 			Monument monument = zone.getMonumentFromCenterBlock(block);
 			if (monument != null && !monument.hasOwner()) {
 				monument.capture(team);
-				if (War.war.isSpoutServer()) {
-					for (Player p : team.getPlayers()) {
-						SpoutPlayer sp = SpoutManager.getPlayer(p);
-						if (sp.isSpoutCraftEnabled()) {
-			                sp.sendNotification(
-			                		SpoutDisplayer.cleanForNotification("Monument " + ChatColor.WHITE + monument.getName()),
-			                		SpoutDisplayer.cleanForNotification(ChatColor.YELLOW + "capped by " + team.getKind().getColor() + player.getName() + ChatColor.YELLOW + "!"),
-			                		team.getKind().getMaterial(),
-			                		team.getKind().getData(),
-			                		10000);
-						}
-					}
-				}
 				zone.broadcast("zone.monument.capture", monument.getName(), team.getName());
 				event.setCancelled(false);
 				return; // important otherwise cancelled down a few line by isImportantblock
@@ -89,8 +73,8 @@ public class WarBlockListener implements Listener {
 
 		boolean isZoneMaker = War.war.isZoneMaker(player);
 		// prevent build in important parts
-		if (zone != null 
-				&& (zone.isImportantBlock(block) || zone.isOpponentSpawnPeripheryBlock(team, block)) 
+		if (zone != null
+				&& (zone.isImportantBlock(block) || zone.isOpponentSpawnPeripheryBlock(team, block))
 				&& (!isZoneMaker || (isZoneMaker && team != null))) {
 			War.war.badMsg(player, "build.denied.location");
 			cancelAndKeepItem(event);
@@ -135,14 +119,14 @@ public class WarBlockListener implements Listener {
 			cancelAndKeepItem(event);
 			return;
 		}
-		
+
 		// a bomb thief can't drop his bomb
 		if (team != null && zone != null && zone.isBombThief(player)) {
 			War.war.badMsg(player, "drop.bomb.disabled");
 			cancelAndKeepItem(event);
 			return;
 		}
-		
+
 		// a cake thief can't drop his cake
 		if (team != null && zone != null && zone.isCakeThief(player)) {
 			War.war.badMsg(player, "drop.cake.disabled");
@@ -166,15 +150,15 @@ public class WarBlockListener implements Listener {
 			return;
 		}
 	}
-	
+
 	private void cancelAndKeepItem(BlockPlaceEvent event) {
 		event.setCancelled(true);
 		ItemStack inHand = event.getItemInHand();
 		ItemStack newItemInHand;
-		
+
 		if (inHand.getType() == Material.FIRE) {
 			// Weird bukkit/mc behavior where item in hand is reported as fire while using flint & steel.
-			// Just give the user his f&s back but almost broken (max durability is 8). 
+			// Just give the user his f&s back but almost broken (max durability is 8).
 			newItemInHand = new ItemStack(Material.FLINT_AND_STEEL, 1, (short)1);
 		} else {
 			newItemInHand = inHand.clone();
@@ -185,7 +169,7 @@ public class WarBlockListener implements Listener {
 			event.getPlayer().getInventory().setItemInMainHand(newItemInHand);
 		}
 	}
-	
+
 	@EventHandler
 	// Do not allow moving of block into or from important zones
 	public void onBlockPistonExtend(final BlockPistonExtendEvent event) {
@@ -203,7 +187,7 @@ public class WarBlockListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler
 	public void onBlockPistonRetract(final BlockPistonRetractEvent event) {
 		Warzone zone = Warzone.getZoneByLocation(event.getBlock().getLocation());
@@ -215,7 +199,7 @@ public class WarBlockListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler
 	public void onBlockBreak(final BlockBreakEvent event) {
 		if (!War.war.isLoaded()) {
@@ -227,7 +211,7 @@ public class WarBlockListener implements Listener {
 			this.handleBreakOrDamage(player, block, event);
 		}
 	}
-	
+
 	@EventHandler
 	public void onBlockDamage(final BlockDamageEvent event) {
 		if (!War.war.isLoaded()) {
@@ -268,19 +252,6 @@ public class WarBlockListener implements Listener {
 			Monument monument = warzone.getMonumentFromCenterBlock(block);
 			if (monument.hasOwner()) {
 				Team ownerTeam = monument.getOwnerTeam();
-				if (War.war.isSpoutServer()) {
-					for (Player p : team.getPlayers()) {
-						SpoutPlayer sp = SpoutManager.getPlayer(p);
-						if (sp.isSpoutCraftEnabled()) {
-			                sp.sendNotification(
-			                		SpoutDisplayer.cleanForNotification("Monument " + ChatColor.WHITE + monument.getName()),
-			                		SpoutDisplayer.cleanForNotification(ChatColor.YELLOW + "freed by " + team.getKind().getColor() + player.getName() + ChatColor.YELLOW + "!"),
-			                		ownerTeam.getKind().getMaterial(),
-			                		ownerTeam.getKind().getData(),
-			                		10000);
-						}
-					}
-				}
 				warzone.broadcast("zone.monument.lose", ownerTeam.getName(), monument.getName());
 				monument.uncapture();
 			}
@@ -320,19 +291,6 @@ public class WarBlockListener implements Listener {
 						for (Team t : warzone.getTeams()) {
 							t.teamcast("zone.steal.flag.broadcast", team.getKind().getColor() + player.getName() + ChatColor.WHITE, lostFlagTeam.getName());
 							if (t.getName().equals(lostFlagTeam.getName())) {
-								if (War.war.isSpoutServer()) {
-									for (Player p : t.getPlayers()) {
-										SpoutPlayer sp = SpoutManager.getPlayer(p);
-										if (sp.isSpoutCraftEnabled()) {
-							                sp.sendNotification(
-							                		SpoutDisplayer.cleanForNotification(team.getKind().getColor() + player.getName() + ChatColor.YELLOW + " stole"),
-							                		SpoutDisplayer.cleanForNotification(ChatColor.YELLOW + "your flag!"),
-							                		lostFlagTeam.getKind().getMaterial(),
-							                		lostFlagTeam.getKind().getData(),
-							                		5000);
-										}
-									}
-								}
 								t.teamcast("zone.steal.flag.prevent", team.getKind().getColor() + player.getName() + ChatColor.WHITE, team.getName());
 							}
 						}
@@ -360,19 +318,6 @@ public class WarBlockListener implements Listener {
 					block.setType(Material.AIR);
 					for (Team t : warzone.getTeams()) {
 						t.teamcast("zone.steal.bomb.broadcast", team.getKind().getColor() + player.getName() + ChatColor.WHITE, ChatColor.GREEN + bomb.getName() + ChatColor.WHITE);
-						if (War.war.isSpoutServer()) {
-							for (Player p : t.getPlayers()) {
-								SpoutPlayer sp = SpoutManager.getPlayer(p);
-								if (sp.isSpoutCraftEnabled()) {
-					                sp.sendNotification(
-					                		SpoutDisplayer.cleanForNotification(team.getKind().getColor() + player.getName() + ChatColor.YELLOW + " has "),
-					                		SpoutDisplayer.cleanForNotification(ChatColor.YELLOW + "bomb " + ChatColor.GREEN + bomb.getName() + ChatColor.YELLOW + "!"),
-					                		Material.TNT,
-					                		(short)0,
-					                		5000);
-								}
-							}
-						}
 						t.teamcast("zone.steal.bomb.prevent", team.getKind().getColor() + player.getName() + ChatColor.WHITE);
 					}
 					War.war.msg(player, "zone.steal.bomb.notice", bomb.getName());
@@ -396,19 +341,6 @@ public class WarBlockListener implements Listener {
 					block.setType(Material.AIR);
 					for (Team t : warzone.getTeams()) {
 						t.teamcast("zone.steal.cake.broadcast", team.getKind().getColor() + player.getName() + ChatColor.WHITE, ChatColor.GREEN + cake.getName() + ChatColor.WHITE);
-						if (War.war.isSpoutServer()) {
-							for (Player p : t.getPlayers()) {
-								SpoutPlayer sp = SpoutManager.getPlayer(p);
-								if (sp.isSpoutCraftEnabled()) {
-					                sp.sendNotification(
-					                		SpoutDisplayer.cleanForNotification(team.getKind().getColor() + player.getName() + ChatColor.YELLOW + " has "),
-					                		SpoutDisplayer.cleanForNotification(ChatColor.YELLOW + "cake " + ChatColor.GREEN + cake.getName() + ChatColor.YELLOW + "!"),
-					                		Material.CAKE,
-					                		(short)0,
-					                		5000);
-								}
-							}
-						}
 						t.teamcast("zone.steal.cake.prevent", team.getKind().getColor() + player.getName() + ChatColor.WHITE);
 					}
 					War.war.msg(player, "zone.steal.cake.notice", cake.getName());

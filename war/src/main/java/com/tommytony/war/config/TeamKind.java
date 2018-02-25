@@ -8,7 +8,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Wool;
-import org.getspout.spoutapi.gui.Color;
 
 public enum TeamKind {
 	WHITE (DyeColor.WHITE, Material.WOOL, ChatColor.WHITE, 450),
@@ -85,17 +84,6 @@ public enum TeamKind {
 	 */
 	public ChatColor getColor() {
 		return this.chatColor;
-	}
-
-	/**
-	 * Get the color of this team in the Spout client GUI.
-	 *
-	 * @return spout chat GUI color
-	 */
-	public Color getSpoutColor() {
-		return new org.getspout.spoutapi.gui.Color(
-				dyeColor.getColor().getRed(), dyeColor.getColor().getGreen(),
-				dyeColor.getColor().getBlue());
 	}
 
 	/**

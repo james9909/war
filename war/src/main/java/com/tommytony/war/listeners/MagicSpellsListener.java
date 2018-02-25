@@ -1,11 +1,5 @@
 package com.tommytony.war.listeners;
 
-import com.nisovin.magicspells.Spell;
-import com.nisovin.magicspells.events.SpellTargetEvent;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 public class MagicSpellsListener implements Listener {

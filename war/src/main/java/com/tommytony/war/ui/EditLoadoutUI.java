@@ -37,16 +37,22 @@ class EditLoadoutUI extends ChestUI {
             if (item == null || item.getType() == Material.AIR) {
                 continue;
             }
-            if (slot == 100) {
-                inv.setItem(9 * 4, item.clone());
-            } else if (slot == 101) {
-                inv.setItem(9 * 4 + 1, item.clone());
-            } else if (slot == 102) {
-                inv.setItem(9 * 4 + 2, item.clone());
-            } else if (slot == 103) {
-                inv.setItem(9 * 4 + 3, item.clone());
-            } else {
-                inv.setItem(slot, item.clone());
+            switch (slot) {
+                case 100:
+                    inv.setItem(9 * 4, item.clone());
+                    break;
+                case 101:
+                    inv.setItem(9 * 4 + 1, item.clone());
+                    break;
+                case 102:
+                    inv.setItem(9 * 4 + 2, item.clone());
+                    break;
+                case 103:
+                    inv.setItem(9 * 4 + 3, item.clone());
+                    break;
+                default:
+                    inv.setItem(slot, item.clone());
+                    break;
             }
         }
         ItemStack item = new ItemStack(Material.NETHER_STAR);

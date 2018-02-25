@@ -15,26 +15,32 @@ public class LoadoutTxtMapper {
             if (itemStr != null && !itemStr.equals("")) {
                 String[] itemStrSplit = itemStr.split(",");
                 ItemStack item = null;
-                if (itemStrSplit.length == 3) {
-                    item = new ItemStack(Integer.parseInt(itemStrSplit[0]), Integer.parseInt(itemStrSplit[1]));
-                } else if (itemStrSplit.length == 5) {
-                    short durability = Short.parseShort(itemStrSplit[3]);
-                    item = new ItemStack(Integer.parseInt(itemStrSplit[0]), Integer.parseInt(itemStrSplit[1]), durability);
-                    item.setDurability(durability);
-                } else if (itemStrSplit.length == 6) {
-                    short durability = Short.parseShort(itemStrSplit[3]);
-                    item = new ItemStack(Integer.parseInt(itemStrSplit[0]), Integer.parseInt(itemStrSplit[1]), durability);
-                    item.setDurability(durability);
+                switch (itemStrSplit.length) {
+                    case 3:
+                        item = new ItemStack(Integer.parseInt(itemStrSplit[0]), Integer.parseInt(itemStrSplit[1]));
+                        break;
+                    case 5: {
+                        short durability = Short.parseShort(itemStrSplit[3]);
+                        item = new ItemStack(Integer.parseInt(itemStrSplit[0]), Integer.parseInt(itemStrSplit[1]), durability);
+                        item.setDurability(durability);
+                        break;
+                    }
+                    case 6: {
+                        short durability = Short.parseShort(itemStrSplit[3]);
+                        item = new ItemStack(Integer.parseInt(itemStrSplit[0]), Integer.parseInt(itemStrSplit[1]), durability);
+                        item.setDurability(durability);
 
-                    // enchantments
-                    String[] enchantmentsSplit = itemStrSplit[5].split("::");
-                    for (String enchantmentStr : enchantmentsSplit) {
-                        if (!enchantmentStr.equals("")) {
-                            String[] enchantmentSplit = enchantmentStr.split(":");
-                            int enchantId = Integer.parseInt(enchantmentSplit[0]);
-                            int level = Integer.parseInt(enchantmentSplit[1]);
-                            War.war.safelyEnchant(item, Enchantment.getById(enchantId), level);
+                        // enchantments
+                        String[] enchantmentsSplit = itemStrSplit[5].split("::");
+                        for (String enchantmentStr : enchantmentsSplit) {
+                            if (!enchantmentStr.equals("")) {
+                                String[] enchantmentSplit = enchantmentStr.split(":");
+                                int enchantId = Integer.parseInt(enchantmentSplit[0]);
+                                int level = Integer.parseInt(enchantmentSplit[1]);
+                                War.war.safelyEnchant(item, Enchantment.getById(enchantId), level);
+                            }
                         }
+                        break;
                     }
                 }
                 destinationLoadout.put(Integer.parseInt(itemStrSplit[2]), item);

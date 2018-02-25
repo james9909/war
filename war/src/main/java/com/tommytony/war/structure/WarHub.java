@@ -31,18 +31,23 @@ public class WarHub {
 
     public WarHub(Location location, String hubOrientation) {
         int yaw = 0;
-        if (hubOrientation.equals("south")) {
-            yaw = 270;
-            this.setOrientation(Direction.SOUTH());
-        } else if (hubOrientation.equals("north")) {
-            yaw = 90;
-            this.setOrientation(Direction.NORTH());
-        } else if (hubOrientation.equals("east")) {
-            yaw = 180;
-            this.setOrientation(Direction.EAST());
-        } else {
-            yaw = 0;
-            this.setOrientation(Direction.WEST());
+        switch (hubOrientation) {
+            case "south":
+                yaw = 270;
+                this.setOrientation(Direction.SOUTH());
+                break;
+            case "north":
+                yaw = 90;
+                this.setOrientation(Direction.NORTH());
+                break;
+            case "east":
+                yaw = 180;
+                this.setOrientation(Direction.EAST());
+                break;
+            default:
+                yaw = 0;
+                this.setOrientation(Direction.WEST());
+                break;
         }
 
         this.location = new Location(location.getWorld(), location.getX(), location.getY(), location.getZ(), yaw, 0);

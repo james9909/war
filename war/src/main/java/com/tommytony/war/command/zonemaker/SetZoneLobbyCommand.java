@@ -87,18 +87,27 @@ public class SetZoneLobbyCommand extends AbstractZoneMakerCommand {
 
             BlockFace wall = Direction.WEST();
             String wallStr = "";
-            if (this.args[0].equals("north") || this.args[0].equals("n")) {
-                wall = Direction.NORTH();
-                wallStr = "north";
-            } else if (this.args[0].equals("east") || this.args[0].equals("e")) {
-                wall = Direction.EAST();
-                wallStr = "east";
-            } else if (this.args[0].equals("south") || this.args[0].equals("s")) {
-                wall = Direction.SOUTH();
-                wallStr = "south";
-            } else if (this.args[0].equals("west") || this.args[0].equals("w")) {
-                wall = Direction.WEST();
-                wallStr = "west";
+            switch (this.args[0]) {
+                case "north":
+                case "n":
+                    wall = Direction.NORTH();
+                    wallStr = "north";
+                    break;
+                case "east":
+                case "e":
+                    wall = Direction.EAST();
+                    wallStr = "east";
+                    break;
+                case "south":
+                case "s":
+                    wall = Direction.SOUTH();
+                    wallStr = "south";
+                    break;
+                case "west":
+                case "w":
+                    wall = Direction.WEST();
+                    wallStr = "west";
+                    break;
             }
 
             if (lobby != null) {

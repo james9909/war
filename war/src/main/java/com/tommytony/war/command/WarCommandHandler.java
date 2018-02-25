@@ -91,74 +91,115 @@ public class WarCommandHandler {
 
         AbstractWarCommand commandObj = null;
         try {
-            if (command.equals("warhub")) {
-                commandObj = new WarhubCommand(this, sender, arguments);
-            } else if (command.equals("zones") || command.equals("warzones")) {
-                commandObj = new WarzonesCommand(this, sender, arguments);
-            } else if (command.equals("zone") || command.equals("warzone")) {
-                commandObj = new WarzoneCommand(this, sender, arguments);
-            } else if (command.equals("teams")) {
-                commandObj = new TeamsCommand(this, sender, arguments);
-            } else if (command.equals("join")) {
-                commandObj = new JoinCommand(this, sender, arguments);
-            } else if (command.equals("leave")) {
-                commandObj = new LeaveCommand(this, sender, arguments);
-            } else if (command.equals("team")) {
-                commandObj = new TeamCommand(this, sender, arguments);
-            } else if (command.equals("setzone")) {
-                commandObj = new SetZoneCommand(this, sender, arguments);
-            } else if (command.equals("deletezone")) {
-                commandObj = new DeleteZoneCommand(this, sender, arguments);
-            } else if (command.equals("setzonelobby")) {
-                commandObj = new SetZoneLobbyCommand(this, sender, arguments);
-            } else if (command.equals("savezone")) {
-                commandObj = new SaveZoneCommand(this, sender, arguments);
-            } else if (command.equals("resetzone")) {
-                commandObj = new ResetZoneCommand(this, sender, arguments);
-            } else if (command.equals("nextbattle")) {
-                commandObj = new NextBattleCommand(this, sender, arguments);
-            } else if (command.equals("renamezone")) {
-                commandObj = new RenameZoneCommand(this, sender, arguments);
-            } else if (command.equals("setteam")) {
-                commandObj = new SetTeamCommand(this, sender, arguments);
-            } else if (command.equals("deleteteam")) {
-                commandObj = new DeleteTeamCommand(this, sender, arguments);
-            } else if (command.equals("setteamflag")) {
-                commandObj = new SetTeamFlagCommand(this, sender, arguments);
-            } else if (command.equals("deleteteamflag")) {
-                commandObj = new DeleteTeamFlagCommand(this, sender, arguments);
-            } else if (command.equals("setmonument")) {
-                commandObj = new SetMonumentCommand(this, sender, arguments);
-            } else if (command.equals("deletemonument")) {
-                commandObj = new DeleteMonumentCommand(this, sender, arguments);
-            } else if (command.equals("setcapturepoint")) {
-                commandObj = new SetCapturePointCommand(this, sender, arguments);
-            } else if (command.equals("deletecapturepoint")) {
-                commandObj = new DeleteCapturePointCommand(this, sender, arguments);
-            } else if (command.equals("setbomb")) {
-                commandObj = new SetBombCommand(this, sender, arguments);
-            } else if (command.equals("deletebomb")) {
-                commandObj = new DeleteBombCommand(this, sender, arguments);
-            } else if (command.equals("setcake")) {
-                commandObj = new SetCakeCommand(this, sender, arguments);
-            } else if (command.equals("deletecake")) {
-                commandObj = new DeleteCakeCommand(this, sender, arguments);
-            } else if (command.equals("setteamconfig") || command.equals("teamcfg")) {
-                commandObj = new SetTeamConfigCommand(this, sender, arguments);
-            } else if (command.equals("setzoneconfig") || command.equals("zonecfg")) {
-                commandObj = new SetZoneConfigCommand(this, sender, arguments);
-            } else if (command.equals("setwarhub")) {
-                commandObj = new SetWarHubCommand(this, sender, arguments);
-            } else if (command.equals("deletewarhub")) {
-                commandObj = new DeleteWarhubCommand(this, sender, arguments);
-            } else if (command.equals("loadwar")) {
-                commandObj = new LoadWarCommand(this, sender, arguments);
-            } else if (command.equals("unloadwar")) {
-                commandObj = new UnloadWarCommand(this, sender, arguments);
-            } else if (command.equals("setwarconfig") || command.equals("warcfg")) {
-                commandObj = new SetWarConfigCommand(this, sender, arguments);
-            } else if (command.equals("zonemaker") || command.equals("zm")) {
-                commandObj = new ZoneMakerCommand(this, sender, arguments);
+            switch (command) {
+                case "warhub":
+                    commandObj = new WarhubCommand(this, sender, arguments);
+                    break;
+                case "zones":
+                case "warzones":
+                    commandObj = new WarzonesCommand(this, sender, arguments);
+                    break;
+                case "zone":
+                case "warzone":
+                    commandObj = new WarzoneCommand(this, sender, arguments);
+                    break;
+                case "teams":
+                    commandObj = new TeamsCommand(this, sender, arguments);
+                    break;
+                case "join":
+                    commandObj = new JoinCommand(this, sender, arguments);
+                    break;
+                case "leave":
+                    commandObj = new LeaveCommand(this, sender, arguments);
+                    break;
+                case "team":
+                    commandObj = new TeamCommand(this, sender, arguments);
+                    break;
+                case "setzone":
+                    commandObj = new SetZoneCommand(this, sender, arguments);
+                    break;
+                case "deletezone":
+                    commandObj = new DeleteZoneCommand(this, sender, arguments);
+                    break;
+                case "setzonelobby":
+                    commandObj = new SetZoneLobbyCommand(this, sender, arguments);
+                    break;
+                case "savezone":
+                    commandObj = new SaveZoneCommand(this, sender, arguments);
+                    break;
+                case "resetzone":
+                    commandObj = new ResetZoneCommand(this, sender, arguments);
+                    break;
+                case "nextbattle":
+                    commandObj = new NextBattleCommand(this, sender, arguments);
+                    break;
+                case "renamezone":
+                    commandObj = new RenameZoneCommand(this, sender, arguments);
+                    break;
+                case "setteam":
+                    commandObj = new SetTeamCommand(this, sender, arguments);
+                    break;
+                case "deleteteam":
+                    commandObj = new DeleteTeamCommand(this, sender, arguments);
+                    break;
+                case "setteamflag":
+                    commandObj = new SetTeamFlagCommand(this, sender, arguments);
+                    break;
+                case "deleteteamflag":
+                    commandObj = new DeleteTeamFlagCommand(this, sender, arguments);
+                    break;
+                case "setmonument":
+                    commandObj = new SetMonumentCommand(this, sender, arguments);
+                    break;
+                case "deletemonument":
+                    commandObj = new DeleteMonumentCommand(this, sender, arguments);
+                    break;
+                case "setcapturepoint":
+                    commandObj = new SetCapturePointCommand(this, sender, arguments);
+                    break;
+                case "deletecapturepoint":
+                    commandObj = new DeleteCapturePointCommand(this, sender, arguments);
+                    break;
+                case "setbomb":
+                    commandObj = new SetBombCommand(this, sender, arguments);
+                    break;
+                case "deletebomb":
+                    commandObj = new DeleteBombCommand(this, sender, arguments);
+                    break;
+                case "setcake":
+                    commandObj = new SetCakeCommand(this, sender, arguments);
+                    break;
+                case "deletecake":
+                    commandObj = new DeleteCakeCommand(this, sender, arguments);
+                    break;
+                case "setteamconfig":
+                case "teamcfg":
+                    commandObj = new SetTeamConfigCommand(this, sender, arguments);
+                    break;
+                case "setzoneconfig":
+                case "zonecfg":
+                    commandObj = new SetZoneConfigCommand(this, sender, arguments);
+                    break;
+                case "setwarhub":
+                    commandObj = new SetWarHubCommand(this, sender, arguments);
+                    break;
+                case "deletewarhub":
+                    commandObj = new DeleteWarhubCommand(this, sender, arguments);
+                    break;
+                case "loadwar":
+                    commandObj = new LoadWarCommand(this, sender, arguments);
+                    break;
+                case "unloadwar":
+                    commandObj = new UnloadWarCommand(this, sender, arguments);
+                    break;
+                case "setwarconfig":
+                case "warcfg":
+                    commandObj = new SetWarConfigCommand(this, sender, arguments);
+                    break;
+                case "zonemaker":
+                case "zm":
+                    commandObj = new ZoneMakerCommand(this, sender, arguments);
+                    break;
             }
             // we are not responsible for any other command
         } catch (NotWarAdminException e) {

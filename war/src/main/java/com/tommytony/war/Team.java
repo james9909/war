@@ -1,8 +1,22 @@
 package com.tommytony.war;
 
-import com.tommytony.war.config.*;
+import com.tommytony.war.config.InventoryBag;
+import com.tommytony.war.config.ScoreboardType;
+import com.tommytony.war.config.TeamConfig;
+import com.tommytony.war.config.TeamConfigBag;
+import com.tommytony.war.config.TeamKind;
+import com.tommytony.war.config.TeamSpawnStyle;
 import com.tommytony.war.utility.Direction;
 import com.tommytony.war.volume.Volume;
+import java.io.File;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.logging.Level;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -14,12 +28,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Sign;
-
-import java.io.File;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.logging.Level;
 
 /**
  *

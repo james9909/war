@@ -32,8 +32,7 @@ public class Monument {
 
     public void addMonumentBlocks() {
         // make air (old three-high above floor)
-        Volume airGap = new Volume(new Location(this.volume.getWorld(), this.volume.getCornerOne().getX(), this.volume.getCornerOne().getY() + 1, this.volume.getCornerOne().getZ()),
-            new Location(this.volume.getWorld(), this.volume.getCornerTwo().getX(), this.volume.getCornerOne().getY() + 3, this.volume.getCornerTwo().getZ()));
+        Volume airGap = new Volume(new Location(this.volume.getWorld(), this.volume.getCornerOne().getX(), this.volume.getCornerOne().getY() + 1, this.volume.getCornerOne().getZ()), new Location(this.volume.getWorld(), this.volume.getCornerTwo().getX(), this.volume.getCornerOne().getY() + 3, this.volume.getCornerTwo().getZ()));
         airGap.setToMaterial(Material.AIR);
 
         this.ownerTeam = null;
@@ -204,11 +203,14 @@ public class Monument {
         int diffX = Math.abs(playerX - x);
         int diffY = Math.abs(playerY - y);
         int diffZ = Math.abs(playerZ - z);
-        return diffX < 6 && diffY < 6 && diffZ < 6;
+        return (diffX < 6 && diffY < 6 && diffZ < 6);
     }
 
     public boolean isOwner(Team team) {
-        return team == this.ownerTeam;
+        if (team == this.ownerTeam) {
+            return true;
+        }
+        return false;
     }
 
     public boolean hasOwner() {

@@ -325,12 +325,13 @@ public class ZoneVolumeMapper {
                 // 4x3
             case DONKEYKONG:
             case SKELETON:
-                if (facing == BlockFace.WEST) {
-                    return loc.getBlock().getLocation().add(0, 0, -1);
-                } else if (facing == BlockFace.SOUTH) {
-                    return loc.getBlock().getLocation().add(-1, 0, 0);
-                } else {
-                    return loc;
+                switch (facing) {
+                    case WEST:
+                        return loc.getBlock().getLocation().add(0, 0, -1);
+                    case SOUTH:
+                        return loc.getBlock().getLocation().add(-1, 0, 0);
+                    default:
+                        return loc;
                 }
 
                 // 2x2
@@ -348,12 +349,13 @@ public class ZoneVolumeMapper {
             case BURNINGSKULL:
             case PIGSCENE:
             case POINTER:
-                if (facing == BlockFace.WEST) {
-                    return loc.getBlock().getLocation().add(0, -1, -1);
-                } else if (facing == BlockFace.SOUTH) {
-                    return loc.getBlock().getLocation().add(-1, -1, 0);
-                } else {
-                    return loc.add(0, -1, 0);
+                switch (facing) {
+                    case WEST:
+                        return loc.getBlock().getLocation().add(0, -1, -1);
+                    case SOUTH:
+                        return loc.getBlock().getLocation().add(-1, -1, 0);
+                    default:
+                        return loc.add(0, -1, 0);
                 }
 
                 // Unsupported artwork

@@ -372,14 +372,19 @@ public class WarzoneYmlMapper {
             // lobby orientation
             String lobbyOrientation = warzoneRootSection.getString(lobbyPrefix + "orientation");
             BlockFace lobbyFace = null;
-            if (lobbyOrientation.equals("south")) {
-                lobbyFace = Direction.SOUTH();
-            } else if (lobbyOrientation.equals("east")) {
-                lobbyFace = Direction.EAST();
-            } else if (lobbyOrientation.equals("north")) {
-                lobbyFace = Direction.NORTH();
-            } else if (lobbyOrientation.equals("west")) {
-                lobbyFace = Direction.WEST();
+            switch (lobbyOrientation) {
+                case "south":
+                    lobbyFace = Direction.SOUTH();
+                    break;
+                case "east":
+                    lobbyFace = Direction.EAST();
+                    break;
+                case "north":
+                    lobbyFace = Direction.NORTH();
+                    break;
+                case "west":
+                    lobbyFace = Direction.WEST();
+                    break;
             }
 
             // lobby materials

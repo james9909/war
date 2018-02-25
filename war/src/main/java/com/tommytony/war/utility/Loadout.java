@@ -100,11 +100,7 @@ public class Loadout implements Comparable<Loadout>, ConfigurationSerializable {
     }
 
     private List<Integer> toIntList(Set<Integer> keySet) {
-        List<Integer> list = new ArrayList<>();
-        for (Integer key : keySet) {
-            list.add(key);
-        }
-        return list;
+        return new ArrayList<>(keySet);
     }
 
     // For future use

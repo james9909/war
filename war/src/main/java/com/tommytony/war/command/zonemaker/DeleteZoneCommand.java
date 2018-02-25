@@ -39,10 +39,10 @@ public class DeleteZoneCommand extends AbstractZoneMakerCommand {
     public boolean handle() {
         Warzone zone;
 
-        if (this.args.length == 1) {
-            zone = Warzone.getZoneByName(this.args[0]);
-        } else if (this.args.length == 0) {
+        if (this.args.length == 0) {
             zone = getWarzoneByLocation();
+        } else if (this.args.length == 1) {
+            zone = Warzone.getZoneByName(this.args[0]);
         } else {
             return false;
         }

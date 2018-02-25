@@ -378,14 +378,19 @@ public class WarzoneTxtMapper {
                 String[] lobbyStrSplit = lobbyStr.split(",");
                 if (lobbyStrSplit.length > 0) {
                     // lobby orientation
-                    if (lobbyStrSplit[0].equals("south")) {
-                        lobbyFace = Direction.SOUTH();
-                    } else if (lobbyStrSplit[0].equals("east")) {
-                        lobbyFace = Direction.EAST();
-                    } else if (lobbyStrSplit[0].equals("north")) {
-                        lobbyFace = Direction.NORTH();
-                    } else if (lobbyStrSplit[0].equals("west")) {
-                        lobbyFace = Direction.WEST();
+                    switch (lobbyStrSplit[0]) {
+                        case "south":
+                            lobbyFace = Direction.SOUTH();
+                            break;
+                        case "east":
+                            lobbyFace = Direction.EAST();
+                            break;
+                        case "north":
+                            lobbyFace = Direction.NORTH();
+                            break;
+                        case "west":
+                            lobbyFace = Direction.WEST();
+                            break;
                     }
 
                     // lobby world

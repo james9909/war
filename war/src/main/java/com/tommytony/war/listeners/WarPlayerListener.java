@@ -245,14 +245,19 @@ public class WarPlayerListener implements Listener {
             if (event.getItem() != null && event.getItem().getType() == Material.WOOD_SWORD && War.war.isWandBearer(player)) {
                 String zoneName = War.war.getWandBearerZone(player);
                 ZoneSetter setter = new ZoneSetter(player, zoneName);
-                if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR) {
-                    War.war.badMsg(player, "wand.toofar");
-                } else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-                    setter.placeCorner1(event.getClickedBlock());
-                    event.setUseItemInHand(Result.ALLOW);
-                } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                    setter.placeCorner2(event.getClickedBlock());
-                    event.setUseItemInHand(Result.ALLOW);
+                switch (event.getAction()) {
+                    case LEFT_CLICK_AIR:
+                    case RIGHT_CLICK_AIR:
+                        War.war.badMsg(player, "wand.toofar");
+                        break;
+                    case LEFT_CLICK_BLOCK:
+                        setter.placeCorner1(event.getClickedBlock());
+                        event.setUseItemInHand(Result.ALLOW);
+                        break;
+                    case RIGHT_CLICK_BLOCK:
+                        setter.placeCorner2(event.getClickedBlock());
+                        event.setUseItemInHand(Result.ALLOW);
+                        break;
                 }
             }
 

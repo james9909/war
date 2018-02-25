@@ -48,16 +48,28 @@ public class SetZoneCommand extends AbstractZoneMakerCommand {
             }
 
             ZoneSetter setter = new ZoneSetter(player, this.args[0]);
-            if (this.args[1].equals("northwest") || this.args[1].equals("nw")) {
-                setter.placeNorthwest();
-            } else if (this.args[1].equals("southeast") || this.args[1].equals("se")) {
-                setter.placeSoutheast();
-            } else if (this.args[1].equals("corner1") || this.args[1].equals("c1") || this.args[1].equals("pos1")) {
-                setter.placeCorner1();
-            } else if (this.args[1].equals("corner2") || this.args[1].equals("c2") || this.args[1].equals("pos2")) {
-                setter.placeCorner2();
-            } else if (this.args[1].equals("wand")) {
-                War.war.addWandBearer(player, this.args[0]);
+            switch (this.args[1]) {
+                case "northwest":
+                case "nw":
+                    setter.placeNorthwest();
+                    break;
+                case "southeast":
+                case "se":
+                    setter.placeSoutheast();
+                    break;
+                case "corner1":
+                case "c1":
+                case "pos1":
+                    setter.placeCorner1();
+                    break;
+                case "corner2":
+                case "c2":
+                case "pos2":
+                    setter.placeCorner2();
+                    break;
+                case "wand":
+                    War.war.addWandBearer(player, this.args[0]);
+                    break;
             }
         } else {
             return false;

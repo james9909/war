@@ -31,8 +31,7 @@ public class Bomb {
 
     public void addBombBlocks() {
         // make air (old two-high above floor)
-        Volume airGap = new Volume(new Location(this.volume.getWorld(), this.volume.getCornerOne().getX(), this.volume.getCornerOne().getY() + 1, this.volume.getCornerOne().getZ()),
-            new Location(this.volume.getWorld(), this.volume.getCornerTwo().getX(), this.volume.getCornerOne().getY() + 3, this.volume.getCornerTwo().getZ()));
+        Volume airGap = new Volume(new Location(this.volume.getWorld(), this.volume.getCornerOne().getX(), this.volume.getCornerOne().getY() + 1, this.volume.getCornerOne().getZ()), new Location(this.volume.getWorld(), this.volume.getCornerTwo().getX(), this.volume.getCornerOne().getY() + 3, this.volume.getCornerTwo().getZ()));
         airGap.setToMaterial(Material.AIR);
 
         int x = this.location.getBlockX();

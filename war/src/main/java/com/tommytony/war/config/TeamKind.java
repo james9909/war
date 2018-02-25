@@ -10,13 +10,22 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.material.Wool;
 
 public enum TeamKind {
-    WHITE(DyeColor.WHITE, Material.WOOL, ChatColor.WHITE, 450), ORANGE(DyeColor.ORANGE, Material.WOOL, ChatColor.GOLD, 51), MAGENTA(DyeColor.MAGENTA, Material.WOOL, ChatColor.LIGHT_PURPLE, 353), BLUE(
-        DyeColor.LIGHT_BLUE, Material.WOOL, ChatColor.BLUE, 23), GOLD(DyeColor.YELLOW, Material.WOOL, ChatColor.YELLOW, 403), // yellow = gold
-    GREEN(DyeColor.LIME, Material.WOOL, ChatColor.GREEN, 612), PINK(DyeColor.PINK, Material.WOOL, ChatColor.LIGHT_PURPLE, 929), GRAY(DyeColor.GRAY, Material.WOOL, ChatColor.DARK_GRAY, 600), IRON(
-        DyeColor.SILVER, Material.WOOL, ChatColor.GRAY, 154), // lightgrey = iron
+    WHITE(DyeColor.WHITE, Material.WOOL, ChatColor.WHITE, 450),
+    ORANGE(DyeColor.ORANGE, Material.WOOL, ChatColor.GOLD, 51),
+    MAGENTA(DyeColor.MAGENTA, Material.WOOL, ChatColor.LIGHT_PURPLE, 353),
+    BLUE(DyeColor.LIGHT_BLUE, Material.WOOL, ChatColor.BLUE, 23),
+    GOLD(DyeColor.YELLOW, Material.WOOL, ChatColor.YELLOW, 403), // yellow = gold
+    GREEN(DyeColor.LIME, Material.WOOL, ChatColor.GREEN, 612),
+    PINK(DyeColor.PINK, Material.WOOL, ChatColor.LIGHT_PURPLE, 929),
+    GRAY(DyeColor.GRAY, Material.WOOL, ChatColor.DARK_GRAY, 600),
+    IRON(DyeColor.SILVER, Material.WOOL, ChatColor.GRAY, 154), // lightgrey = iron
     DIAMOND(DyeColor.CYAN, Material.WOOL, ChatColor.DARK_AQUA, 738), // cyan = diamond
-    PURPLE(DyeColor.PURPLE, Material.WOOL, ChatColor.DARK_PURPLE, 153), NAVY(DyeColor.BLUE, Material.WOOL, ChatColor.DARK_BLUE, 939), BROWN(DyeColor.BROWN, Material.WOOL, ChatColor.DARK_RED,
-        908), DARKGREEN(DyeColor.GREEN, Material.WOOL, ChatColor.DARK_GREEN, 612), RED(DyeColor.RED, Material.WOOL, ChatColor.RED, 245), BLACK(DyeColor.BLACK, Material.WOOL, ChatColor.BLACK, 0);
+    PURPLE(DyeColor.PURPLE, Material.WOOL, ChatColor.DARK_PURPLE, 153),
+    NAVY(DyeColor.BLUE, Material.WOOL, ChatColor.DARK_BLUE, 939),
+    BROWN(DyeColor.BROWN, Material.WOOL, ChatColor.DARK_RED, 908),
+    DARKGREEN(DyeColor.GREEN, Material.WOOL, ChatColor.DARK_GREEN, 612),
+    RED(DyeColor.RED, Material.WOOL, ChatColor.RED, 245),
+    BLACK(DyeColor.BLACK, Material.WOOL, ChatColor.BLACK, 0);
 
     private final DyeColor dyeColor;
     private final ChatColor chatColor;

@@ -12,7 +12,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 public class TeamConfigBag {
 
-    private EnumMap<TeamConfig, Object> bag = new EnumMap<TeamConfig, Object>(TeamConfig.class);
+    private EnumMap<TeamConfig, Object> bag = new EnumMap<>(TeamConfig.class);
     private Warzone warzone;
 
     public TeamConfigBag(Warzone warzone) {

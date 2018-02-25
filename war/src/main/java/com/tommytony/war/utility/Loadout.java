@@ -31,7 +31,7 @@ public class Loadout implements Comparable<Loadout>, ConfigurationSerializable {
     }
 
     public static HashMap<String, HashMap<Integer, ItemStack>> toLegacyFormat(List<Loadout> loadouts) {
-        HashMap<String, HashMap<Integer, ItemStack>> oldLoadouts = new HashMap<String, HashMap<Integer, ItemStack>>();
+        HashMap<String, HashMap<Integer, ItemStack>> oldLoadouts = new HashMap<>();
         for (Loadout ldt : loadouts) {
             oldLoadouts.put(ldt.getName(), ldt.getContents());
         }
@@ -49,7 +49,7 @@ public class Loadout implements Comparable<Loadout>, ConfigurationSerializable {
 
     @SuppressWarnings("unchecked")
     public static Loadout deserialize(Map<String, Object> config) {
-        HashMap<Integer, ItemStack> contents = new HashMap<Integer, ItemStack>();
+        HashMap<Integer, ItemStack> contents = new HashMap<>();
         List<Integer> slots = (List<Integer>) config.get("slots");
         for (Integer slot : slots) {
             contents.put(slot, ItemStack.deserialize((Map<String, Object>) config.get(slot.toString())));
@@ -100,7 +100,7 @@ public class Loadout implements Comparable<Loadout>, ConfigurationSerializable {
     }
 
     private List<Integer> toIntList(Set<Integer> keySet) {
-        List<Integer> list = new ArrayList<Integer>();
+        List<Integer> list = new ArrayList<>();
         for (Integer key : keySet) {
             list.add(key);
         }
@@ -109,7 +109,7 @@ public class Loadout implements Comparable<Loadout>, ConfigurationSerializable {
 
     // For future use
     public Map<String, Object> serialize() {
-        Map<String, Object> config = new HashMap<String, Object>();
+        Map<String, Object> config = new HashMap<>();
         config.put("slots", this.toIntList(contents.keySet()));
         for (Integer slot : contents.keySet()) {
             ItemStack stack = contents.get(slot);

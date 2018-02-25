@@ -23,7 +23,7 @@ public class Volume {
     private World world;
     private Location cornerOne;
     private Location cornerTwo;
-    private List<BlockState> blocks = new ArrayList<BlockState>();
+    private List<BlockState> blocks = new ArrayList<>();
 
     public Volume(String name, World world) {
         this.name = name;

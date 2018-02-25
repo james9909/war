@@ -40,37 +40,34 @@ public class JoinTeamUI extends ChestUI {
                     MessageFormat.format(ChatColor.GRAY + "{0} lives left", team.getRemainingLives()), ChatColor.DARK_GRAY + "Click to join team"));
 
                 item.setItemMeta(meta);
-                this.addItem(inv, formatter.next(), item, new Runnable() {
-                    @Override
-                    public void run() {
-                        if (warzone.getWarzoneConfig().getBoolean(WarzoneConfig.DISABLED)) {
-                            War.war.badMsg(player, "join.disabled");
-                        } else if (warzone.isReinitializing()) {
-                            War.war.badMsg(player, "join.disabled");
-                        } else if (warzone.getWarzoneConfig().getBoolean(WarzoneConfig.AUTOASSIGN)) {
-                            War.war.badMsg(player, "join.aarequired");
-                        } else if (!warzone.getWarzoneConfig().getBoolean(WarzoneConfig.JOINMIDBATTLE) && warzone.isEnoughPlayers()) {
-                            War.war.badMsg(player, "join.progress");
+                this.addItem(inv, formatter.next(), item, () -> {
+                    if (warzone.getWarzoneConfig().getBoolean(WarzoneConfig.DISABLED)) {
+                        War.war.badMsg(player, "join.disabled");
+                    } else if (warzone.isReinitializing()) {
+                        War.war.badMsg(player, "join.disabled");
+                    } else if (warzone.getWarzoneConfig().getBoolean(WarzoneConfig.AUTOASSIGN)) {
+                        War.war.badMsg(player, "join.aarequired");
+                    } else if (!warzone.getWarzoneConfig().getBoolean(WarzoneConfig.JOINMIDBATTLE) && warzone.isEnoughPlayers()) {
+                        War.war.badMsg(player, "join.progress");
+                    } else {
+                        Team team1 = warzone.getTeamByKind(kind);
+                        if (team1 == null) {
+                            War.war.badMsg(player, "join.team404");
+                        } else if (!War.war.canPlayWar(player, team1)) {
+                            War.war.badMsg(player, "join.permission.single");
+                        } else if (team1.isFull()) {
+                            War.war.badMsg(player, "join.full.single", team1.getName());
                         } else {
-                            Team team = warzone.getTeamByKind(kind);
-                            if (team == null) {
-                                War.war.badMsg(player, "join.team404");
-                            } else if (!War.war.canPlayWar(player, team)) {
-                                War.war.badMsg(player, "join.permission.single");
-                            } else if (team.isFull()) {
-                                War.war.badMsg(player, "join.full.single", team.getName());
-                            } else {
-                                Team previousTeam = Team.getTeamByPlayerName(player.getName());
-                                if (previousTeam != null) {
-                                    if (previousTeam == team) {
-                                        War.war.badMsg(player, "join.selfteam");
-                                        return;
-                                    }
-                                    previousTeam.removePlayer(player);
-                                    previousTeam.resetSign();
+                            Team previousTeam = Team.getTeamByPlayerName(player.getName());
+                            if (previousTeam != null) {
+                                if (previousTeam == team1) {
+                                    War.war.badMsg(player, "join.selfteam");
+                                    return;
                                 }
-                                warzone.assign(player, team);
+                                previousTeam.removePlayer(player);
+                                previousTeam.resetSign();
                             }
+                            warzone.assign(player, team1);
                         }
                     }
                 });

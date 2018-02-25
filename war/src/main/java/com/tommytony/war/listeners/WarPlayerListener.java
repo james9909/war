@@ -63,7 +63,7 @@ public class WarPlayerListener implements Listener {
 
     private static final int MINIMUM_TEAM_BLOCKS = 1;
     private java.util.Random random = new java.util.Random();
-    private HashMap<String, Location> latestLocations = new HashMap<String, Location>();
+    private HashMap<String, Location> latestLocations = new HashMap<>();
 
     /**
      * Correctly removes quitting players from warzones
@@ -814,14 +814,11 @@ public class WarPlayerListener implements Listener {
             Team playerTeam = Team.getTeamByPlayerName(event.getPlayer().getName());
             if (playerWarzone != null && playerTeam != null && playerTeam.getInventories().resolveLoadouts().keySet().size() > 1 && playerTeam.isSpawnLocation(event.getPlayer().getLocation())) {
                 if (playerWarzone.getLoadoutSelections().keySet().contains(event.getPlayer().getName()) && playerWarzone.getLoadoutSelections().get(event.getPlayer().getName()).isStillInSpawn()) {
+
                     LoadoutSelection selection = playerWarzone.getLoadoutSelections().get(event.getPlayer().getName());
-                    List<Loadout> loadouts = new ArrayList<Loadout>(playerTeam.getInventories().resolveNewLoadouts());
-                    for (Iterator<Loadout> it = loadouts.iterator(); it.hasNext(); ) {
-                        Loadout ldt = it.next();
-                        if (ldt.getName().equals("first") || (ldt.requiresPermission() && !event.getPlayer().hasPermission(ldt.getPermission()))) {
-                            it.remove();
-                        }
-                    }
+                    List<Loadout> loadouts = new ArrayList<>(playerTeam.getInventories().resolveNewLoadouts());
+                    loadouts.removeIf(ldt -> ldt.getName().equals("first") || (ldt.requiresPermission() && !event.getPlayer().hasPermission(ldt.getPermission())));
+
                     int currentIndex = (selection.getSelectedIndex() + 1) % loadouts.size();
                     selection.setSelectedIndex(currentIndex);
 

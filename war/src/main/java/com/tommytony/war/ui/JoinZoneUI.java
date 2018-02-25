@@ -24,12 +24,7 @@ public class JoinZoneUI extends ChestUI {
         meta.setLore(ImmutableList.of(ChatColor.GRAY + "Teleports you to the " + ChatColor.RED + "Warhub" + ChatColor.GRAY + " lobby", ChatColor.DARK_GRAY + "Warzone doors located here"));
         item.setItemMeta(meta);
         int i = 0;
-        this.addItem(inv, i++, item, new Runnable() {
-            @Override
-            public void run() {
-                player.teleport(War.war.getWarHub().getLocation());
-            }
-        });
+        this.addItem(inv, i++, item, () -> player.teleport(War.war.getWarHub().getLocation()));
         for (final Warzone zone : War.war.getEnabledWarzones()) {
             item = new ItemStack(Material.ENDER_PEARL);
             meta = item.getItemMeta();
@@ -38,12 +33,7 @@ public class JoinZoneUI extends ChestUI {
                 .of(MessageFormat.format(ChatColor.GRAY + "{0}/{1} players", zone.getPlayerCount(), zone.getMaxPlayers()), MessageFormat.format(ChatColor.GRAY + "{0} teams", zone.getTeams().size()),
                     ChatColor.DARK_GRAY + "Click to teleport"));
             item.setItemMeta(meta);
-            this.addItem(inv, i++, item, new Runnable() {
-                @Override
-                public void run() {
-                    War.war.getUIManager().assignUI(player, new JoinTeamUI(zone));
-                }
-            });
+            this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new JoinTeamUI(zone)));
         }
     }
 

@@ -61,12 +61,7 @@ public class EditOrCreateZoneUI extends ChestUI {
             meta.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + zone.getName());
             meta.setLore(ImmutableList.of(ChatColor.GRAY + "Click to edit"));
             item.setItemMeta(meta);
-            this.addItem(inv, i++, item, new Runnable() {
-                @Override
-                public void run() {
-                    War.war.getUIManager().assignUI(player, new EditZoneUI(zone));
-                }
-            });
+            this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new EditZoneUI(zone)));
         }
     }
 

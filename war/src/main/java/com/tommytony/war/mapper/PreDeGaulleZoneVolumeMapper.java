@@ -30,7 +30,7 @@ import org.bukkit.material.MaterialData;
 public class PreDeGaulleZoneVolumeMapper {
 
     private static List<ItemStack> readInventoryString(String invString) {
-        List<ItemStack> items = new ArrayList<ItemStack>();
+        List<ItemStack> items = new ArrayList<>();
         String[] itemsStrSplit = invString.split(";;");
         for (String itemStr : itemsStrSplit) {
             String[] itemStrSplit = itemStr.split(";");

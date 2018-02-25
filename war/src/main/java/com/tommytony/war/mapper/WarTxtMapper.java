@@ -79,7 +79,7 @@ public class WarTxtMapper {
 
         String loadoutStr = warConfig.getString("defaultLoadout");
         if (loadoutStr != null && !loadoutStr.equals("")) {
-            War.war.getDefaultInventories().addLoadout("default", new HashMap<Integer, ItemStack>());
+            War.war.getDefaultInventories().addLoadout("default", new HashMap<>());
             LoadoutTxtMapper.fromStringToLoadout(loadoutStr, War.war.getDefaultInventories().getLoadout("default"));
         }
 
@@ -89,7 +89,7 @@ public class WarTxtMapper {
 
         for (String nameStr : extraLoadoutsSplit) {
             if (nameStr != null && !nameStr.equals("")) {
-                War.war.getDefaultInventories().addLoadout(nameStr, new HashMap<Integer, ItemStack>());
+                War.war.getDefaultInventories().addLoadout(nameStr, new HashMap<>());
             }
         }
 

@@ -35,7 +35,7 @@ public class ZoneLobby {
 
     Location warHubLinkGate = null;
 
-    Map<String, Location> teamGateBlocks = new HashMap<String, Location>();
+    Map<String, Location> teamGateBlocks = new HashMap<>();
     Location autoAssignGate = null;
 
     Location zoneTeleportBlock = null;

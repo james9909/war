@@ -87,7 +87,7 @@ public class WarzoneTxtMapper {
 
             String loadoutStr = warzoneConfig.getString("loadout");
             if (loadoutStr != null && !loadoutStr.equals("")) {
-                warzone.getDefaultInventories().setLoadout("default", new HashMap<Integer, ItemStack>());
+                warzone.getDefaultInventories().setLoadout("default", new HashMap<>());
                 LoadoutTxtMapper.fromStringToLoadout(loadoutStr, warzone.getDefaultInventories().getLoadout("default"));
             }
 
@@ -97,7 +97,7 @@ public class WarzoneTxtMapper {
 
             for (String nameStr : extraLoadoutsSplit) {
                 if (nameStr != null && !nameStr.equals("")) {
-                    warzone.getDefaultInventories().setLoadout(nameStr, new HashMap<Integer, ItemStack>());
+                    warzone.getDefaultInventories().setLoadout(nameStr, new HashMap<>());
                 }
             }
 
@@ -178,7 +178,7 @@ public class WarzoneTxtMapper {
             // reward
             String rewardStr = warzoneConfig.getString("reward");
             if (rewardStr != null && !rewardStr.equals("")) {
-                HashMap<Integer, ItemStack> reward = new HashMap<Integer, ItemStack>();
+                HashMap<Integer, ItemStack> reward = new HashMap<>();
                 LoadoutTxtMapper.fromStringToLoadout(rewardStr, reward);
                 warzone.getDefaultInventories().setReward(reward);
             }

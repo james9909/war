@@ -10,7 +10,7 @@ import org.bukkit.entity.Item;
 
 public class DeferredBlockResetsJob implements Runnable {
 
-    List<BlockState> deferred = new ArrayList<BlockState>();
+    List<BlockState> deferred = new ArrayList<>();
 
     public DeferredBlockResetsJob() {
     }

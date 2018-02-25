@@ -15,7 +15,7 @@ public abstract class ChestUI {
     private Map<ItemStack, Runnable> actions;
 
     ChestUI() {
-        actions = new HashMap<ItemStack, Runnable>();
+        actions = new HashMap<>();
     }
 
     protected void addItem(Inventory inv, int slot, ItemStack item, Runnable action) {

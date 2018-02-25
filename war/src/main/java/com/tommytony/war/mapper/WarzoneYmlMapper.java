@@ -79,13 +79,13 @@ public class WarzoneYmlMapper {
             // defaultLoadouts
             if (warzoneRootSection.contains("team.default.loadout")) {
                 ConfigurationSection loadoutsSection = warzoneRootSection.getConfigurationSection("team.default.loadout");
-                warzone.getDefaultInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection, new HashMap<String, HashMap<Integer, ItemStack>>()));
+                warzone.getDefaultInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection, new HashMap<>()));
             }
 
             // defaultReward
             if (warzoneRootSection.contains("team.default.reward")) {
                 ConfigurationSection rewardsSection = warzoneRootSection.getConfigurationSection("team.default.reward");
-                HashMap<Integer, ItemStack> reward = new HashMap<Integer, ItemStack>();
+                HashMap<Integer, ItemStack> reward = new HashMap<>();
                 LoadoutYmlMapper.fromConfigToLoadout(rewardsSection, reward, "default");
                 warzone.getDefaultInventories().setReward(reward);
             }
@@ -221,7 +221,7 @@ public class WarzoneYmlMapper {
                         // try lowercase instead - supports custom team names
                         teamInfoPrefix = "team." + teamName.toLowerCase() + ".info.";
                     }
-                    List<Location> teamSpawns = new ArrayList<Location>();
+                    List<Location> teamSpawns = new ArrayList<>();
                     if (warzoneRootSection.contains(teamInfoPrefix + "spawn")) {
                         int teamX = warzoneRootSection.getInt(teamInfoPrefix + "spawn.x");
                         int teamY = warzoneRootSection.getInt(teamInfoPrefix + "spawn.y");
@@ -283,24 +283,24 @@ public class WarzoneYmlMapper {
                     if (warzoneRootSection.contains(teamLoadoutPrefix)) {
                         // team specific loadouts
                         ConfigurationSection loadoutsSection = warzoneRootSection.getConfigurationSection(teamLoadoutPrefix);
-                        team.getInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection, new HashMap<String, HashMap<Integer, ItemStack>>()));
+                        team.getInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection, new HashMap<>()));
                     } else if (warzoneRootSection.contains(teamLoadoutPrefix.toLowerCase())) {
                         // try lowercase instead
                         ConfigurationSection loadoutsSection = warzoneRootSection.getConfigurationSection(teamLoadoutPrefix.toLowerCase());
-                        team.getInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection, new HashMap<String, HashMap<Integer, ItemStack>>()));
+                        team.getInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection, new HashMap<>()));
                     }
 
                     String teamRewardPrefix = "team." + teamName + ".reward";
                     if (warzoneRootSection.contains(teamRewardPrefix)) {
                         // team specific reward
                         ConfigurationSection rewardsSection = warzoneRootSection.getConfigurationSection(teamRewardPrefix);
-                        HashMap<Integer, ItemStack> reward = new HashMap<Integer, ItemStack>();
+                        HashMap<Integer, ItemStack> reward = new HashMap<>();
                         LoadoutYmlMapper.fromConfigToLoadout(rewardsSection, reward, "default");
                         warzone.getDefaultInventories().setReward(reward);
                     } else if (warzoneRootSection.contains(teamRewardPrefix.toLowerCase())) {
                         // try lowercase instead
                         ConfigurationSection rewardsSection = warzoneRootSection.getConfigurationSection(teamRewardPrefix.toLowerCase());
-                        HashMap<Integer, ItemStack> reward = new HashMap<Integer, ItemStack>();
+                        HashMap<Integer, ItemStack> reward = new HashMap<>();
                         LoadoutYmlMapper.fromConfigToLoadout(rewardsSection, reward, "default");
                         warzone.getDefaultInventories().setReward(reward);
                     }
@@ -537,7 +537,7 @@ public class WarzoneYmlMapper {
         if (warzone.getMonuments().size() > 0) {
             ConfigurationSection monumentsSection = warzoneInfoSection.createSection("monument");
 
-            List<String> monumentNames = new ArrayList<String>();
+            List<String> monumentNames = new ArrayList<>();
             for (Monument monument : warzone.getMonuments()) {
                 monumentNames.add(monument.getName());
             }
@@ -557,7 +557,7 @@ public class WarzoneYmlMapper {
         if (warzone.getCapturePoints().size() > 0) {
             ConfigurationSection cpsSection = warzoneInfoSection.createSection("capturepoint");
 
-            List<String> cpNames = new ArrayList<String>();
+            List<String> cpNames = new ArrayList<>();
             for (CapturePoint cp : warzone.getCapturePoints()) {
                 cpNames.add(cp.getName());
             }
@@ -580,7 +580,7 @@ public class WarzoneYmlMapper {
         if (warzone.getBombs().size() > 0) {
             ConfigurationSection bombsSection = warzoneInfoSection.createSection("bomb");
 
-            List<String> bombNames = new ArrayList<String>();
+            List<String> bombNames = new ArrayList<>();
             for (Bomb bomb : warzone.getBombs()) {
                 bombNames.add(bomb.getName());
             }
@@ -600,7 +600,7 @@ public class WarzoneYmlMapper {
         if (warzone.getCakes().size() > 0) {
             ConfigurationSection cakesSection = warzoneInfoSection.createSection("cake");
 
-            List<String> cakeNames = new ArrayList<String>();
+            List<String> cakeNames = new ArrayList<>();
             for (Cake cake : warzone.getCakes()) {
                 cakeNames.add(cake.getName());
             }
@@ -621,7 +621,7 @@ public class WarzoneYmlMapper {
         // teams
         List<Team> teams = warzone.getTeams();
 
-        List<String> teamNames = new ArrayList<String>();
+        List<String> teamNames = new ArrayList<>();
         for (Team team : teams) {
             teamNames.add(team.getName());
         }
@@ -668,9 +668,9 @@ public class WarzoneYmlMapper {
 
             ConfigurationSection teamInfoSection = teamsSection.createSection(team.getName() + ".info");
 
-            List<Map<String, Object>> spawnSerilization = new ArrayList<Map<String, Object>>();
+            List<Map<String, Object>> spawnSerilization = new ArrayList<>();
             for (Location spawn : team.getTeamSpawns()) {
-                Map<String, Object> map = new HashMap<String, Object>();
+                Map<String, Object> map = new HashMap<>();
                 map.put("x", spawn.getBlockX());
                 map.put("y", spawn.getBlockY());
                 map.put("z", spawn.getBlockZ());

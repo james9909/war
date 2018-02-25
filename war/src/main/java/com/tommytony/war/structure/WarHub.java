@@ -26,7 +26,7 @@ public class WarHub {
 
     private Location location;
     private Volume volume;
-    private Map<String, Block> zoneGateBlocks = new HashMap<String, Block>();
+    private Map<String, Block> zoneGateBlocks = new HashMap<>();
     private BlockFace orientation;
 
     public WarHub(Location location, String hubOrientation) {

@@ -26,8 +26,8 @@ public class UIManager implements Listener {
 
     public UIManager(War plugin) {
         this.plugin = plugin;
-        this.uiMap = new HashMap<Player, ChestUI>();
-        this.messageMap = new HashMap<Player, StringRunnable>();
+        this.uiMap = new HashMap<>();
+        this.messageMap = new HashMap<>();
     }
 
     public void assignUI(Player player, ChestUI ui) {

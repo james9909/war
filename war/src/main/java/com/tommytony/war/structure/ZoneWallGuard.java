@@ -24,7 +24,7 @@ public class ZoneWallGuard {
     private Warzone warzone;
     private Location playerLocation;
     private BlockFace wall;
-    private List<BlockState> glassified = new ArrayList<BlockState>();
+    private List<BlockState> glassified = new ArrayList<>();
 
     public ZoneWallGuard(Player player, War war, Warzone warzone, BlockFace wall) {
         this.player = player;

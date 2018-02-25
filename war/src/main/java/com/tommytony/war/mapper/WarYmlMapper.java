@@ -70,11 +70,11 @@ public class WarYmlMapper {
 
         // defaultLoadouts
         ConfigurationSection loadoutsSection = warRootSection.getConfigurationSection("team.default.loadout");
-        War.war.getDefaultInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection, new HashMap<String, HashMap<Integer, ItemStack>>()));
+        War.war.getDefaultInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection, new HashMap<>()));
 
         // defaultReward
         ConfigurationSection rewardsSection = warRootSection.getConfigurationSection("team.default.reward");
-        HashMap<Integer, ItemStack> reward = new HashMap<Integer, ItemStack>();
+        HashMap<Integer, ItemStack> reward = new HashMap<>();
         LoadoutYmlMapper.fromConfigToLoadout(rewardsSection, reward, "default");
         War.war.getDefaultInventories().setReward(reward);
 
@@ -139,7 +139,7 @@ public class WarYmlMapper {
         ConfigurationSection warInfoSection = warRootSection.createSection("war.info");
 
         // warzones
-        List<String> warzones = new ArrayList<String>();
+        List<String> warzones = new ArrayList<>();
         for (Warzone zone : War.war.getWarzones()) {
             warzones.add(zone.getName());
         }

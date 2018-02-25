@@ -35,34 +35,26 @@ public class EditTeamsListUI extends ChestUI {
             if (team == null) {
                 meta.setDisplayName("Create new team");
                 item.setItemMeta(meta);
-                this.addItem(inv, i, item, new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!warzone.getVolume().contains(player.getLocation())) {
-                            player.sendTitle("", ChatColor.RED + "Can't add a spawn outside of the zone!", 10, 20, 10);
-                            return;
-                        }
-
-                        Team newTeam = new Team(kind.toString(), kind, Collections.<Location>emptyList(), warzone);
-                        newTeam.setRemainingLives(newTeam.getTeamConfig().resolveInt(TeamConfig.LIFEPOOL));
-                        warzone.getTeams().add(newTeam);
-                        if (warzone.getLobby() != null) {
-                            warzone.getLobby().setLocation(warzone.getTeleport());
-                            warzone.getLobby().initialize();
-                        }
-                        newTeam.addTeamSpawn(player.getLocation());
-                        player.sendTitle("", "Team " + newTeam.getName() + " created with spawn here.", 10, 20, 10);
+                this.addItem(inv, i, item, () -> {
+                    if (!warzone.getVolume().contains(player.getLocation())) {
+                        player.sendTitle("", ChatColor.RED + "Can't add a spawn outside of the zone!", 10, 20, 10);
+                        return;
                     }
+
+                    Team newTeam = new Team(kind.toString(), kind, Collections.<Location>emptyList(), warzone);
+                    newTeam.setRemainingLives(newTeam.getTeamConfig().resolveInt(TeamConfig.LIFEPOOL));
+                    warzone.getTeams().add(newTeam);
+                    if (warzone.getLobby() != null) {
+                        warzone.getLobby().setLocation(warzone.getTeleport());
+                        warzone.getLobby().initialize();
+                    }
+                    newTeam.addTeamSpawn(player.getLocation());
+                    player.sendTitle("", "Team " + newTeam.getName() + " created with spawn here.", 10, 20, 10);
                 });
             } else {
                 meta.setDisplayName("Edit team " + kind.getColor() + kind.name().toLowerCase());
                 item.setItemMeta(meta);
-                this.addItem(inv, i, item, new Runnable() {
-                    @Override
-                    public void run() {
-                        War.war.getUIManager().assignUI(player, new EditTeamUI(team));
-                    }
-                });
+                this.addItem(inv, i, item, () -> War.war.getUIManager().assignUI(player, new EditTeamUI(team)));
             }
             i++;
             if (i == 9) {

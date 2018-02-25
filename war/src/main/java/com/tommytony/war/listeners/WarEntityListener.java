@@ -234,7 +234,7 @@ public class WarEntityListener implements Listener {
         }
         // protect zones elements, lobbies and warhub from creepers and tnt
         List<Block> explodedBlocks = event.blockList();
-        List<Block> dontExplode = new ArrayList<Block>();
+        List<Block> dontExplode = new ArrayList<>();
 
         boolean explosionInAWarzone = event.getEntity() != null && Warzone.getZoneByLocation(event.getEntity().getLocation()) != null;
 

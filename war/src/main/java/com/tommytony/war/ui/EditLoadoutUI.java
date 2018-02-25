@@ -53,42 +53,36 @@ class EditLoadoutUI extends ChestUI {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.GRAY + "Save");
         item.setItemMeta(meta);
-        this.addItem(inv, getSize() - 2, item, new Runnable() {
-            @Override
-            public void run() {
-                HashMap<Integer, ItemStack> nc = new HashMap<Integer, ItemStack>();
-                for (int i = 0; i < 9 * 4 + 4; i++) {
-                    int slot = i;
-                    if (i >= 9 * 4) {
-                        slot = i + 64;
-                    }
-                    ItemStack item = inv.getItem(i);
-                    if (item != null && item.getType() != Material.AIR) {
-                        nc.put(slot, item);
-                    }
+        this.addItem(inv, getSize() - 2, item, () -> {
+            HashMap<Integer, ItemStack> nc = new HashMap<>();
+            for (int i = 0; i < 9 * 4 + 4; i++) {
+                int slot = i;
+                if (i >= 9 * 4) {
+                    slot = i + 64;
                 }
-                loadout.setContents(nc);
-                if (zone != null) {
-                    WarzoneConfigBag.afterUpdate(zone, player, "loadout updated", false);
-                } else if (team != null) {
-                    TeamConfigBag.afterUpdate(team, player, "loadout updated", false);
+                ItemStack item1 = inv.getItem(i);
+                if (item1 != null && item1.getType() != Material.AIR) {
+                    nc.put(slot, item1);
                 }
+            }
+            loadout.setContents(nc);
+            if (zone != null) {
+                WarzoneConfigBag.afterUpdate(zone, player, "loadout updated", false);
+            } else if (team != null) {
+                TeamConfigBag.afterUpdate(team, player, "loadout updated", false);
             }
         });
         item = new ItemStack(Material.TNT);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.GRAY + "Delete");
         item.setItemMeta(meta);
-        this.addItem(inv, getSize() - 1, item, new Runnable() {
-            @Override
-            public void run() {
-                if (zone != null) {
-                    zone.getDefaultInventories().removeLoadout(loadout.getName());
-                    WarzoneConfigBag.afterUpdate(zone, player, "loadout deleted", false);
-                } else if (team != null) {
-                    team.getInventories().removeLoadout(loadout.getName());
-                    TeamConfigBag.afterUpdate(team, player, "loadout deleted", false);
-                }
+        this.addItem(inv, getSize() - 1, item, () -> {
+            if (zone != null) {
+                zone.getDefaultInventories().removeLoadout(loadout.getName());
+                WarzoneConfigBag.afterUpdate(zone, player, "loadout deleted", false);
+            } else if (team != null) {
+                team.getInventories().removeLoadout(loadout.getName());
+                TeamConfigBag.afterUpdate(team, player, "loadout deleted", false);
             }
         });
     }

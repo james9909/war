@@ -14,7 +14,7 @@ public class UIFormatter {
 
     UIFormatter(int slots) {
         this.i = 0;
-        this.pattern = new ArrayList<Integer>();
+        this.pattern = new ArrayList<>();
         int row = 0;
         while (slots > 9) {
             List<Integer> pattern = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8);

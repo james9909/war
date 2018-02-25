@@ -16,24 +16,9 @@ public class WarUI extends ChestUI {
 
     @Override
     public void build(final Player player, Inventory inv) {
-        Runnable joinZoneAction = new Runnable() {
-            @Override
-            public void run() {
-                War.war.getUIManager().assignUI(player, new JoinZoneUI());
-            }
-        };
-        Runnable createZoneAction = new Runnable() {
-            @Override
-            public void run() {
-                War.war.getUIManager().assignUI(player, new EditOrCreateZoneUI());
-            }
-        };
-        Runnable warAdminAction = new Runnable() {
-            @Override
-            public void run() {
-                War.war.getUIManager().assignUI(player, new WarAdminUI());
-            }
-        };
+        Runnable joinZoneAction = () -> War.war.getUIManager().assignUI(player, new JoinZoneUI());
+        Runnable createZoneAction = () -> War.war.getUIManager().assignUI(player, new EditOrCreateZoneUI());
+        Runnable warAdminAction = () -> War.war.getUIManager().assignUI(player, new WarAdminUI());
 
         if (War.war.isWarAdmin(player)) {
             this.addItem(inv, 2, getWarAdminItem(), warAdminAction);

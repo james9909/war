@@ -60,7 +60,7 @@ public class KillstreakReward {
      */
     public KillstreakReward(ConfigurationSection section) {
         this.section = section;
-        this.airstrikePlayers = new HashSet<String>();
+        this.airstrikePlayers = new HashSet<>();
     }
 
     /**
@@ -116,11 +116,7 @@ public class KillstreakReward {
                 }
                 // Detect win conditions
                 if (playerTeam.getPoints() >= playerTeam.getTeamConfig().resolveInt(TeamConfig.MAXSCORE)) {
-                    player.getServer().getScheduler().runTaskLater(War.war, new Runnable() {
-                        public void run() {
-                            zone.handleScoreCapReached(playerTeam.getName());
-                        }
-                    }, 1L);
+                    player.getServer().getScheduler().runTaskLater(War.war, () -> zone.handleScoreCapReached(playerTeam.getName()), 1L);
                 } else {
                     // just added a point
                     playerTeam.resetSign();

@@ -223,7 +223,7 @@ public class VolumeMapper {
      */
     @Deprecated
     public static List<ItemStack> readInventoryString(String invString) {
-        List<ItemStack> items = new ArrayList<ItemStack>();
+        List<ItemStack> items = new ArrayList<>();
         if (invString != null && !invString.equals("")) {
             String[] itemsStrSplit = invString.split(";;");
             for (String itemStr : itemsStrSplit) {
@@ -303,7 +303,7 @@ public class VolumeMapper {
     @Deprecated
     public static List<ItemStack> getItemListFromInv(Inventory inv) {
         int size = inv.getSize();
-        List<ItemStack> items = new ArrayList<ItemStack>();
+        List<ItemStack> items = new ArrayList<>();
         for (int invIndex = 0; invIndex < size; invIndex++) {
             ItemStack item = inv.getItem(invIndex);
             if (item != null && item.getType().getId() != Material.AIR.getId()) {

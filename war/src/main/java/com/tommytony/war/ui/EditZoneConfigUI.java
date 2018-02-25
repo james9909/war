@@ -33,25 +33,17 @@ public class EditZoneConfigUI extends ChestUI {
         meta = item.getItemMeta();
         meta.setDisplayName(">>>> Team Default Config >>>>");
         item.setItemMeta(meta);
-        this.addItem(inv, i++, item, new Runnable() {
-            @Override
-            public void run() {
-                War.war.getUIManager().assignUI(player, new EditZoneConfigUI(zone));
-            }
-        });
+        this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new EditZoneConfigUI(zone)));
         UIConfigHelper.addTeamConfigOptions(this, player, inv, zone.getTeamDefaultConfig(), null, zone, i);
         item = new ItemStack(Material.SNOW_BALL);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.GRAY + "" + ChatColor.BOLD + "Restore Defaults");
         item.setItemMeta(meta);
-        this.addItem(inv, getSize() - 1, item, new Runnable() {
-            @Override
-            public void run() {
-                zone.getWarzoneConfig().reset();
-                zone.getTeamDefaultConfig().reset();
-                WarzoneConfigBag.afterUpdate(zone, player, "All options set to defaults in warzone " + zone.getName() + " by " + player.getName(), false);
-                War.war.getUIManager().assignUI(player, new EditZoneConfigUI(zone));
-            }
+        this.addItem(inv, getSize() - 1, item, () -> {
+            zone.getWarzoneConfig().reset();
+            zone.getTeamDefaultConfig().reset();
+            WarzoneConfigBag.afterUpdate(zone, player, "All options set to defaults in warzone " + zone.getName() + " by " + player.getName(), false);
+            War.war.getUIManager().assignUI(player, new EditZoneConfigUI(zone));
         });
     }
 

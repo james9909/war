@@ -31,32 +31,17 @@ class EditZoneUI extends ChestUI {
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.YELLOW + "Options");
         item.setItemMeta(meta);
-        this.addItem(inv, 0, item, new Runnable() {
-            @Override
-            public void run() {
-                War.war.getUIManager().assignUI(player, new EditZoneConfigUI(zone));
-            }
-        });
+        this.addItem(inv, 0, item, () -> War.war.getUIManager().assignUI(player, new EditZoneConfigUI(zone)));
         item = new ItemStack(Material.CHEST);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.YELLOW + "Teams");
         item.setItemMeta(meta);
-        this.addItem(inv, 1, item, new Runnable() {
-            @Override
-            public void run() {
-                War.war.getUIManager().assignUI(player, new EditTeamsListUI(zone));
-            }
-        });
+        this.addItem(inv, 1, item, () -> War.war.getUIManager().assignUI(player, new EditTeamsListUI(zone)));
         item = new ItemStack(Material.CHEST);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.YELLOW + "Loadouts");
         item.setItemMeta(meta);
-        this.addItem(inv, 2, item, new Runnable() {
-            @Override
-            public void run() {
-                War.war.getUIManager().assignUI(player, new EditLoadoutListUI(zone));
-            }
-        });
+        this.addItem(inv, 2, item, () -> War.war.getUIManager().assignUI(player, new EditLoadoutListUI(zone)));
         item = new ItemStack(Material.CHEST);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.YELLOW + "Structures");
@@ -65,12 +50,7 @@ class EditZoneUI extends ChestUI {
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.GRAY + "Reset Blocks");
         item.setItemMeta(meta);
-        this.addItem(inv, 7, item, new Runnable() {
-            @Override
-            public void run() {
-                ResetZoneCommand.forceResetZone(zone, player);
-            }
-        });
+        this.addItem(inv, 7, item, () -> ResetZoneCommand.forceResetZone(zone, player));
         item = new ItemStack(Material.TNT);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.DARK_RED + "" + ChatColor.BOLD + "Delete");

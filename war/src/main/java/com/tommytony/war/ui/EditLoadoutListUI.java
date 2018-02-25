@@ -62,10 +62,10 @@ class EditLoadoutListUI extends ChestUI {
                         }
                         Loadout ldt;
                         if (zone != null) {
-                            zone.getDefaultInventories().setLoadout(this.getValue(), new HashMap<Integer, ItemStack>());
+                            zone.getDefaultInventories().setLoadout(this.getValue(), new HashMap<>());
                             ldt = zone.getDefaultInventories().getNewLoadout(this.getValue());
                         } else {
-                            team.getInventories().setLoadout(this.getValue(), new HashMap<Integer, ItemStack>());
+                            team.getInventories().setLoadout(this.getValue(), new HashMap<>());
                             ldt = team.getInventories().getNewLoadout(this.getValue());
                         }
                         War.war.getUIManager().assignUI(player, new EditLoadoutUI(ldt, zone, team));
@@ -84,12 +84,7 @@ class EditLoadoutListUI extends ChestUI {
             meta = item.getItemMeta();
             meta.setDisplayName(ChatColor.YELLOW + loadoutName);
             item.setItemMeta(meta);
-            this.addItem(inv, i++, item, new Runnable() {
-                @Override
-                public void run() {
-                    War.war.getUIManager().assignUI(player, new EditLoadoutUI(ldt, zone, team));
-                }
-            });
+            this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new EditLoadoutUI(ldt, zone, team)));
         }
 
     }

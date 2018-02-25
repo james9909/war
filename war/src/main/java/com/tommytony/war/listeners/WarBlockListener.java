@@ -392,7 +392,7 @@ public class WarBlockListener implements Listener {
     public void onStructureGrowth(final StructureGrowEvent event) {
         Warzone zone = Warzone.getZoneByLocation(event.getLocation());
         if (zone != null) {
-            List<BlockState> canceledBlocks = new ArrayList<BlockState>();
+            List<BlockState> canceledBlocks = new ArrayList<>();
             for (BlockState state : event.getBlocks()) {
                 if (!zone.getVolume().contains(state.getLocation()) || zone.isImportantBlock(state.getBlock())) {
                     canceledBlocks.add(state);

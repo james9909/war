@@ -13,7 +13,7 @@ import org.bukkit.configuration.ConfigurationSection;
 public class WarzoneConfigBag {
 
     private final Warzone warzone;
-    EnumMap<WarzoneConfig, Object> bag = new EnumMap<WarzoneConfig, Object>(WarzoneConfig.class);
+    EnumMap<WarzoneConfig, Object> bag = new EnumMap<>(WarzoneConfig.class);
 
     public WarzoneConfigBag(Warzone warzone) {
         this.warzone = warzone;

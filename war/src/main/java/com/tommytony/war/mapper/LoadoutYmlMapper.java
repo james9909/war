@@ -26,9 +26,9 @@ public class LoadoutYmlMapper {
     public static List<Loadout> fromConfigToLoadouts(ConfigurationSection config, HashMap<String, HashMap<Integer, ItemStack>> loadouts) {
         List<String> loadoutNames = config.getStringList("names");
         loadouts.clear();
-        List<Loadout> ldts = new ArrayList<Loadout>();
+        List<Loadout> ldts = new ArrayList<>();
         for (String name : loadoutNames) {
-            HashMap<Integer, ItemStack> newLoadout = new HashMap<Integer, ItemStack>();
+            HashMap<Integer, ItemStack> newLoadout = new HashMap<>();
             Loadout ldt = fromConfigToLoadout(config, newLoadout, name);
             ldts.add(ldt);
             loadouts.put(name, newLoadout);
@@ -114,7 +114,7 @@ public class LoadoutYmlMapper {
      */
     public static void fromLoadoutsToConfig(List<Loadout> loadouts, ConfigurationSection section) {
         Collections.sort(loadouts);
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         for (Loadout ldt : loadouts) {
             names.add(ldt.getName());
             LoadoutYmlMapper.fromLoadoutToConfig(ldt, section);
@@ -123,7 +123,7 @@ public class LoadoutYmlMapper {
     }
 
     public static List<String> sortNames(HashMap<String, HashMap<Integer, ItemStack>> loadouts) {
-        List<String> sortedNames = new ArrayList<String>();
+        List<String> sortedNames = new ArrayList<>();
 
         // default comes first
         if (loadouts.containsKey("default")) {
@@ -140,7 +140,7 @@ public class LoadoutYmlMapper {
     }
 
     private static List<Integer> toIntList(Set<Integer> keySet) {
-        List<Integer> list = new ArrayList<Integer>();
+        List<Integer> list = new ArrayList<>();
         for (Integer key : keySet) {
             list.add(key);
         }

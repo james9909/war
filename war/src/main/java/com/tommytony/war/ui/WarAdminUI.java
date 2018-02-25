@@ -24,23 +24,13 @@ public class WarAdminUI extends ChestUI {
         meta = item.getItemMeta();
         meta.setDisplayName(">>>> Warzone Default Config >>>>");
         item.setItemMeta(meta);
-        this.addItem(inv, i++, item, new Runnable() {
-            @Override
-            public void run() {
-                War.war.getUIManager().assignUI(player, new WarAdminUI());
-            }
-        });
+        this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new WarAdminUI()));
         i = UIConfigHelper.addWarzoneConfigOptions(this, player, inv, War.war.getWarzoneDefaultConfig(), null, i);
         item = new ItemStack(Material.STAINED_GLASS_PANE);
         meta = item.getItemMeta();
         meta.setDisplayName(">>>> Team Default Config >>>>");
         item.setItemMeta(meta);
-        this.addItem(inv, i++, item, new Runnable() {
-            @Override
-            public void run() {
-                War.war.getUIManager().assignUI(player, new WarAdminUI());
-            }
-        });
+        this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new WarAdminUI()));
         UIConfigHelper.addTeamConfigOptions(this, player, inv, War.war.getTeamDefaultConfig(), null, null, i);
     }
 

@@ -59,21 +59,16 @@ import java.util.logging.Level;
  */
 public class Warzone {
 
-	static final Comparator<Team> LEAST_PLAYER_COUNT_ORDER = new Comparator<Team>() {
-		@Override
-		public int compare(Team arg0, Team arg1) {
-			return arg0.getPlayers().size() - arg1.getPlayers().size();
-		}
-	};
-	private final List<Team> teams = new ArrayList<Team>();
-	private final List<Monument> monuments = new ArrayList<Monument>();
-	private final List<CapturePoint> capturePoints = new ArrayList<CapturePoint>();
-	private final List<Bomb> bombs = new ArrayList<Bomb>();
-	private final List<Cake> cakes = new ArrayList<Cake>();
-	private final List<String> authors = new ArrayList<String>();
+	static final Comparator<Team> LEAST_PLAYER_COUNT_ORDER = Comparator.comparingInt(arg0 -> arg0.getPlayers().size());
+	private final List<Team> teams = new ArrayList<>();
+	private final List<Monument> monuments = new ArrayList<>();
+	private final List<CapturePoint> capturePoints = new ArrayList<>();
+	private final List<Bomb> bombs = new ArrayList<>();
+	private final List<Cake> cakes = new ArrayList<>();
+	private final List<String> authors = new ArrayList<>();
 	private final int minSafeDistanceFromWall = 6;
-	private final List<Player> respawn = new ArrayList<Player>();
-	private final List<String> reallyDeadFighters = new ArrayList<String>();
+	private final List<Player> respawn = new ArrayList<>();
+	private final List<String> reallyDeadFighters = new ArrayList<>();
 	private final WarzoneConfigBag warzoneConfig;
 	private final TeamConfigBag teamDefaultConfig;
 	private String name;
@@ -82,22 +77,22 @@ public class Warzone {
 	private Location teleport;
 	private ZoneLobby lobby;
 	private Location rallyPoint;
-	private List<ZoneWallGuard> zoneWallGuards = new ArrayList<ZoneWallGuard>();
-	private HashMap<String, PlayerState> playerStates = new HashMap<String, PlayerState>();
-	private HashMap<UUID, Team> flagThieves = new HashMap<UUID, Team>();
-	private HashMap<UUID, Bomb> bombThieves = new HashMap<UUID, Bomb>();
-	private HashMap<UUID, Cake> cakeThieves = new HashMap<UUID, Cake>();
-	private HashMap<String, LoadoutSelection> loadoutSelections = new HashMap<String, LoadoutSelection>();
-	private HashMap<String, PlayerState> deadMenInventories = new HashMap<String, PlayerState>();
-	private HashMap<String, Integer> killCount = new HashMap<String, Integer>();
-	private HashMap<Player, PermissionAttachment> attachments = new HashMap<Player, PermissionAttachment>();
-	private HashMap<Player, Team> delayedJoinPlayers = new HashMap<Player, Team>();
-	private List<LogKillsDeathsJob.KillsDeathsRecord> killsDeathsTracker = new ArrayList<KillsDeathsRecord>();
+	private List<ZoneWallGuard> zoneWallGuards = new ArrayList<>();
+	private HashMap<String, PlayerState> playerStates = new HashMap<>();
+	private HashMap<UUID, Team> flagThieves = new HashMap<>();
+	private HashMap<UUID, Bomb> bombThieves = new HashMap<>();
+	private HashMap<UUID, Cake> cakeThieves = new HashMap<>();
+	private HashMap<String, LoadoutSelection> loadoutSelections = new HashMap<>();
+	private HashMap<String, PlayerState> deadMenInventories = new HashMap<>();
+	private HashMap<String, Integer> killCount = new HashMap<>();
+	private HashMap<Player, PermissionAttachment> attachments = new HashMap<>();
+	private HashMap<Player, Team> delayedJoinPlayers = new HashMap<>();
+	private List<LogKillsDeathsJob.KillsDeathsRecord> killsDeathsTracker = new ArrayList<>();
 	private InventoryBag defaultInventories = new InventoryBag();
 
 	private Scoreboard scoreboard;
 
-	private HubLobbyMaterials lobbyMaterials = null;
+	private HubLobbyMaterials lobbyMaterials;
 	private WarzoneMaterials warzoneMaterials = new WarzoneMaterials(
 			new ItemStack(Material.OBSIDIAN), new ItemStack(Material.FENCE),
 			new ItemStack(Material.GLOWSTONE));
@@ -462,15 +457,10 @@ public class Warzone {
 		player.setFallDistance(0);
 		player.setFireTicks(0);
 		player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 5, 255));
-		Runnable antiFireAction = new Runnable() {
-
-			@Override
-			public void run() {
-				// Stop fire here, since doing it in the same tick as death doesn't extinguish it
-				player.setFireTicks(0);
-			}
-
-		};
+		Runnable antiFireAction = () -> {
+            // Stop fire here, since doing it in the same tick as death doesn't extinguish it
+            player.setFireTicks(0);
+        };
 		// ughhhhh bukkit
 		War.war.getServer().getScheduler().runTaskLater(War.war, antiFireAction, 1L);
 		War.war.getServer().getScheduler().runTaskLater(War.war, antiFireAction, 2L);
@@ -535,12 +525,10 @@ public class Warzone {
 			// "Respawn" Timer - player will not be able to leave spawn for a few seconds
 			respawn.add(player);
 
-			War.war.getServer().getScheduler().scheduleSyncDelayedTask(War.war, new Runnable() {
-				public void run() {
-				    respawn.remove(player);
-					War.war.getServer().getScheduler().scheduleSyncDelayedTask(War.war, job);
-				}
-			}, team.getTeamConfig().resolveInt(TeamConfig.RESPAWNTIMER) * 20L); // 20 ticks = 1 second
+			War.war.getServer().getScheduler().scheduleSyncDelayedTask(War.war, () -> {
+                respawn.remove(player);
+                War.war.getServer().getScheduler().scheduleSyncDelayedTask(War.war, job);
+            }, team.getTeamConfig().resolveInt(TeamConfig.RESPAWNTIMER) * 20L); // 20 ticks = 1 second
 		}
 	}
 
@@ -554,7 +542,7 @@ public class Warzone {
 		playerInv.clear(playerInv.getSize() + 3); // helmet/blockHead
 
 		Loadout banned = Loadout.getLoadout(team.getInventories().resolveNewLoadouts(), "banned");
-		Set<Material> bannedMaterials = new HashSet<Material>();
+		Set<Material> bannedMaterials = new HashSet<>();
 		if (banned != null) {
 			for (ItemStack bannedItem : banned.getContents().values()) {
 				bannedMaterials.add(bannedItem.getType());
@@ -863,7 +851,7 @@ public class Warzone {
 	}
 
 	public List<Block> getNearestWallBlocks(Location latestPlayerLocation) {
-		List<Block> nearestWallBlocks = new ArrayList<Block>();
+		List<Block> nearestWallBlocks = new ArrayList<>();
 		if (Math.abs(this.volume.getSoutheastZ() - latestPlayerLocation.getBlockZ()) < this.minSafeDistanceFromWall && latestPlayerLocation.getBlockX() <= this.volume.getSoutheastX() && latestPlayerLocation.getBlockX() >= this.volume.getNorthwestX() && latestPlayerLocation.getBlockY() >= this.volume.getMinY() && latestPlayerLocation.getBlockY() <= this.volume.getMaxY()) {
 			// near east wall
 			Block eastWallBlock = this.world.getBlockAt(latestPlayerLocation.getBlockX() + 1, latestPlayerLocation.getBlockY() + 1, this.volume.getSoutheastZ());
@@ -904,7 +892,7 @@ public class Warzone {
 	}
 
 	public List<BlockFace> getNearestWalls(Location latestPlayerLocation) {
-		List<BlockFace> walls = new ArrayList<BlockFace>();
+		List<BlockFace> walls = new ArrayList<>();
 		if (Math.abs(this.volume.getSoutheastZ() - latestPlayerLocation.getBlockZ()) < this.minSafeDistanceFromWall && latestPlayerLocation.getBlockX() <= this.volume.getSoutheastX() && latestPlayerLocation.getBlockX() >= this.volume.getNorthwestX() && latestPlayerLocation.getBlockY() >= this.volume.getMinY() && latestPlayerLocation.getBlockY() <= this.volume.getMaxY()) {
 			// near east wall
 			walls.add(Direction.EAST());
@@ -965,7 +953,7 @@ public class Warzone {
 	}
 
 	public void dropZoneWallGuardIfAny(Player player) {
-		List<ZoneWallGuard> playerGuards = new ArrayList<ZoneWallGuard>();
+		List<ZoneWallGuard> playerGuards = new ArrayList<>();
 		for (ZoneWallGuard guard : this.zoneWallGuards) {
 			if (guard.getPlayer().getName().equals(player.getName())) {
 				playerGuards.add(guard);
@@ -988,7 +976,7 @@ public class Warzone {
 	}
 
 	public Team autoAssign(Player player) {
-		Collections.sort(teams, LEAST_PLAYER_COUNT_ORDER);
+		teams.sort(LEAST_PLAYER_COUNT_ORDER);
 		Team lowestNoOfPlayers = null;
 		for (Team team : this.teams) {
 			if (War.war.canPlayWar(player, team)) {
@@ -1218,7 +1206,7 @@ public class Warzone {
 
 	private void handleTeamLoss(Team losingTeam, Player player) {
 		StringBuilder teamScores = new StringBuilder();
-		List<Team> winningTeams = new ArrayList<Team>(teams.size());
+		List<Team> winningTeams = new ArrayList<>(teams.size());
 		for (Team team : this.teams) {
 			if (team.getPlayers().isEmpty())
 				continue;
@@ -1484,7 +1472,7 @@ public class Warzone {
 	public void handleScoreCapReached(String winnersStr) {
 		// Score cap reached. Reset everything.
 		this.isEndOfGame = true;
-		List<Team> winningTeams = new ArrayList<Team>(teams.size());
+		List<Team> winningTeams = new ArrayList<>(teams.size());
 		for (String team : winnersStr.split(" ")) {
 			winningTeams.add(this.getTeamByKind(TeamKind.getTeam(team)));
 		}
@@ -1723,12 +1711,12 @@ public class Warzone {
 	}
 
 	private HashMap<Integer, ItemStack> getPlayerInventoryFromSavedState(Player player) {
-		HashMap<Integer, ItemStack> playerItems = new HashMap<Integer, ItemStack>();
+		HashMap<Integer, ItemStack> playerItems = new HashMap<>();
 		PlayerState originalState = this.playerStates.get(player.getName());
 
 		if (originalState != null) {
 			int invIndex = 0;
-			playerItems = new HashMap<Integer, ItemStack>();
+			playerItems = new HashMap<>();
 			for (ItemStack item : originalState.getContents()) {
 				if (item != null && item.getType() != Material.AIR) {
 					playerItems.put(invIndex, item);
@@ -1915,7 +1903,7 @@ public class Warzone {
 	 * @return list containing all team players.
 	 */
 	public List<Player> getPlayers() {
-		List<Player> players = new ArrayList<Player>();
+		List<Player> players = new ArrayList<>();
 		for (Team team : this.teams) {
 			players.addAll(team.getPlayers());
 		}

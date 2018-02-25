@@ -22,8 +22,8 @@ public final class PropertiesFile {
     private FileInputStream inputStream;
     private FileOutputStream outputStream;
 
-    // private List<String> lines = new ArrayList<String>();
-    // private Map<String, String> props = new HashMap<String, String>();
+    // private List<String> lines = new ArrayList<>();
+    // private Map<String, String> props = new HashMap<>();
 
     /**
      * Creates or opens a properties file using specified filename

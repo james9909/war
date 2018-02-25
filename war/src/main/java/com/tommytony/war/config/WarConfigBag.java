@@ -10,7 +10,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 public class WarConfigBag {
 
-    EnumMap<WarConfig, Object> bag = new EnumMap<WarConfig, Object>(WarConfig.class);
+    EnumMap<WarConfig, Object> bag = new EnumMap<>(WarConfig.class);
 
     public static void afterUpdate(CommandSender sender, String namedParamReturn, boolean wantsToPrint) {
         WarYmlMapper.save();
@@ -28,11 +28,7 @@ public class WarConfigBag {
     }
 
     public Object getValue(WarConfig config) {
-        if (this.bag.containsKey(config)) {
-            return this.bag.get(config);
-        } else {
-            return null;
-        }
+        return this.bag.getOrDefault(config, null);
     }
 
     public Integer getInt(WarConfig config) {

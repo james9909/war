@@ -53,13 +53,13 @@ public class War extends JavaPlugin {
 	static final boolean HIDE_BLANK_MESSAGES = true;
 	public static War war;
 	private static ResourceBundle messages = ResourceBundle.getBundle("messages");
-	private final List<String> zoneMakerNames = new ArrayList<String>();
-	private final List<String> commandWhitelist = new ArrayList<String>();
-	private final List<Warzone> incompleteZones = new ArrayList<Warzone>();
-	private final List<String> zoneMakersImpersonatingPlayers = new ArrayList<String>();
-	private final HashMap<String, String> wandBearers = new HashMap<String, String>(); // playername to zonename
-	private final List<String> deadlyAdjectives = new ArrayList<String>();
-	private final List<String> killerVerbs = new ArrayList<String>();
+	private final List<String> zoneMakerNames = new ArrayList<>();
+	private final List<String> commandWhitelist = new ArrayList<>();
+	private final List<Warzone> incompleteZones = new ArrayList<>();
+	private final List<String> zoneMakersImpersonatingPlayers = new ArrayList<>();
+	private final HashMap<String, String> wandBearers = new HashMap<>(); // playername to zonename
+	private final List<String> deadlyAdjectives = new ArrayList<>();
+	private final List<String> killerVerbs = new ArrayList<>();
 	private final InventoryBag defaultInventories = new InventoryBag();
 	private final WarConfigBag warConfig = new WarConfigBag();
 	private final WarzoneConfigBag warzoneDefaultConfig = new WarzoneConfigBag();
@@ -72,9 +72,9 @@ public class War extends JavaPlugin {
 	private PluginDescriptionFile desc = null;
 	private boolean loaded = false;
 	// Zones and hub
-	private List<Warzone> warzones = new ArrayList<Warzone>();
+	private List<Warzone> warzones = new ArrayList<>();
 	private WarHub warHub;
-	private HashMap<String, PlayerState> disconnected = new HashMap<String, PlayerState>();
+	private HashMap<String, PlayerState> disconnected = new HashMap<>();
 	private KillstreakReward killstreakReward;
 	private MySQLConfig mysqlConfig;
 	private Economy econ = null;
@@ -200,7 +200,7 @@ public class War extends JavaPlugin {
 		teamDefaultConfig.put(TeamConfig.BORDERDROP, false);
 
 		this.getDefaultInventories().clearLoadouts();
-		HashMap<Integer, ItemStack> defaultLoadout = new HashMap<Integer, ItemStack>();
+		HashMap<Integer, ItemStack> defaultLoadout = new HashMap<>();
 
 		ItemStack stoneSword = new ItemStack(Material.STONE_SWORD, 1, (byte) 8);
 		stoneSword.setDurability((short) 8);
@@ -223,7 +223,7 @@ public class War extends JavaPlugin {
 
 		this.getDefaultInventories().addLoadout("default", defaultLoadout);
 
-		HashMap<Integer, ItemStack> reward = new HashMap<Integer, ItemStack>();
+		HashMap<Integer, ItemStack> reward = new HashMap<>();
 		reward.put(0, new ItemStack(Material.CAKE, 1));
 		this.getDefaultInventories().setReward(reward);
 
@@ -378,8 +378,8 @@ public class War extends JavaPlugin {
 
 	public String updateTeamFromNamedParams(Team team, CommandSender commandSender, String[] arguments) {
 		try {
-			Map<String, String> namedParams = new HashMap<String, String>();
-			Map<String, String> thirdParameter = new HashMap<String, String>();
+			Map<String, String> namedParams = new HashMap<>();
+			Map<String, String> thirdParameter = new HashMap<>();
 			for (String namedPair : arguments) {
 				String[] pairSplit = namedPair.split(":");
 				if (pairSplit.length == 2) {
@@ -412,7 +412,7 @@ public class War extends JavaPlugin {
 							}
 						}
 
-						loadout = new HashMap<Integer, ItemStack>();
+						loadout = new HashMap<>();
 						team.getInventories().setLoadout(loadoutName, loadout);
 						returnMessage.append(loadoutName + " respawn loadout added.");
 					} else {
@@ -439,7 +439,7 @@ public class War extends JavaPlugin {
 					}
 				}
 				if (namedParams.containsKey("reward")) {
-					HashMap<Integer, ItemStack> reward = new HashMap<Integer, ItemStack>();
+					HashMap<Integer, ItemStack> reward = new HashMap<>();
 					this.inventoryToLoadout(player, reward);
 					team.getInventories().setReward(reward);
 					returnMessage.append(" game end reward updated.");
@@ -454,8 +454,8 @@ public class War extends JavaPlugin {
 
 	public String updateZoneFromNamedParams(Warzone warzone, CommandSender commandSender, String[] arguments) {
 		try {
-			Map<String, String> namedParams = new HashMap<String, String>();
-			Map<String, String> thirdParameter = new HashMap<String, String>();
+			Map<String, String> namedParams = new HashMap<>();
+			Map<String, String> thirdParameter = new HashMap<>();
 			for (String namedPair : arguments) {
 				String[] pairSplit = namedPair.split(":");
 				if (pairSplit.length == 2) {
@@ -493,7 +493,7 @@ public class War extends JavaPlugin {
 					String loadoutName = namedParams.get("loadout");
 					HashMap<Integer, ItemStack> loadout = warzone.getDefaultInventories().getLoadout(loadoutName);
 					if (loadout == null) {
-						loadout = new HashMap<Integer, ItemStack>();
+						loadout = new HashMap<>();
 
 						// Check if any loadouts exist, if not gotta use the default inventories then add the newly created one
 						if(!warzone.getDefaultInventories().hasLoadouts()) {
@@ -533,7 +533,7 @@ public class War extends JavaPlugin {
 					}
 				}
 				if (namedParams.containsKey("reward")) {
-					HashMap<Integer, ItemStack> reward = new HashMap<Integer, ItemStack>();
+					HashMap<Integer, ItemStack> reward = new HashMap<>();
 					this.inventoryToLoadout(player, reward);
 					warzone.getDefaultInventories().setReward(reward);
 					returnMessage.append(" game end reward updated.");
@@ -629,8 +629,8 @@ public class War extends JavaPlugin {
 
 	public String updateFromNamedParams(CommandSender commandSender, String[] arguments) {
 		try {
-			Map<String, String> namedParams = new HashMap<String, String>();
-			Map<String, String> thirdParameter = new HashMap<String, String>();
+			Map<String, String> namedParams = new HashMap<>();
+			Map<String, String> thirdParameter = new HashMap<>();
 			for (String namedPair : arguments) {
 				String[] pairSplit = namedPair.split(":");
 				if (pairSplit.length == 2) {
@@ -653,7 +653,7 @@ public class War extends JavaPlugin {
 					String loadoutName = namedParams.get("loadout");
 					HashMap<Integer, ItemStack> loadout = this.getDefaultInventories().getLoadout(loadoutName);
 					if (loadout == null) {
-						loadout = new HashMap<Integer, ItemStack>();
+						loadout = new HashMap<>();
 						this.getDefaultInventories().addLoadout(loadoutName, loadout);
 						returnMessage.append(loadoutName + " respawn loadout added.");
 					} else {
@@ -684,7 +684,7 @@ public class War extends JavaPlugin {
 					}
 				}
 				if (namedParams.containsKey("reward")) {
-					HashMap<Integer, ItemStack> reward = new HashMap<Integer, ItemStack>();
+					HashMap<Integer, ItemStack> reward = new HashMap<>();
 					this.inventoryToLoadout(player, reward);
 					this.getDefaultInventories().setReward(reward);
 					returnMessage.append(" game end reward updated.");
@@ -880,7 +880,7 @@ public class War extends JavaPlugin {
 	 * @return List of enabled warzones.
 	 */
 	public List<Warzone> getEnabledWarzones() {
-		List<Warzone> enabledZones = new ArrayList<Warzone>(this.warzones.size());
+		List<Warzone> enabledZones = new ArrayList<>(this.warzones.size());
 		for (Warzone zone : this.warzones) {
 			if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.DISABLED) == false) {
 				enabledZones.add(zone);
@@ -894,7 +894,7 @@ public class War extends JavaPlugin {
 	 * @return List of enabled warzones with players.
 	 */
 	public List<Warzone> getActiveWarzones() {
-		List<Warzone> activeZones = new ArrayList<Warzone>(this.warzones.size());
+		List<Warzone> activeZones = new ArrayList<>(this.warzones.size());
 		for (Warzone zone : this.warzones) {
 			if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.DISABLED) == false
 				&& zone.getPlayerCount() > 0) {

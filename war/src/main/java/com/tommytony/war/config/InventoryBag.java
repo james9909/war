@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class InventoryBag {
 
-    private List<Loadout> loadouts = new ArrayList<Loadout>();
+    private List<Loadout> loadouts = new ArrayList<>();
     private HashMap<Integer, ItemStack> reward = null;
 
     private Warzone warzone;
@@ -33,7 +33,7 @@ public class InventoryBag {
     }
 
     public void removeLoadout(String name) {
-        ArrayList<Loadout> loadoutsToRemove = new ArrayList<Loadout>();
+        ArrayList<Loadout> loadoutsToRemove = new ArrayList<>();
         for (Loadout ldt : loadouts) {
             if (ldt.getName().equals(name)) {
                 loadoutsToRemove.add(ldt);
@@ -74,7 +74,7 @@ public class InventoryBag {
         } else if (War.war.getDefaultInventories().hasLoadouts()) {
             return War.war.getDefaultInventories().resolveLoadouts();
         } else {
-            return new HashMap<String, HashMap<Integer, ItemStack>>();
+            return new HashMap<>();
         }
     }
 

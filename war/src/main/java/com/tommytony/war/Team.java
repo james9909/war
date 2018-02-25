@@ -29,8 +29,8 @@ import java.util.logging.Level;
 public class Team {
 	private final Warzone warzone;
 	Random teamSpawnRandomizer = new Random();
-	private List<Player> players = new ArrayList<Player>();
-	private List<Player> teamChatPlayers = new ArrayList<Player>();
+	private List<Player> players = new ArrayList<>();
+	private List<Player> teamChatPlayers = new ArrayList<>();
 	private List<Location> teamSpawns;
 	private Location teamFlag = null;
 	private String name;
@@ -47,8 +47,8 @@ public class Team {
 		this.teamConfig = new TeamConfigBag(warzone);
 		this.inventories = new InventoryBag(warzone);	// important constructors for cascading configs
 		this.setName(name);
-		this.teamSpawns = new ArrayList<Location>(teamSpawn);
-		this.spawnVolumes = new HashMap<Location, Volume>();
+		this.teamSpawns = new ArrayList<>(teamSpawn);
+		this.spawnVolumes = new HashMap<>();
 		for (Location spawn : teamSpawn) {
 			this.setSpawnVolume(spawn, new Volume(name + teamSpawns.indexOf(spawn), warzone.getWorld()));
 		}
@@ -690,7 +690,7 @@ public class Team {
 	 * @return array of usernames.
 	 */
 	public List<String> getPlayerNames() {
-		List<String> ret = new ArrayList<String>(this.players.size());
+		List<String> ret = new ArrayList<>(this.players.size());
 		for (Player player : this.players) {
 			ret.add(player.getName());
 		}

@@ -55,12 +55,9 @@ public class UIConfigHelper {
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).add(inheritance).build());
                 item.setItemMeta(meta);
-                ui.addItem(inv, i++, item, new Runnable() {
-                    @Override
-                    public void run() {
-                        config.put(option, !config.resolveBoolean(option));
-                        onTeamConfigUpdate(player, option, config, team, warzone);
-                    }
+                ui.addItem(inv, i++, item, () -> {
+                    config.put(option, !config.resolveBoolean(option));
+                    onTeamConfigUpdate(player, option, config, team, warzone);
                 });
             } else if (option.getConfigType() == Integer.class || option.getConfigType() == Double.class || option.getConfigType() == String.class) {
                 status += ChatColor.LIGHT_PURPLE + config.resolveValue(option).toString();
@@ -94,21 +91,18 @@ public class UIConfigHelper {
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).add(inheritance).build());
                 item.setItemMeta(meta);
-                ui.addItem(inv, i++, item, new Runnable() {
-                    @Override
-                    public void run() {
-                        FlagReturn next = FlagReturn.BOTH;
-                        FlagReturn[] values = FlagReturn.values();
-                        for (int i1 = 0; i1 < values.length; i1++) {
-                            FlagReturn flagReturn = values[i1];
-                            if (flagReturn == config.resolveFlagReturn() && i1 != values.length - 1) {
-                                next = values[i1 + 1];
-                                break;
-                            }
+                ui.addItem(inv, i++, item, () -> {
+                    FlagReturn next = FlagReturn.BOTH;
+                    FlagReturn[] values = FlagReturn.values();
+                    for (int i1 = 0; i1 < values.length; i1++) {
+                        FlagReturn flagReturn = values[i1];
+                        if (flagReturn == config.resolveFlagReturn() && i1 != values.length - 1) {
+                            next = values[i1 + 1];
+                            break;
                         }
-                        config.put(option, next);
-                        onTeamConfigUpdate(player, option, config, team, warzone);
                     }
+                    config.put(option, next);
+                    onTeamConfigUpdate(player, option, config, team, warzone);
                 });
             } else if (option.getConfigType() == TeamSpawnStyle.class) {
                 status += ChatColor.YELLOW + config.resolveValue(option).toString();
@@ -117,21 +111,18 @@ public class UIConfigHelper {
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).add(inheritance).build());
                 item.setItemMeta(meta);
-                ui.addItem(inv, i++, item, new Runnable() {
-                    @Override
-                    public void run() {
-                        TeamSpawnStyle next = TeamSpawnStyle.INVISIBLE;
-                        TeamSpawnStyle[] values = TeamSpawnStyle.values();
-                        for (int i1 = 0; i1 < values.length; i1++) {
-                            TeamSpawnStyle tss = values[i1];
-                            if (tss == config.resolveSpawnStyle() && i1 != values.length - 1) {
-                                next = values[i1 + 1];
-                                break;
-                            }
+                ui.addItem(inv, i++, item, () -> {
+                    TeamSpawnStyle next = TeamSpawnStyle.INVISIBLE;
+                    TeamSpawnStyle[] values = TeamSpawnStyle.values();
+                    for (int i1 = 0; i1 < values.length; i1++) {
+                        TeamSpawnStyle tss = values[i1];
+                        if (tss == config.resolveSpawnStyle() && i1 != values.length - 1) {
+                            next = values[i1 + 1];
+                            break;
                         }
-                        config.put(option, next);
-                        onTeamConfigUpdate(player, option, config, team, warzone);
                     }
+                    config.put(option, next);
+                    onTeamConfigUpdate(player, option, config, team, warzone);
                 });
             } else {
                 status += ChatColor.RED + config.resolveValue(option).toString();
@@ -140,10 +131,7 @@ public class UIConfigHelper {
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).add(inheritance).build());
                 item.setItemMeta(meta);
-                ui.addItem(inv, i++, item, new Runnable() {
-                    @Override
-                    public void run() {
-                    }
+                ui.addItem(inv, i++, item, () -> {
                 });
             }
         }
@@ -188,12 +176,9 @@ public class UIConfigHelper {
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).add(inheritance).build());
                 item.setItemMeta(meta);
-                ui.addItem(inv, i++, item, new Runnable() {
-                    @Override
-                    public void run() {
-                        config.put(option, !config.getBoolean(option));
-                        onWarzoneConfigUpdate(player, option, config, warzone);
-                    }
+                ui.addItem(inv, i++, item, () -> {
+                    config.put(option, !config.getBoolean(option));
+                    onWarzoneConfigUpdate(player, option, config, warzone);
                 });
             } else if (option.getConfigType() == Integer.class || option.getConfigType() == Double.class || option.getConfigType() == String.class) {
                 status += ChatColor.LIGHT_PURPLE + config.getValue(option).toString();
@@ -227,21 +212,18 @@ public class UIConfigHelper {
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).add(inheritance).build());
                 item.setItemMeta(meta);
-                ui.addItem(inv, i++, item, new Runnable() {
-                    @Override
-                    public void run() {
-                        ScoreboardType next = ScoreboardType.NONE;
-                        ScoreboardType[] values = ScoreboardType.values();
-                        for (int i1 = 0; i1 < values.length; i1++) {
-                            ScoreboardType st = values[i1];
-                            if (st == config.getScoreboardType(option) && i1 != values.length - 1) {
-                                next = values[i1 + 1];
-                                break;
-                            }
+                ui.addItem(inv, i++, item, () -> {
+                    ScoreboardType next = ScoreboardType.NONE;
+                    ScoreboardType[] values = ScoreboardType.values();
+                    for (int i1 = 0; i1 < values.length; i1++) {
+                        ScoreboardType st = values[i1];
+                        if (st == config.getScoreboardType(option) && i1 != values.length - 1) {
+                            next = values[i1 + 1];
+                            break;
                         }
-                        config.put(option, next);
-                        onWarzoneConfigUpdate(player, option, config, warzone);
                     }
+                    config.put(option, next);
+                    onWarzoneConfigUpdate(player, option, config, warzone);
                 });
             } else {
                 status += ChatColor.RED + config.getValue(option).toString();
@@ -250,10 +232,7 @@ public class UIConfigHelper {
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).add(inheritance).build());
                 item.setItemMeta(meta);
-                ui.addItem(inv, i++, item, new Runnable() {
-                    @Override
-                    public void run() {
-                    }
+                ui.addItem(inv, i++, item, () -> {
                 });
             }
         }
@@ -291,12 +270,9 @@ public class UIConfigHelper {
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).build());
                 item.setItemMeta(meta);
-                ui.addItem(inv, i++, item, new Runnable() {
-                    @Override
-                    public void run() {
-                        config.put(option, !config.getBoolean(option));
-                        onWarConfigUpdate(player, option, config);
-                    }
+                ui.addItem(inv, i++, item, () -> {
+                    config.put(option, !config.getBoolean(option));
+                    onWarConfigUpdate(player, option, config);
                 });
             } else if (option.getConfigType() == Integer.class || option.getConfigType() == Double.class || option.getConfigType() == String.class) {
                 status += ChatColor.LIGHT_PURPLE + config.getValue(option).toString();
@@ -330,10 +306,7 @@ public class UIConfigHelper {
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).build());
                 item.setItemMeta(meta);
-                ui.addItem(inv, i++, item, new Runnable() {
-                    @Override
-                    public void run() {
-                    }
+                ui.addItem(inv, i++, item, () -> {
                 });
             }
         }

@@ -18,7 +18,7 @@ public class TeleportPlayerJobTest {
 	TeleportPlayerJob job;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		player = mock(Player.class);
 		world = mock(World.class);
 		when(world.getName()).thenReturn("world");

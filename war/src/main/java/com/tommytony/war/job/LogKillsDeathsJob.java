@@ -61,6 +61,7 @@ public class LogKillsDeathsJob extends BukkitRunnable {
                 try {
                     conn.close();
                 } catch (SQLException ex) {
+                    War.war.getLogger().warning("Could not close connection");
                 }
             }
         }

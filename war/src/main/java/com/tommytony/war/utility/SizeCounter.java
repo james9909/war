@@ -11,8 +11,6 @@ public class SizeCounter implements FileFilter {
     public SizeCounter() {
     }
 
-    ;
-
     public static long getFileOrDirectorySize(File file) {
         SizeCounter counter = new SizeCounter();
         file.listFiles(counter);

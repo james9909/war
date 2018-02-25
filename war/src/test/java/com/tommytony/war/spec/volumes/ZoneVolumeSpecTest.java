@@ -10,9 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.junit.Test;
 
-import com.tommytony.war.Team;
 import com.tommytony.war.Warzone;
-import com.tommytony.war.structure.Monument;
 import com.tommytony.war.volume.NotNorthwestException;
 import com.tommytony.war.volume.NotSoutheastException;
 import com.tommytony.war.volume.TooBigException;

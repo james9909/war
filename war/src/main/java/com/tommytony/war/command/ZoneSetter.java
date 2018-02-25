@@ -223,7 +223,7 @@ public class ZoneSetter {
                 warzone.getLobby().getVolume().resetBlocks();
             }
             warzone.getVolume().resetBlocks();
-            msgString.append(warzone.getVolume().size() + " blocks reset. ");
+            msgString.append(warzone.getVolume().size()).append(" blocks reset. ");
         }
     }
 

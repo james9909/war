@@ -798,9 +798,7 @@ public class Warzone {
 					return true;
 				}
 			}
-			if (this.volume.isWallBlock(block)) {
-				return true;
-			}
+			return this.volume.isWallBlock(block);
 		}
 		return false;
 	}
@@ -1686,15 +1684,12 @@ public class Warzone {
 			int currentIndex = selection.getSelectedIndex();
 			Loadout firstLoadout = Loadout.getLoadout(loadouts, "first");
 			int i = 0;
-			Iterator<String> it = sortedNames.iterator();
-			while (it.hasNext()) {
-				String name = it.next();
+			for (String name : sortedNames) {
 				if (i == currentIndex) {
 					if (playerTeam.getTeamConfig().resolveBoolean(TeamConfig.PLAYERLOADOUTASDEFAULT) && name.equals("default")) {
 						// Use player's own inventory as loadout
 						this.resetInventory(playerTeam, player, this.getPlayerInventoryFromSavedState(player));
-					} else if (isFirstRespawn && firstLoadout != null && name.equals("default")
-							&& (!firstLoadout.requiresPermission() || player.hasPermission(firstLoadout.getPermission()))) {
+					} else if (isFirstRespawn && firstLoadout != null && name.equals("default") && (!firstLoadout.requiresPermission() || player.hasPermission(firstLoadout.getPermission()))) {
 						// Get the loadout for the first spawn
 						this.resetInventory(playerTeam, player, firstLoadout.getContents());
 					} else {

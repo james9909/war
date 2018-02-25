@@ -137,12 +137,8 @@ public class PartialZoneResetJob extends BukkitRunnable implements Cloneable {
     }
 
     @Override
-    protected PartialZoneResetJob clone() {
-        try {
-            return (PartialZoneResetJob) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new Error(e);
-        }
+    protected PartialZoneResetJob clone() throws CloneNotSupportedException {
+        return (PartialZoneResetJob) super.clone();
     }
 
     private boolean doneAir() {

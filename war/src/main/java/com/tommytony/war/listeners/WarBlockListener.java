@@ -138,7 +138,6 @@ public class WarBlockListener implements Listener {
         if (team != null && !team.canModify(block.getType())) {
             War.war.badMsg(player, "build.denied.zone.type");
             cancelAndKeepItem(event);
-            return;
         }
     }
 
@@ -186,7 +185,6 @@ public class WarBlockListener implements Listener {
             Block b = event.getBlock().getRelative(event.getDirection(), 2);
             if (zone.isImportantBlock(b)) {
                 event.setCancelled(true);
-                return;
             }
         }
     }
@@ -384,7 +382,6 @@ public class WarBlockListener implements Listener {
         if (team != null && !team.canModify(block.getType())) {
             War.war.badMsg(player, "build.denied.zone.type");
             event.setCancelled(true);
-            return;
         }
     }
 

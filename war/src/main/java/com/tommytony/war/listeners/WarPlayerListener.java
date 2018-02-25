@@ -19,7 +19,6 @@ import com.tommytony.war.utility.LoadoutSelection;
 import com.tommytony.war.volume.Volume;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import org.apache.commons.lang.Validate;

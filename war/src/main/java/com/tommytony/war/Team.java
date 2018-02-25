@@ -623,9 +623,7 @@ public class Team {
 			int flagX = this.teamFlag.getBlockX();
 			int flagY = this.teamFlag.getBlockY() + 1;
 			int flagZ = this.teamFlag.getBlockZ();
-			if (block.getX() == flagX && block.getY() == flagY && block.getZ() == flagZ) {
-				return true;
-			}
+			return block.getX() == flagX && block.getY() == flagY && block.getZ() == flagZ;
 		}
 		return false;
 	}
@@ -704,8 +702,7 @@ public class Team {
 	 * @return true if this block can be modified, false otherwise.
 	 */
 	public boolean canModify(Material type) {
-		for (String whitelistedBlock : this.getTeamConfig()
-				.resolveString(TeamConfig.BLOCKWHITELIST).split(",")) {
+		for (String whitelistedBlock : this.getTeamConfig().resolveString(TeamConfig.BLOCKWHITELIST).split(",")) {
 			if (whitelistedBlock.equalsIgnoreCase("all")) {
 				return true;
 			}

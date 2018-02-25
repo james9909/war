@@ -204,17 +204,11 @@ public class Monument {
         int diffX = Math.abs(playerX - x);
         int diffY = Math.abs(playerY - y);
         int diffZ = Math.abs(playerZ - z);
-        if (diffX < 6 && diffY < 6 && diffZ < 6) {
-            return true;
-        }
-        return false;
+        return diffX < 6 && diffY < 6 && diffZ < 6;
     }
 
     public boolean isOwner(Team team) {
-        if (team == this.ownerTeam) {
-            return true;
-        }
-        return false;
+        return team == this.ownerTeam;
     }
 
     public boolean hasOwner() {

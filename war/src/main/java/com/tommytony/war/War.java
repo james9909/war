@@ -882,7 +882,7 @@ public class War extends JavaPlugin {
 	public List<Warzone> getEnabledWarzones() {
 		List<Warzone> enabledZones = new ArrayList<>(this.warzones.size());
 		for (Warzone zone : this.warzones) {
-			if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.DISABLED) == false) {
+			if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.DISABLED)) {
 				enabledZones.add(zone);
 			}
 		}
@@ -896,8 +896,7 @@ public class War extends JavaPlugin {
 	public List<Warzone> getActiveWarzones() {
 		List<Warzone> activeZones = new ArrayList<>(this.warzones.size());
 		for (Warzone zone : this.warzones) {
-			if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.DISABLED) == false
-				&& zone.getPlayerCount() > 0) {
+			if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.DISABLED) && zone.getPlayerCount() > 0) {
 				activeZones.add(zone);
 			}
 		}
@@ -1046,9 +1045,8 @@ public class War extends JavaPlugin {
 	public boolean canBuildOutsideZone(Player player) {
 		if (this.getWarConfig().getBoolean(WarConfig.BUILDINZONESONLY)) {
 			return player.hasPermission("war.build");
-		} else {
-			return true;
 		}
+        return true;
 	}
 
 	/**

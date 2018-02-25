@@ -534,20 +534,19 @@ public class ZoneLobby {
     public boolean isInTeamGate(Team team, Location location) {
         Location info = this.teamGateBlocks.get(team.getName());
         if (info != null) {
-            if (location.getBlockX() == info.getX() && location.getBlockY() == info.getY() && location.getBlockZ() == info.getZ()) {
-                return true;
-            }
+            return location.getBlockX() == info.getX()
+                && location.getBlockY() == info.getY()
+                && location.getBlockZ() == info.getZ();
         }
 
         return false;
     }
 
     public boolean isAutoAssignGate(Location location) {
-        if (this.autoAssignGate != null && (location.getBlockX() == this.autoAssignGate.getX() && location.getBlockY() == this.autoAssignGate.getY() && location.getBlockZ() == this.autoAssignGate
-            .getZ())) {
-            return true;
-        }
-        return false;
+        return this.autoAssignGate != null
+            && (location.getBlockX() == this.autoAssignGate.getX()
+                && location.getBlockY() == this.autoAssignGate.getY()
+                && location.getBlockZ() == this.autoAssignGate.getZ());
     }
 
     public Team getTeamGate(Location location) {
@@ -634,12 +633,11 @@ public class ZoneLobby {
     }
 
     public boolean isInWarHubLinkGate(Location location) {
-        if (this.warHubLinkGate != null && location.getBlockX() == this.warHubLinkGate.getX() && location.getBlockY() == this.warHubLinkGate.getY() && location.getBlockZ() == this.warHubLinkGate
-            .getZ()) {
-            return true;
-        }
+        return this.warHubLinkGate != null
+            && location.getBlockX() == this.warHubLinkGate.getX()
+            && location.getBlockY() == this.warHubLinkGate.getY()
+            && location.getBlockZ() == this.warHubLinkGate.getZ();
 
-        return false;
     }
 
     public boolean blockIsAGateBlock(Block block, BlockFace blockWall) {
@@ -651,10 +649,7 @@ public class ZoneLobby {
                 }
             }
 
-            if (this.autoAssignGate != null && this.isPartOfGate(this.autoAssignGate.getBlock(), block)) {
-                // auto assign
-                return true;
-            }
+            return this.autoAssignGate != null && this.isPartOfGate(this.autoAssignGate.getBlock(), block);
         }
         return false;
     }
@@ -798,11 +793,7 @@ public class ZoneLobby {
         gateExitVolume.setCornerOne(out.getRelative(left).getRelative(BlockFace.DOWN));
         gateExitVolume.setCornerTwo(gate.getRelative(right, 1).getRelative(BlockFace.UP, 2));
 
-        if (gateExitVolume.contains(location)) {
-            return true;
-        }
-
-        return false;
+        return gateExitVolume.contains(location);
     }
 
     private void clearGatePath(Block gateBlock, BlockFace awayFromGate, BlockFace left, BlockFace right, boolean clearPathForPlayer) {

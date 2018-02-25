@@ -117,6 +117,6 @@ public abstract class AbstractWarCommand {
             }
             return lobby.getZone();
         }
-        return null;
+        return zone;
     }
 }

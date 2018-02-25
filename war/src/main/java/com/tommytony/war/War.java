@@ -17,6 +17,7 @@ import com.tommytony.war.config.WarzoneConfigBag;
 import com.tommytony.war.job.CapturePointTimer;
 import com.tommytony.war.job.HelmetProtectionTask;
 import com.tommytony.war.job.ScoreboardSwitchTimer;
+import com.tommytony.war.listeners.MagicSpellsListener;
 import com.tommytony.war.listeners.WarBlockListener;
 import com.tommytony.war.listeners.WarEntityListener;
 import com.tommytony.war.listeners.WarPlayerListener;
@@ -90,6 +91,7 @@ public class War extends JavaPlugin {
     private WarPlayerListener playerListener = new WarPlayerListener();
     private WarEntityListener entityListener = new WarEntityListener();
     private WarBlockListener blockListener = new WarBlockListener();
+    private MagicSpellsListener magicSpellsListener = new MagicSpellsListener();
     private WarCommandHandler commandHandler = new WarCommandHandler();
     private PluginDescriptionFile desc = null;
     private boolean loaded = false;
@@ -154,6 +156,7 @@ public class War extends JavaPlugin {
         pm.registerEvents(this.playerListener, this);
         pm.registerEvents(this.entityListener, this);
         pm.registerEvents(this.blockListener, this);
+        pm.registerEvents(this.magicSpellsListener, this);
         pm.registerEvents(this.UIManager, this);
 
         // Add defaults

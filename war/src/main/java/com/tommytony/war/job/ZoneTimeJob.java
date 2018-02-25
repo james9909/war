@@ -7,16 +7,16 @@ import com.tommytony.war.Warzone;
  */
 public class ZoneTimeJob implements Runnable {
 
-	private Warzone zone;
-	
-	public ZoneTimeJob(Warzone zone) {
-		this.zone = zone;
-	}
-	
-	@Override
-	public void run() {
-		zone.setPvpReady(true);
-	}
+    private Warzone zone;
 
-	
+    public ZoneTimeJob(Warzone zone) {
+        this.zone = zone;
+    }
+
+    @Override
+    public void run() {
+        zone.setPvpReady(true);
+    }
+
+
 }

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.inventory.ItemStack;
@@ -17,106 +16,106 @@ import org.bukkit.inventory.ItemStack;
  */
 public class Loadout implements Comparable<Loadout>, ConfigurationSerializable {
 
-	private String name;
-	private HashMap<Integer, ItemStack> contents;
-	private String permission;
+    static {
+        ConfigurationSerialization.registerClass(Loadout.class);
+    }
 
-	public Loadout(String name, HashMap<Integer, ItemStack> contents, String permission) {
-		this.name = name;
-		this.contents = contents;
-		this.permission = permission;
-	}
+    private String name;
+    private HashMap<Integer, ItemStack> contents;
+    private String permission;
 
-	static {
-		ConfigurationSerialization.registerClass(Loadout.class);
-	}
+    public Loadout(String name, HashMap<Integer, ItemStack> contents, String permission) {
+        this.name = name;
+        this.contents = contents;
+        this.permission = permission;
+    }
 
-	public int compareTo(Loadout ldt) {
-		if ("default".equals(ldt.getName()) && !"default".equals(this.getName())) {
-			return -1;
-		} else if ("default".equals(this.getName()) && !"default".equals(ldt.getName())) {
-			return 1;
-		} else {
-			return 0;
-		}
-	}
+    public static HashMap<String, HashMap<Integer, ItemStack>> toLegacyFormat(List<Loadout> loadouts) {
+        HashMap<String, HashMap<Integer, ItemStack>> oldLoadouts = new HashMap<String, HashMap<Integer, ItemStack>>();
+        for (Loadout ldt : loadouts) {
+            oldLoadouts.put(ldt.getName(), ldt.getContents());
+        }
+        return oldLoadouts;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public static Loadout getLoadout(List<Loadout> loadouts, String name) {
+        for (Loadout ldt : loadouts) {
+            if (ldt.getName().equals(name)) {
+                return ldt;
+            }
+        }
+        return null;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @SuppressWarnings("unchecked")
+    public static Loadout deserialize(Map<String, Object> config) {
+        HashMap<Integer, ItemStack> contents = new HashMap<Integer, ItemStack>();
+        List<Integer> slots = (List<Integer>) config.get("slots");
+        for (Integer slot : slots) {
+            contents.put(slot, ItemStack.deserialize((Map<String, Object>) config.get(slot.toString())));
+        }
+        String permission = "";
+        if (config.containsKey("permission")) {
+            permission = (String) config.get("permission");
+        }
+        return new Loadout(null, contents, permission);
+    }
 
-	public HashMap<Integer, ItemStack> getContents() {
-		return contents;
-	}
+    public int compareTo(Loadout ldt) {
+        if ("default".equals(ldt.getName()) && !"default".equals(this.getName())) {
+            return -1;
+        } else if ("default".equals(this.getName()) && !"default".equals(ldt.getName())) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 
-	public void setContents(HashMap<Integer, ItemStack> contents) {
-		this.contents = contents;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getPermission() {
-		return permission;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setPermission(String permission) {
-		this.permission = permission;
-	}
+    public HashMap<Integer, ItemStack> getContents() {
+        return contents;
+    }
 
-	public boolean requiresPermission() {
-		return permission != null && !permission.isEmpty();
-	}
+    public void setContents(HashMap<Integer, ItemStack> contents) {
+        this.contents = contents;
+    }
 
-	private List<Integer> toIntList(Set<Integer> keySet) {
-		List<Integer> list = new ArrayList<Integer>();
-		for (Integer key : keySet) {
-			list.add(key);
-		}
-		return list;
-	}
+    public String getPermission() {
+        return permission;
+    }
 
-	public static HashMap<String, HashMap<Integer, ItemStack>> toLegacyFormat(List<Loadout> loadouts) {
-		HashMap<String, HashMap<Integer, ItemStack>> oldLoadouts = new HashMap<String, HashMap<Integer, ItemStack>>();
-		for (Loadout ldt : loadouts) {
-			oldLoadouts.put(ldt.getName(), ldt.getContents());
-		}
-		return oldLoadouts;
-	}
+    public void setPermission(String permission) {
+        this.permission = permission;
+    }
 
-	public static Loadout getLoadout(List<Loadout> loadouts, String name) {
-		for (Loadout ldt : loadouts) {
-			if (ldt.getName().equals(name)) {
-				return ldt;
-			}
-		}
-		return null;
-	}
+    public boolean requiresPermission() {
+        return permission != null && !permission.isEmpty();
+    }
 
-	// For future use
-	public Map<String, Object> serialize() {
-		Map<String, Object> config = new HashMap<String, Object>();
-		config.put("slots", this.toIntList(contents.keySet()));
-		for (Integer slot : contents.keySet()) {
-			ItemStack stack = contents.get(slot);
-			config.put(slot.toString(), stack.serialize());
-		}
-		config.put("permission", permission);
-		return config;
-	}
+    private List<Integer> toIntList(Set<Integer> keySet) {
+        List<Integer> list = new ArrayList<Integer>();
+        for (Integer key : keySet) {
+            list.add(key);
+        }
+        return list;
+    }
 
-	@SuppressWarnings("unchecked")
-	public static Loadout deserialize(Map<String, Object> config) {
-		HashMap<Integer, ItemStack> contents = new HashMap<Integer, ItemStack>();
-		List<Integer> slots = (List<Integer>) config.get("slots");
-		for (Integer slot : slots) {
-			contents.put(slot, ItemStack.deserialize((Map<String, Object>) config.get(slot.toString())));
-		}
-		String permission = "";
-		if (config.containsKey("permission")) {
-			permission = (String) config.get("permission");
-		}
-		return new Loadout(null, contents, permission);
-	}
+    // For future use
+    public Map<String, Object> serialize() {
+        Map<String, Object> config = new HashMap<String, Object>();
+        config.put("slots", this.toIntList(contents.keySet()));
+        for (Integer slot : contents.keySet()) {
+            ItemStack stack = contents.get(slot);
+            config.put(slot.toString(), stack.serialize());
+        }
+        config.put("permission", permission);
+        return config;
+    }
 }

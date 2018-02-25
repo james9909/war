@@ -6,10 +6,10 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 public class WarLogFormatter extends Formatter {
-	
-	@Override
+
+    @Override
     public String format(LogRecord arg0) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         StringBuilder b = new StringBuilder();
         b.append(dateFormat.format(new Date()));
         b.append(" [");

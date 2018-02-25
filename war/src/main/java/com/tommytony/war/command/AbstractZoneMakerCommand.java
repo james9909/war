@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
  */
 public abstract class AbstractZoneMakerCommand extends AbstractOptionalZoneMakerCommand {
 
-	public AbstractZoneMakerCommand(WarCommandHandler handler, CommandSender sender, String[] args) throws NotZoneMakerException {
-		super(handler, sender, args, true);
-	}
+    public AbstractZoneMakerCommand(WarCommandHandler handler, CommandSender sender, String[] args) throws NotZoneMakerException {
+        super(handler, sender, args, true);
+    }
 }

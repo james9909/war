@@ -5,49 +5,50 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class WarzoneMaterials implements Cloneable {
-	private ItemStack mainBlock;
-	private ItemStack standBlock;
-	private ItemStack lightBlock;
 
-	public WarzoneMaterials(ItemStack mainBlock, ItemStack standBlock, ItemStack lightBlock) {
-		Validate.isTrue(mainBlock.getType().isBlock() || mainBlock.getType() == Material.AIR);
-		Validate.isTrue(standBlock.getType().isBlock() || standBlock.getType() == Material.AIR);
-		Validate.isTrue(lightBlock.getType().isBlock() || lightBlock.getType() == Material.AIR);
-		this.mainBlock = mainBlock;
-		this.standBlock = standBlock;
-		this.lightBlock = lightBlock;
-	}
+    private ItemStack mainBlock;
+    private ItemStack standBlock;
+    private ItemStack lightBlock;
 
-	public ItemStack getMainBlock() {
-		return mainBlock;
-	}
+    public WarzoneMaterials(ItemStack mainBlock, ItemStack standBlock, ItemStack lightBlock) {
+        Validate.isTrue(mainBlock.getType().isBlock() || mainBlock.getType() == Material.AIR);
+        Validate.isTrue(standBlock.getType().isBlock() || standBlock.getType() == Material.AIR);
+        Validate.isTrue(lightBlock.getType().isBlock() || lightBlock.getType() == Material.AIR);
+        this.mainBlock = mainBlock;
+        this.standBlock = standBlock;
+        this.lightBlock = lightBlock;
+    }
 
-	public void setMainBlock(ItemStack mainBlock) {
-		this.mainBlock = mainBlock;
-	}
+    public ItemStack getMainBlock() {
+        return mainBlock;
+    }
 
-	public ItemStack getStandBlock() {
-		return standBlock;
-	}
+    public void setMainBlock(ItemStack mainBlock) {
+        this.mainBlock = mainBlock;
+    }
 
-	public void setStandBlock(ItemStack standBlock) {
-		this.standBlock = standBlock;
-	}
+    public ItemStack getStandBlock() {
+        return standBlock;
+    }
 
-	public ItemStack getLightBlock() {
-		return lightBlock;
-	}
+    public void setStandBlock(ItemStack standBlock) {
+        this.standBlock = standBlock;
+    }
 
-	public void setLightBlock(ItemStack lightBlock) {
-		this.lightBlock = lightBlock;
-	}
+    public ItemStack getLightBlock() {
+        return lightBlock;
+    }
 
-	@Override
-	public WarzoneMaterials clone() {
-		try {
-			return (WarzoneMaterials) super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new Error(e);
-		}
-	}
+    public void setLightBlock(ItemStack lightBlock) {
+        this.lightBlock = lightBlock;
+    }
+
+    @Override
+    public WarzoneMaterials clone() {
+        try {
+            return (WarzoneMaterials) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new Error(e);
+        }
+    }
 }

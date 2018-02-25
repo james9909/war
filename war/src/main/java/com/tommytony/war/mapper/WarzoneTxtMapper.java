@@ -1,17 +1,5 @@
 package com.tommytony.war.mapper;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.logging.Level;
-
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.BlockFace;
-import org.bukkit.inventory.ItemStack;
-
-
 import com.tommytony.war.Team;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
@@ -25,404 +13,411 @@ import com.tommytony.war.structure.ZoneLobby;
 import com.tommytony.war.utility.Direction;
 import com.tommytony.war.volume.Volume;
 import com.tommytony.war.volume.ZoneVolume;
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.logging.Level;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.BlockFace;
+import org.bukkit.inventory.ItemStack;
 
 /**
- *
  * @author tommytony
- *
  */
 public class WarzoneTxtMapper {
 
-	public static Warzone load(String name, boolean createNewVolume) {
-		// war.getLogger().info("Loading warzone " + name + " config and blocks...");
-		PropertiesFile warzoneConfig = new PropertiesFile(War.war.getDataFolder().getPath() + "/warzone-" + name + ".txt");
-		try {
-			warzoneConfig.load();
-		} catch (IOException e) {
-			War.war.getLogger().info("Failed to load warzone-" + name + ".txt file.");
-			e.printStackTrace();
-		}
+    public static Warzone load(String name, boolean createNewVolume) {
+        // war.getLogger().info("Loading warzone " + name + " config and blocks...");
+        PropertiesFile warzoneConfig = new PropertiesFile(War.war.getDataFolder().getPath() + "/warzone-" + name + ".txt");
+        try {
+            warzoneConfig.load();
+        } catch (IOException e) {
+            War.war.getLogger().info("Failed to load warzone-" + name + ".txt file.");
+            e.printStackTrace();
+        }
 
-		// world
-		String worldStr = warzoneConfig.getProperty("world");
-		World world = null;
-		if (worldStr == null || worldStr.equals("")) {
-			world = War.war.getServer().getWorlds().get(0); // default to first world
-		} else {
-			world = War.war.getServer().getWorld(worldStr);
-		}
+        // world
+        String worldStr = warzoneConfig.getProperty("world");
+        World world = null;
+        if (worldStr == null || worldStr.equals("")) {
+            world = War.war.getServer().getWorlds().get(0); // default to first world
+        } else {
+            world = War.war.getServer().getWorld(worldStr);
+        }
 
-		if (world == null) {
-			War.war.log("Failed to restore warzone " + name + ". The specified world (name: " + worldStr + ") does not exist!", Level.WARNING);
-		} else {
-			// Create the zone
-			Warzone warzone = new Warzone(world, name);
+        if (world == null) {
+            War.war.log("Failed to restore warzone " + name + ". The specified world (name: " + worldStr + ") does not exist!", Level.WARNING);
+        } else {
+            // Create the zone
+            Warzone warzone = new Warzone(world, name);
 
-			// Create file if needed
-			if (!warzoneConfig.containsKey("name")) {
-				WarzoneTxtMapper.save(warzone, false);
-				War.war.getLogger().info("Warzone " + name + " config file created.");
-				try {
-					warzoneConfig.load();
-				} catch (IOException e) {
-					// war.getLogger().info("Failed to reload warzone-" + name + ".txt file after creating it.");
-					e.printStackTrace();
-				}
-			}
+            // Create file if needed
+            if (!warzoneConfig.containsKey("name")) {
+                WarzoneTxtMapper.save(warzone, false);
+                War.war.getLogger().info("Warzone " + name + " config file created.");
+                try {
+                    warzoneConfig.load();
+                } catch (IOException e) {
+                    // war.getLogger().info("Failed to reload warzone-" + name + ".txt file after creating it.");
+                    e.printStackTrace();
+                }
+            }
 
-			// teleport
-			String teleportStr = warzoneConfig.getString("teleport");
-			if (teleportStr != null && !teleportStr.equals("")) {
-				String[] teleportSplit = teleportStr.split(",");
-				int teleX = Integer.parseInt(teleportSplit[0]);
-				int teleY = Integer.parseInt(teleportSplit[1]);
-				int teleZ = Integer.parseInt(teleportSplit[2]);
-				int yaw = Integer.parseInt(teleportSplit[3]);
-				warzone.setTeleport(new Location(world, teleX, teleY, teleZ, yaw, 0));
-			}	
+            // teleport
+            String teleportStr = warzoneConfig.getString("teleport");
+            if (teleportStr != null && !teleportStr.equals("")) {
+                String[] teleportSplit = teleportStr.split(",");
+                int teleX = Integer.parseInt(teleportSplit[0]);
+                int teleY = Integer.parseInt(teleportSplit[1]);
+                int teleZ = Integer.parseInt(teleportSplit[2]);
+                int yaw = Integer.parseInt(teleportSplit[3]);
+                warzone.setTeleport(new Location(world, teleX, teleY, teleZ, yaw, 0));
+            }
 
-			// ff
-			if (warzoneConfig.containsKey("friendlyFire")) {
-				warzone.getWarzoneConfig().put(WarzoneConfig.FRIENDLYFIRE, warzoneConfig.getBoolean("friendlyFire"));
-			}
+            // ff
+            if (warzoneConfig.containsKey("friendlyFire")) {
+                warzone.getWarzoneConfig().put(WarzoneConfig.FRIENDLYFIRE, warzoneConfig.getBoolean("friendlyFire"));
+            }
 
-			// loadout
-			warzone.getDefaultInventories().clearLoadouts();
-			
-			String loadoutStr = warzoneConfig.getString("loadout");
-			if (loadoutStr != null && !loadoutStr.equals("")) {
-				warzone.getDefaultInventories().setLoadout("default", new HashMap<Integer, ItemStack>());
-				LoadoutTxtMapper.fromStringToLoadout(loadoutStr, warzone.getDefaultInventories().getLoadout("default"));
-			}
-			
-			// extraLoadouts
-			String extraLoadoutStr = warzoneConfig.getString("extraLoadouts");
-			String[] extraLoadoutsSplit = extraLoadoutStr.split(",");
-			
-			for (String nameStr : extraLoadoutsSplit) {
-				if (nameStr != null && !nameStr.equals("")) {
-					warzone.getDefaultInventories().setLoadout(nameStr, new HashMap<Integer, ItemStack>());
-				}
-			}
-			
-			for (String extraName : extraLoadoutsSplit) {
-				if (extraName != null && !extraName.equals("")) {
-					String loadoutString = warzoneConfig.getString(extraName + "Loadout");
-					HashMap<Integer, ItemStack> loadout = warzone.getDefaultInventories().getLoadout(extraName);
-					LoadoutTxtMapper.fromStringToLoadout(loadoutString, loadout);
-				}
-			}
+            // loadout
+            warzone.getDefaultInventories().clearLoadouts();
 
-			// authors
-			if (warzoneConfig.containsKey("author") && !warzoneConfig.getString("author").equals("")) {
-				for(String authorStr : warzoneConfig.getString("author").split(",")) {
-					if (!authorStr.equals("")) {
-						warzone.addAuthor(authorStr);
-					}
-				}
-			}
+            String loadoutStr = warzoneConfig.getString("loadout");
+            if (loadoutStr != null && !loadoutStr.equals("")) {
+                warzone.getDefaultInventories().setLoadout("default", new HashMap<Integer, ItemStack>());
+                LoadoutTxtMapper.fromStringToLoadout(loadoutStr, warzone.getDefaultInventories().getLoadout("default"));
+            }
 
-			// life pool (always set after teams, so the teams' remaining lives get initialized properly by this setter)
-			if (warzoneConfig.containsKey("lifePool")) {
-				warzone.getTeamDefaultConfig().put(TeamConfig.LIFEPOOL, warzoneConfig.getInt("lifePool"));
-			}
+            // extraLoadouts
+            String extraLoadoutStr = warzoneConfig.getString("extraLoadouts");
+            String[] extraLoadoutsSplit = extraLoadoutStr.split(",");
 
-			// monument heal
-			if (warzoneConfig.containsKey("monumentHeal")) {
-				warzone.getWarzoneConfig().put(WarzoneConfig.MONUMENTHEAL, warzoneConfig.getInt("monumentHeal"));
-			}
+            for (String nameStr : extraLoadoutsSplit) {
+                if (nameStr != null && !nameStr.equals("")) {
+                    warzone.getDefaultInventories().setLoadout(nameStr, new HashMap<Integer, ItemStack>());
+                }
+            }
 
-			// autoAssignOnly
-			if (warzoneConfig.containsKey("autoAssignOnly")) {
-				warzone.getWarzoneConfig().put(WarzoneConfig.AUTOASSIGN, warzoneConfig.getBoolean("autoAssignOnly"));
-			}
+            for (String extraName : extraLoadoutsSplit) {
+                if (extraName != null && !extraName.equals("")) {
+                    String loadoutString = warzoneConfig.getString(extraName + "Loadout");
+                    HashMap<Integer, ItemStack> loadout = warzone.getDefaultInventories().getLoadout(extraName);
+                    LoadoutTxtMapper.fromStringToLoadout(loadoutString, loadout);
+                }
+            }
 
-			// flagPointsOnly
-			if (warzoneConfig.containsKey("flagPointsOnly")) {
-				warzone.getTeamDefaultConfig().put(TeamConfig.FLAGPOINTSONLY, warzoneConfig.getBoolean("flagPointsOnly"));
-			}
-			
-			// flagMustBeHome
-			if (warzoneConfig.containsKey("flagMustBeHome")) {
-				warzone.getTeamDefaultConfig().put(TeamConfig.FLAGMUSTBEHOME, warzoneConfig.getBoolean("flagMustBeHome"));
-			}
+            // authors
+            if (warzoneConfig.containsKey("author") && !warzoneConfig.getString("author").equals("")) {
+                for (String authorStr : warzoneConfig.getString("author").split(",")) {
+                    if (!authorStr.equals("")) {
+                        warzone.addAuthor(authorStr);
+                    }
+                }
+            }
 
-			// team cap
-			if (warzoneConfig.containsKey("teamCap")) {
-				warzone.getTeamDefaultConfig().put(TeamConfig.TEAMSIZE, warzoneConfig.getInt("teamCap"));
-			}
-			
-			// score cap
-			if (warzoneConfig.containsKey("scoreCap")) {
-				warzone.getTeamDefaultConfig().put(TeamConfig.MAXSCORE, warzoneConfig.getInt("scoreCap"));
-			}
-			
-			// respawn timer
-			if (warzoneConfig.containsKey("respawnTimer")) {
-				warzone.getTeamDefaultConfig().put(TeamConfig.RESPAWNTIMER, warzoneConfig.getInt("respawnTimer"));
-			}
+            // life pool (always set after teams, so the teams' remaining lives get initialized properly by this setter)
+            if (warzoneConfig.containsKey("lifePool")) {
+                warzone.getTeamDefaultConfig().put(TeamConfig.LIFEPOOL, warzoneConfig.getInt("lifePool"));
+            }
 
-			// blockHeads
-			if (warzoneConfig.containsKey("blockHeads")) {
-				warzone.getWarzoneConfig().put(WarzoneConfig.BLOCKHEADS, warzoneConfig.getBoolean("blockHeads"));
-			}
+            // monument heal
+            if (warzoneConfig.containsKey("monumentHeal")) {
+                warzone.getWarzoneConfig().put(WarzoneConfig.MONUMENTHEAL, warzoneConfig.getInt("monumentHeal"));
+            }
 
-			// spawnStyle
-			String spawnStyle = warzoneConfig.getString("spawnStyle");
-			if (spawnStyle != null && !spawnStyle.equals("")) {
-				warzone.getTeamDefaultConfig().put(TeamConfig.SPAWNSTYLE, TeamSpawnStyle.getStyleFromString(spawnStyle));
-			}
+            // autoAssignOnly
+            if (warzoneConfig.containsKey("autoAssignOnly")) {
+                warzone.getWarzoneConfig().put(WarzoneConfig.AUTOASSIGN, warzoneConfig.getBoolean("autoAssignOnly"));
+            }
 
-			// flagReturn
-			String flagReturn = warzoneConfig.getString("flagReturn");
-			if (flagReturn != null && !flagReturn.equals("")) {
-				warzone.getTeamDefaultConfig().put(TeamConfig.FLAGRETURN, FlagReturn.getFromString(flagReturn));
-			}
+            // flagPointsOnly
+            if (warzoneConfig.containsKey("flagPointsOnly")) {
+                warzone.getTeamDefaultConfig().put(TeamConfig.FLAGPOINTSONLY, warzoneConfig.getBoolean("flagPointsOnly"));
+            }
 
-			// reward
-			String rewardStr = warzoneConfig.getString("reward");
-			if (rewardStr != null && !rewardStr.equals("")) {
-				HashMap<Integer, ItemStack> reward = new HashMap<Integer, ItemStack>();
-				LoadoutTxtMapper.fromStringToLoadout(rewardStr, reward);
-				warzone.getDefaultInventories().setReward(reward);
-			}
+            // flagMustBeHome
+            if (warzoneConfig.containsKey("flagMustBeHome")) {
+                warzone.getTeamDefaultConfig().put(TeamConfig.FLAGMUSTBEHOME, warzoneConfig.getBoolean("flagMustBeHome"));
+            }
 
-			// unbreakableZoneBlocks
-			if (warzoneConfig.containsKey("unbreakableZoneBlocks")) {
-				warzone.getWarzoneConfig().put(WarzoneConfig.UNBREAKABLE, warzoneConfig.getBoolean("unbreakableZoneBlocks"));
-			}
+            // team cap
+            if (warzoneConfig.containsKey("teamCap")) {
+                warzone.getTeamDefaultConfig().put(TeamConfig.TEAMSIZE, warzoneConfig.getInt("teamCap"));
+            }
 
-			// disabled
-			if (warzoneConfig.containsKey("disabled")) {
-				warzone.getWarzoneConfig().put(WarzoneConfig.DISABLED, warzoneConfig.getBoolean("disabled"));
-			}
+            // score cap
+            if (warzoneConfig.containsKey("scoreCap")) {
+                warzone.getTeamDefaultConfig().put(TeamConfig.MAXSCORE, warzoneConfig.getInt("scoreCap"));
+            }
 
-			// noCreatures
-			if (warzoneConfig.containsKey("noCreatures")) {
-				warzone.getWarzoneConfig().put(WarzoneConfig.NOCREATURES, warzoneConfig.getBoolean("noCreatures"));
-			}
-			
-			// glassWalls
-			if (warzoneConfig.containsKey("glassWalls")) {
-				warzone.getWarzoneConfig().put(WarzoneConfig.GLASSWALLS, warzoneConfig.getBoolean("glassWalls"));
-			}
-			
-			// pvpInZone
-			if (warzoneConfig.containsKey("pvpInZone")) {
-				warzone.getWarzoneConfig().put(WarzoneConfig.PVPINZONE, warzoneConfig.getBoolean("pvpInZone"));
-			}
-			
-			// instaBreak
-			if (warzoneConfig.containsKey("instaBreak")) {
-				warzone.getWarzoneConfig().put(WarzoneConfig.INSTABREAK, warzoneConfig.getBoolean("instaBreak"));
-			}
-			
-			// noDrops
-			if (warzoneConfig.containsKey("noDrops")) {
-				warzone.getWarzoneConfig().put(WarzoneConfig.NODROPS, warzoneConfig.getBoolean("noDrops"));
-			}
-			
-			// noHunger
-			if (warzoneConfig.containsKey("noHunger")) {
-				warzone.getTeamDefaultConfig().put(TeamConfig.NOHUNGER, warzoneConfig.getBoolean("noHunger"));
-			}
-			
-			// saturation
-			if (warzoneConfig.containsKey("saturation")) {
-				warzone.getTeamDefaultConfig().put(TeamConfig.SATURATION, warzoneConfig.getInt("saturation"));
-			}
-			
-			// minPlayers
-			if (warzoneConfig.containsKey("minPlayers")) {
-				warzone.getWarzoneConfig().put(WarzoneConfig.MINPLAYERS, warzoneConfig.getInt("minPlayers"));
-			}
-			
-			// minTeams
-			if (warzoneConfig.containsKey("minTeams")) {
-				warzone.getWarzoneConfig().put(WarzoneConfig.MINTEAMS, warzoneConfig.getInt("minTeams"));
-			}
+            // respawn timer
+            if (warzoneConfig.containsKey("respawnTimer")) {
+                warzone.getTeamDefaultConfig().put(TeamConfig.RESPAWNTIMER, warzoneConfig.getInt("respawnTimer"));
+            }
 
-			// resetOnEmpty
-			if (warzoneConfig.containsKey("resetOnEmpty")) {
-				warzone.getWarzoneConfig().put(WarzoneConfig.RESETONEMPTY, warzoneConfig.getBoolean("resetOnEmpty"));
-			}
+            // blockHeads
+            if (warzoneConfig.containsKey("blockHeads")) {
+                warzone.getWarzoneConfig().put(WarzoneConfig.BLOCKHEADS, warzoneConfig.getBoolean("blockHeads"));
+            }
 
-			// resetOnLoad
-			if (warzoneConfig.containsKey("resetOnLoad")) {
-				warzone.getWarzoneConfig().put(WarzoneConfig.RESETONLOAD, warzoneConfig.getBoolean("resetOnLoad"));
-			}
+            // spawnStyle
+            String spawnStyle = warzoneConfig.getString("spawnStyle");
+            if (spawnStyle != null && !spawnStyle.equals("")) {
+                warzone.getTeamDefaultConfig().put(TeamConfig.SPAWNSTYLE, TeamSpawnStyle.getStyleFromString(spawnStyle));
+            }
 
-			// resetOnUnload
-			if (warzoneConfig.containsKey("resetOnUnload")) {
-				warzone.getWarzoneConfig().put(WarzoneConfig.RESETONUNLOAD, warzoneConfig.getBoolean("resetOnUnload"));
-			}
+            // flagReturn
+            String flagReturn = warzoneConfig.getString("flagReturn");
+            if (flagReturn != null && !flagReturn.equals("")) {
+                warzone.getTeamDefaultConfig().put(TeamConfig.FLAGRETURN, FlagReturn.getFromString(flagReturn));
+            }
 
-			// rallyPoint
-			String rallyPointStr = warzoneConfig.getString("rallyPoint");
-			if (rallyPointStr != null && !rallyPointStr.equals("")) {
-				String[] rallyPointStrSplit = rallyPointStr.split(",");
+            // reward
+            String rewardStr = warzoneConfig.getString("reward");
+            if (rewardStr != null && !rewardStr.equals("")) {
+                HashMap<Integer, ItemStack> reward = new HashMap<Integer, ItemStack>();
+                LoadoutTxtMapper.fromStringToLoadout(rewardStr, reward);
+                warzone.getDefaultInventories().setReward(reward);
+            }
 
-				int rpX = Integer.parseInt(rallyPointStrSplit[0]);
-				int rpY = Integer.parseInt(rallyPointStrSplit[1]);
-				int rpZ = Integer.parseInt(rallyPointStrSplit[2]);
-				Location rallyPoint = new Location(world, rpX, rpY, rpZ);
-				warzone.setRallyPoint(rallyPoint);
-			}
+            // unbreakableZoneBlocks
+            if (warzoneConfig.containsKey("unbreakableZoneBlocks")) {
+                warzone.getWarzoneConfig().put(WarzoneConfig.UNBREAKABLE, warzoneConfig.getBoolean("unbreakableZoneBlocks"));
+            }
 
-			// monuments
-			String monumentsStr = warzoneConfig.getString("monuments");
-			if (monumentsStr != null && !monumentsStr.equals("")) {
-				String[] monumentsSplit = monumentsStr.split(";");
-				warzone.getMonuments().clear();
-				for (String monumentStr : monumentsSplit) {
-					if (monumentStr != null && !monumentStr.equals("")) {
-						String[] monumentStrSplit = monumentStr.split(",");
-						int monumentX = Integer.parseInt(monumentStrSplit[1]);
-						int monumentY = Integer.parseInt(monumentStrSplit[2]);
-						int monumentZ = Integer.parseInt(monumentStrSplit[3]);
-						Monument monument = new Monument(monumentStrSplit[0], warzone, new Location(world, monumentX, monumentY, monumentZ));
-						warzone.getMonuments().add(monument);
-					}
-				}
-			}
-			
-			// teams
-			String teamsStr = warzoneConfig.getString("teams");
-			if (teamsStr != null && !teamsStr.equals("")) {
-				String[] teamsSplit = teamsStr.split(";");
-				warzone.getTeams().clear();
-				for (String teamStr : teamsSplit) {
-					if (teamStr != null && !teamStr.equals("")) {
-						String[] teamStrSplit = teamStr.split(",");
-						int teamX = Integer.parseInt(teamStrSplit[1]);
-						int teamY = Integer.parseInt(teamStrSplit[2]);
-						int teamZ = Integer.parseInt(teamStrSplit[3]);
-						Location teamLocation = new Location(world, teamX, teamY, teamZ);
-						if (teamStrSplit.length > 4) {
-							int yaw = Integer.parseInt(teamStrSplit[4]);
-							teamLocation.setYaw(yaw);
-						}
-						File original = new File(War.war.getDataFolder().getPath() + "/dat/warzone-" + name + "/volume-" + teamStrSplit[0] + ".dat");
-						File modified = new File(War.war.getDataFolder().getPath() + "/dat/warzone-" + name + "/volume-" + teamStrSplit[0] + "0.dat");
-						try {
-							original.renameTo(modified);
-						} catch (Exception ignored) {
-						}
+            // disabled
+            if (warzoneConfig.containsKey("disabled")) {
+                warzone.getWarzoneConfig().put(WarzoneConfig.DISABLED, warzoneConfig.getBoolean("disabled"));
+            }
 
-						Team team = new Team(teamStrSplit[0], TeamKind.teamKindFromString(teamStrSplit[0]), Arrays.asList(teamLocation), warzone);
-						team.setRemainingLives(warzone.getTeamDefaultConfig().resolveInt(TeamConfig.LIFEPOOL));
-						warzone.getTeams().add(team);
-					}
-				}
-			}
+            // noCreatures
+            if (warzoneConfig.containsKey("noCreatures")) {
+                warzone.getWarzoneConfig().put(WarzoneConfig.NOCREATURES, warzoneConfig.getBoolean("noCreatures"));
+            }
 
-			// teamFlags
-			String teamFlagsStr = warzoneConfig.getString("teamFlags");
-			if (teamFlagsStr != null && !teamFlagsStr.equals("")) {
-				String[] teamFlagsSplit = teamFlagsStr.split(";");
-				for (String teamFlagStr : teamFlagsSplit) {
-					if (teamFlagStr != null && !teamFlagStr.equals("")) {
-						String[] teamFlagStrSplit = teamFlagStr.split(",");
-						Team team = warzone.getTeamByKind(TeamKind.teamKindFromString(teamFlagStrSplit[0]));
-						if (team != null) {
-							int teamFlagX = Integer.parseInt(teamFlagStrSplit[1]);
-							int teamFlagY = Integer.parseInt(teamFlagStrSplit[2]);
-							int teamFlagZ = Integer.parseInt(teamFlagStrSplit[3]);
-							Location teamFlagLocation = new Location(world, teamFlagX, teamFlagY, teamFlagZ);
-							if (teamFlagStrSplit.length > 4) {
-								int yaw = Integer.parseInt(teamFlagStrSplit[4]);
-								teamFlagLocation.setYaw(yaw);
-							}
-							team.setTeamFlag(teamFlagLocation); // this may screw things up
-						}
-					}
-				}
-			}
+            // glassWalls
+            if (warzoneConfig.containsKey("glassWalls")) {
+                warzone.getWarzoneConfig().put(WarzoneConfig.GLASSWALLS, warzoneConfig.getBoolean("glassWalls"));
+            }
 
-			// lobby
-			String lobbyStr = warzoneConfig.getString("lobby");
+            // pvpInZone
+            if (warzoneConfig.containsKey("pvpInZone")) {
+                warzone.getWarzoneConfig().put(WarzoneConfig.PVPINZONE, warzoneConfig.getBoolean("pvpInZone"));
+            }
 
-			warzoneConfig.close();
+            // instaBreak
+            if (warzoneConfig.containsKey("instaBreak")) {
+                warzone.getWarzoneConfig().put(WarzoneConfig.INSTABREAK, warzoneConfig.getBoolean("instaBreak"));
+            }
 
-			if (createNewVolume) {
-				ZoneVolume zoneVolume = new ZoneVolume(warzone.getName(), world, warzone); // VolumeMapper.loadZoneVolume(warzone.getName(), warzone.getName(), war, warzone.getWorld(), warzone);
-				warzone.setVolume(zoneVolume);
-			}
+            // noDrops
+            if (warzoneConfig.containsKey("noDrops")) {
+                warzone.getWarzoneConfig().put(WarzoneConfig.NODROPS, warzoneConfig.getBoolean("noDrops"));
+            }
 
-			// monument blocks
-			for (Monument monument : warzone.getMonuments()) {
-				try {
-					monument.setVolume(VolumeMapper.loadVolume(monument.getName(), warzone.getName(), world));
-				} catch (SQLException e) {
-					War.war.getLogger().log(Level.WARNING, "Failed to load some ambiguous old volume", e);
-				}
-			}
+            // noHunger
+            if (warzoneConfig.containsKey("noHunger")) {
+                warzone.getTeamDefaultConfig().put(TeamConfig.NOHUNGER, warzoneConfig.getBoolean("noHunger"));
+            }
 
-			// team spawn blocks
-			for (Team team : warzone.getTeams()) {
-				for (Location spawnLocation : team.getTeamSpawns()) {
-					try {
-						team.setSpawnVolume(spawnLocation, VolumeMapper.loadVolume(team.getName() + "0", warzone.getName(), world));
-					} catch (SQLException e) {
-						War.war.getLogger().log(Level.WARNING, "Failed to load some ambiguous old volume", e);
-					}
-				}
-				if (team.getTeamFlag() != null) {
-					try {
-						team.setFlagVolume(VolumeMapper.loadVolume(team.getName() + "flag", warzone.getName(), world));
-					} catch (SQLException e) {
-						War.war.getLogger().log(Level.WARNING, "Failed to load some ambiguous old volume", e);
-					}
-				}
-			}
+            // saturation
+            if (warzoneConfig.containsKey("saturation")) {
+                warzone.getTeamDefaultConfig().put(TeamConfig.SATURATION, warzoneConfig.getInt("saturation"));
+            }
 
-			// lobby
-			BlockFace lobbyFace = null;
-			if (lobbyStr != null && !lobbyStr.equals("")) {
-				String[] lobbyStrSplit = lobbyStr.split(",");
-				if (lobbyStrSplit.length > 0) {
-					// lobby orientation
-					if (lobbyStrSplit[0].equals("south")) {
-						lobbyFace = Direction.SOUTH();
-					} else if (lobbyStrSplit[0].equals("east")) {
-						lobbyFace = Direction.EAST();
-					} else if (lobbyStrSplit[0].equals("north")) {
-						lobbyFace = Direction.NORTH();
-					} else if (lobbyStrSplit[0].equals("west")) {
-						lobbyFace = Direction.WEST();
-					}
-					
-					// lobby world
-					World lobbyWorld = world;	// by default, warzone world
-					if (lobbyStrSplit.length > 1) {
-						World strWorld = War.war.getServer().getWorld(lobbyStrSplit[1]);
-						if (strWorld != null) {
-							lobbyWorld = strWorld;
-						}
-					}
-					
-					// create the lobby
-					Volume lobbyVolume = null;
-					try {
-						lobbyVolume = VolumeMapper.loadVolume("lobby", warzone.getName(), lobbyWorld);
-					} catch (SQLException e) {
-						// if the zone is this old is there any reason the lobby should be nimitz format
-						War.war.getLogger().log(Level.WARNING, "Failed to load lobby for a really old warzone", e);
-					}
-					ZoneLobby lobby = new ZoneLobby(warzone, lobbyFace, lobbyVolume);
-					warzone.setLobby(lobby);
-				}
-			}
+            // minPlayers
+            if (warzoneConfig.containsKey("minPlayers")) {
+                warzone.getWarzoneConfig().put(WarzoneConfig.MINPLAYERS, warzoneConfig.getInt("minPlayers"));
+            }
 
-			return warzone;
-		}
-		return null;
-	}
+            // minTeams
+            if (warzoneConfig.containsKey("minTeams")) {
+                warzone.getWarzoneConfig().put(WarzoneConfig.MINTEAMS, warzoneConfig.getInt("minTeams"));
+            }
 
-	public static void save(Warzone warzone, boolean saveAllBlocks) {
-		
-		War.war.log("Saving War with WarzoneTxtMapper", Level.SEVERE);
+            // resetOnEmpty
+            if (warzoneConfig.containsKey("resetOnEmpty")) {
+                warzone.getWarzoneConfig().put(WarzoneConfig.RESETONEMPTY, warzoneConfig.getBoolean("resetOnEmpty"));
+            }
+
+            // resetOnLoad
+            if (warzoneConfig.containsKey("resetOnLoad")) {
+                warzone.getWarzoneConfig().put(WarzoneConfig.RESETONLOAD, warzoneConfig.getBoolean("resetOnLoad"));
+            }
+
+            // resetOnUnload
+            if (warzoneConfig.containsKey("resetOnUnload")) {
+                warzone.getWarzoneConfig().put(WarzoneConfig.RESETONUNLOAD, warzoneConfig.getBoolean("resetOnUnload"));
+            }
+
+            // rallyPoint
+            String rallyPointStr = warzoneConfig.getString("rallyPoint");
+            if (rallyPointStr != null && !rallyPointStr.equals("")) {
+                String[] rallyPointStrSplit = rallyPointStr.split(",");
+
+                int rpX = Integer.parseInt(rallyPointStrSplit[0]);
+                int rpY = Integer.parseInt(rallyPointStrSplit[1]);
+                int rpZ = Integer.parseInt(rallyPointStrSplit[2]);
+                Location rallyPoint = new Location(world, rpX, rpY, rpZ);
+                warzone.setRallyPoint(rallyPoint);
+            }
+
+            // monuments
+            String monumentsStr = warzoneConfig.getString("monuments");
+            if (monumentsStr != null && !monumentsStr.equals("")) {
+                String[] monumentsSplit = monumentsStr.split(";");
+                warzone.getMonuments().clear();
+                for (String monumentStr : monumentsSplit) {
+                    if (monumentStr != null && !monumentStr.equals("")) {
+                        String[] monumentStrSplit = monumentStr.split(",");
+                        int monumentX = Integer.parseInt(monumentStrSplit[1]);
+                        int monumentY = Integer.parseInt(monumentStrSplit[2]);
+                        int monumentZ = Integer.parseInt(monumentStrSplit[3]);
+                        Monument monument = new Monument(monumentStrSplit[0], warzone, new Location(world, monumentX, monumentY, monumentZ));
+                        warzone.getMonuments().add(monument);
+                    }
+                }
+            }
+
+            // teams
+            String teamsStr = warzoneConfig.getString("teams");
+            if (teamsStr != null && !teamsStr.equals("")) {
+                String[] teamsSplit = teamsStr.split(";");
+                warzone.getTeams().clear();
+                for (String teamStr : teamsSplit) {
+                    if (teamStr != null && !teamStr.equals("")) {
+                        String[] teamStrSplit = teamStr.split(",");
+                        int teamX = Integer.parseInt(teamStrSplit[1]);
+                        int teamY = Integer.parseInt(teamStrSplit[2]);
+                        int teamZ = Integer.parseInt(teamStrSplit[3]);
+                        Location teamLocation = new Location(world, teamX, teamY, teamZ);
+                        if (teamStrSplit.length > 4) {
+                            int yaw = Integer.parseInt(teamStrSplit[4]);
+                            teamLocation.setYaw(yaw);
+                        }
+                        File original = new File(War.war.getDataFolder().getPath() + "/dat/warzone-" + name + "/volume-" + teamStrSplit[0] + ".dat");
+                        File modified = new File(War.war.getDataFolder().getPath() + "/dat/warzone-" + name + "/volume-" + teamStrSplit[0] + "0.dat");
+                        try {
+                            original.renameTo(modified);
+                        } catch (Exception ignored) {
+                        }
+
+                        Team team = new Team(teamStrSplit[0], TeamKind.teamKindFromString(teamStrSplit[0]), Arrays.asList(teamLocation), warzone);
+                        team.setRemainingLives(warzone.getTeamDefaultConfig().resolveInt(TeamConfig.LIFEPOOL));
+                        warzone.getTeams().add(team);
+                    }
+                }
+            }
+
+            // teamFlags
+            String teamFlagsStr = warzoneConfig.getString("teamFlags");
+            if (teamFlagsStr != null && !teamFlagsStr.equals("")) {
+                String[] teamFlagsSplit = teamFlagsStr.split(";");
+                for (String teamFlagStr : teamFlagsSplit) {
+                    if (teamFlagStr != null && !teamFlagStr.equals("")) {
+                        String[] teamFlagStrSplit = teamFlagStr.split(",");
+                        Team team = warzone.getTeamByKind(TeamKind.teamKindFromString(teamFlagStrSplit[0]));
+                        if (team != null) {
+                            int teamFlagX = Integer.parseInt(teamFlagStrSplit[1]);
+                            int teamFlagY = Integer.parseInt(teamFlagStrSplit[2]);
+                            int teamFlagZ = Integer.parseInt(teamFlagStrSplit[3]);
+                            Location teamFlagLocation = new Location(world, teamFlagX, teamFlagY, teamFlagZ);
+                            if (teamFlagStrSplit.length > 4) {
+                                int yaw = Integer.parseInt(teamFlagStrSplit[4]);
+                                teamFlagLocation.setYaw(yaw);
+                            }
+                            team.setTeamFlag(teamFlagLocation); // this may screw things up
+                        }
+                    }
+                }
+            }
+
+            // lobby
+            String lobbyStr = warzoneConfig.getString("lobby");
+
+            warzoneConfig.close();
+
+            if (createNewVolume) {
+                ZoneVolume zoneVolume = new ZoneVolume(warzone.getName(), world, warzone); // VolumeMapper.loadZoneVolume(warzone.getName(), warzone.getName(), war, warzone.getWorld(), warzone);
+                warzone.setVolume(zoneVolume);
+            }
+
+            // monument blocks
+            for (Monument monument : warzone.getMonuments()) {
+                try {
+                    monument.setVolume(VolumeMapper.loadVolume(monument.getName(), warzone.getName(), world));
+                } catch (SQLException e) {
+                    War.war.getLogger().log(Level.WARNING, "Failed to load some ambiguous old volume", e);
+                }
+            }
+
+            // team spawn blocks
+            for (Team team : warzone.getTeams()) {
+                for (Location spawnLocation : team.getTeamSpawns()) {
+                    try {
+                        team.setSpawnVolume(spawnLocation, VolumeMapper.loadVolume(team.getName() + "0", warzone.getName(), world));
+                    } catch (SQLException e) {
+                        War.war.getLogger().log(Level.WARNING, "Failed to load some ambiguous old volume", e);
+                    }
+                }
+                if (team.getTeamFlag() != null) {
+                    try {
+                        team.setFlagVolume(VolumeMapper.loadVolume(team.getName() + "flag", warzone.getName(), world));
+                    } catch (SQLException e) {
+                        War.war.getLogger().log(Level.WARNING, "Failed to load some ambiguous old volume", e);
+                    }
+                }
+            }
+
+            // lobby
+            BlockFace lobbyFace = null;
+            if (lobbyStr != null && !lobbyStr.equals("")) {
+                String[] lobbyStrSplit = lobbyStr.split(",");
+                if (lobbyStrSplit.length > 0) {
+                    // lobby orientation
+                    if (lobbyStrSplit[0].equals("south")) {
+                        lobbyFace = Direction.SOUTH();
+                    } else if (lobbyStrSplit[0].equals("east")) {
+                        lobbyFace = Direction.EAST();
+                    } else if (lobbyStrSplit[0].equals("north")) {
+                        lobbyFace = Direction.NORTH();
+                    } else if (lobbyStrSplit[0].equals("west")) {
+                        lobbyFace = Direction.WEST();
+                    }
+
+                    // lobby world
+                    World lobbyWorld = world;    // by default, warzone world
+                    if (lobbyStrSplit.length > 1) {
+                        World strWorld = War.war.getServer().getWorld(lobbyStrSplit[1]);
+                        if (strWorld != null) {
+                            lobbyWorld = strWorld;
+                        }
+                    }
+
+                    // create the lobby
+                    Volume lobbyVolume = null;
+                    try {
+                        lobbyVolume = VolumeMapper.loadVolume("lobby", warzone.getName(), lobbyWorld);
+                    } catch (SQLException e) {
+                        // if the zone is this old is there any reason the lobby should be nimitz format
+                        War.war.getLogger().log(Level.WARNING, "Failed to load lobby for a really old warzone", e);
+                    }
+                    ZoneLobby lobby = new ZoneLobby(warzone, lobbyFace, lobbyVolume);
+                    warzone.setLobby(lobby);
+                }
+            }
+
+            return warzone;
+        }
+        return null;
+    }
+
+    public static void save(Warzone warzone, boolean saveAllBlocks) {
+
+        War.war.log("Saving War with WarzoneTxtMapper", Level.SEVERE);
 //		(new File(War.war.getDataFolder().getPath() + "/dat/warzone-" + warzone.getName())).mkdir();
 //		PropertiesFile warzoneConfig = new PropertiesFile(War.war.getDataFolder().getPath() + "/warzone-" + warzone.getName() + ".txt");
 //		// war.getLogger().info("Saving warzone " + warzone.getName() + "...");
@@ -484,13 +479,13 @@ public class WarzoneTxtMapper {
 //		// loadout
 //		HashMap<Integer, ItemStack> items = warzone.getDefaultInventories().getLoadouts().get("default");
 //		warzoneConfig.setString("loadout", LoadoutTxtMapper.fromLoadoutToString(items));
-//		
+//
 //		// defaultExtraLoadouts
 //		String extraLoadoutsStr = "";
 //		for (String name : warzone.getDefaultInventories().getLoadouts().keySet()) {
 //			if (!name.equals("default")) {
 //				extraLoadoutsStr += name + ",";
-//				
+//
 //				HashMap<Integer, ItemStack> loadout = warzone.getDefaultInventories().getLoadouts().get(name);
 //				warzoneConfig.setString(name + "Loadout", LoadoutTxtMapper.fromLoadoutToString(loadout));
 //			}
@@ -499,7 +494,7 @@ public class WarzoneTxtMapper {
 //
 //		// authors
 //		warzoneConfig.setString("author", warzone.getAuthorsString());
-//		
+//
 //		// life pool
 //		warzoneConfig.setInt("lifePool", warzone.getLifePool());
 //
@@ -511,7 +506,7 @@ public class WarzoneTxtMapper {
 //
 //		// flagPointsOnly
 //		warzoneConfig.setBoolean("flagPointsOnly", warzone.isFlagPointsOnly());
-//		
+//
 //		// flagMustBeHome
 //		warzoneConfig.setBoolean("flagMustBeHome", warzone.isFlagMustBeHome());
 //
@@ -520,7 +515,7 @@ public class WarzoneTxtMapper {
 //
 //		// score cap
 //		warzoneConfig.setInt("scoreCap", warzone.getScoreCap());
-//		
+//
 //		// respawn timer
 //		warzoneConfig.setInt("respawnTimer", warzone.getRespawnTimer());
 //
@@ -545,28 +540,28 @@ public class WarzoneTxtMapper {
 //
 //		// noCreatures
 //		warzoneConfig.setBoolean("noCreatures", warzone.isNoCreatures());
-//		
+//
 //		// glassWalls
 //		warzoneConfig.setBoolean("glassWalls", warzone.isGlassWalls());
-//		
+//
 //		// pvpInZone
 //		warzoneConfig.setBoolean("pvpInZone", warzone.isPvpInZone());
-//		
+//
 //		// instaBreak
 //		warzoneConfig.setBoolean("instaBreak", warzone.isInstaBreak());
-//		
+//
 //		// noDrops
 //		warzoneConfig.setBoolean("noDrops", warzone.isNoDrops());
-//		
+//
 //		// noHunger
 //		warzoneConfig.setBoolean("noHunger", warzone.isNoHunger());
-//		
+//
 //		// saturation
 //		warzoneConfig.setInt("saturation", warzone.getSaturation());
-//		
+//
 //		// minPlayers
 //		warzoneConfig.setInt("minPlayers", warzone.getMinPlayers());
-//		
+//
 //		// minTeams
 //		warzoneConfig.setInt("minTeams", warzone.getMinTeams());
 //
@@ -633,25 +628,25 @@ public class WarzoneTxtMapper {
 //		if (warzone.getLobby() != null) {
 //			VolumeMapper.save(warzone.getLobby().getVolume(), warzone.getName());
 //		}
-	}
+    }
 
-	public static void delete(String name) {
-		File zoneFolder = new File(War.war.getDataFolder().getPath() + "/dat/warzone-" + name);
-		File[] files = zoneFolder.listFiles();
-		for (File file : files) {
-			boolean deletedData = file.delete();
-			if (!deletedData) {
-				War.war.log("Failed to delete file " + file.getName(), Level.WARNING);
-			}
-		}
-		boolean deletedData = zoneFolder.delete();
-		if (!deletedData) {
-			War.war.log("Failed to delete folder " + zoneFolder.getName(), Level.WARNING);
-		}
-		File zoneFile = new File(War.war.getDataFolder().getPath() + "/warzone-" + name + ".txt");
-		deletedData = zoneFile.delete();
-		if (!deletedData) {
-			War.war.log("Failed to delete file " + zoneFile.getName(), Level.WARNING);
-		}
-	}
+    public static void delete(String name) {
+        File zoneFolder = new File(War.war.getDataFolder().getPath() + "/dat/warzone-" + name);
+        File[] files = zoneFolder.listFiles();
+        for (File file : files) {
+            boolean deletedData = file.delete();
+            if (!deletedData) {
+                War.war.log("Failed to delete file " + file.getName(), Level.WARNING);
+            }
+        }
+        boolean deletedData = zoneFolder.delete();
+        if (!deletedData) {
+            War.war.log("Failed to delete folder " + zoneFolder.getName(), Level.WARNING);
+        }
+        File zoneFile = new File(War.war.getDataFolder().getPath() + "/warzone-" + name + ".txt");
+        deletedData = zoneFile.delete();
+        if (!deletedData) {
+            War.war.log("Failed to delete file " + zoneFile.getName(), Level.WARNING);
+        }
+    }
 }

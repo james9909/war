@@ -21,16 +21,8 @@ public abstract class AbstractOptionalWarAdminCommand extends AbstractWarCommand
 
     public boolean isSenderWarAdmin() {
         if (this.getSender() instanceof Player) {
-            if (!War.war.isWarAdmin((Player) this.getSender())) {
-                return false;
-            } else {
-                return true;
-            }
-        } else if (!(this.getSender() instanceof ConsoleCommandSender)) {
-            return false;
-        } else {
-            // ConsoleCommandSender is admin
-            return true;
+            return War.war.isWarAdmin((Player) this.getSender());
         }
+        return this.getSender() instanceof  ConsoleCommandSender;
     }
 }

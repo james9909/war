@@ -24,11 +24,7 @@ public class SetZoneCommand extends AbstractZoneMakerCommand {
 
         Player player = (Player) this.getSender();
 
-        if (this.args.length == 0) {
-            return false;
-        } else if (this.args.length > 2) {
-            return false;
-        } else if (this.args.length == 1) {
+        if (this.args.length == 1) {
             if (War.war.getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
                 WorldEditPlugin worldEdit = (WorldEditPlugin) War.war.getServer().getPluginManager().getPlugin("WorldEdit");
                 Selection selection = worldEdit.getSelection(player);
@@ -43,6 +39,7 @@ public class SetZoneCommand extends AbstractZoneMakerCommand {
             }
             War.war.addWandBearer(player, this.args[0]);
         } else if (this.args.length == 2) {
+            // args.length == 2
             if (!this.args[1].equals("southeast") && !this.args[1].equals("northwest") && !this.args[1].equals("se") && !this.args[1].equals("nw") && !this.args[1].equals("corner1") && !this.args[1]
                 .equals("corner2") && !this.args[1].equals("c1") && !this.args[1].equals("c2") && !this.args[1].equals("pos1") && !this.args[1].equals("pos2") && !this.args[1].equals("wand")) {
                 return false;
@@ -60,6 +57,8 @@ public class SetZoneCommand extends AbstractZoneMakerCommand {
             } else if (this.args[1].equals("wand")) {
                 War.war.addWandBearer(player, this.args[0]);
             }
+        } else {
+            return false;
         }
 
         return true;

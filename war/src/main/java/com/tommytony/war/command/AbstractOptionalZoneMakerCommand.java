@@ -25,17 +25,9 @@ public abstract class AbstractOptionalZoneMakerCommand extends AbstractWarComman
     public boolean isSenderZoneMaker() {
         if (this.getSender() instanceof Player) {
             // for players check War.isZoneMaker()
-            if (!War.war.isZoneMaker((Player) this.getSender())) {
-                return false;
-            } else {
-                return true;
-            }
-        } else if (!(this.getSender() instanceof ConsoleCommandSender)) {
-            return false;
-        } else {
-            // ConsoleCommandSender is admin
-            return true;
+            return War.war.isZoneMaker((Player) this.getSender());
         }
+        return this.getSender() instanceof ConsoleCommandSender;
     }
 
     public boolean isSenderAuthorOfZone(Warzone zone) {

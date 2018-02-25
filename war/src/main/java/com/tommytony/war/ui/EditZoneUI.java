@@ -2,8 +2,8 @@ package com.tommytony.war.ui;
 
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
-import com.tommytony.war.command.DeleteZoneCommand;
-import com.tommytony.war.command.ResetZoneCommand;
+import com.tommytony.war.command.zonemaker.DeleteZoneCommand;
+import com.tommytony.war.command.zonemaker.ResetZoneCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

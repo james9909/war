@@ -36,13 +36,13 @@ permissions:
     description: Gives you access the /zone and /warhub commands that let you teleport to all warzones.
     default: true
   war.build:
-    description: 
-      Useful only after using /warcfg buildinzonesonly:true. This node circumvents the build restriction and lets you build outside warzones. 
-      Give war.build to people that you consider worthy of having build rights. 
+    description:
+      Useful only after using /warcfg buildinzonesonly:true. This node circumvents the build restriction and lets you build outside warzones.
+      Give war.build to people that you consider worthy of having build rights.
     default: false
   war.pvp:
-    description: 
-      Useful only after using /warcfg pvpinzonesonly:true. This node circumvents the pvp restriction and lets you pvp outside warzones. 
+    description:
+      Useful only after using /warcfg pvpinzonesonly:true. This node circumvents the pvp restriction and lets you pvp outside warzones.
       To setup a pvp world, give war.pvp to players, but only as a permission specific to the pvp world. Other worlds will remain protected
       by the pvpinzonesonly setting. NOTE - No matter what, pvp must be turned on in your server.properties file, otherwise War won't work.
     default: false
@@ -73,9 +73,9 @@ commands:
     usage: Lists the teams in the warzone. Use zone name when outside warzone.
         Ex - /teams [zone-name]
   join:
-    description: War> Use to change teams. Also used instead of walking in the team gate in the lobby.
-    usage: Use to change teams. Also used instead of walking in the team gate in the lobby. Must be standing in warzone or lobby.
-        Ex - /join <team-color>
+    description: War> Use to join warzones.
+    usage: Use to join warzones. Use zone name when outside a warzone.
+        Ex - /join [zone-name]
   leave:
     description: War> Use to leave a warzone. Teleports you back to the lobby.
     usage: Use to leave a warzone. Teleports you back to the lobby. Must be in team already.
@@ -141,15 +141,15 @@ commands:
         Ex -
         /setteamflag <diamond/iron/gold/white/orange/magenta/blue/green/pink/gray/purple/navy/brown/darkgreen/red/black/>
   setbomb:
-    description: War> Creates or moves a bomb. Get the bomb to the other team's spawn. People from other teams can blow you up. 
+    description: War> Creates or moves a bomb. Get the bomb to the other team's spawn. People from other teams can blow you up.
     usage: Creates or moves a bomb. Get the bomb to the other team's spawn. People from other teams can blow you up. Must be standing in warzone.
         Ex -
         /setbomb <bomb-name>
   setcake:
-    description: War> Creates or moves a cake. Get the cake to your spawn to score a replenish your lifepool. 
+    description: War> Creates or moves a cake. Get the cake to your spawn to score a replenish your lifepool.
     usage: Creates or moves a bomb. Get the cake to your spawn to score a replenish your lifepool. Must be standing in warzone.
         Ex -
-        /setcake <cake-name>   
+        /setcake <cake-name>
   resetzone:
     description: War> Reloads zone blocks from disk. Everyone is teleported back to the lobby.
     usage: Reloads zone blocks from disk. Everyone is teleported back to the lobby. Provide a zone name if not standing in warzone or lobby.
@@ -201,11 +201,11 @@ commands:
     usage: Use named parameters to change the configuration of the warzone and default team settings. May require a /resetzone. Provide a zone name if not standing in warzone or lobby.
         \\\\ Warzone config \\
         /zonecfg [zone-name] disabled:off -> prevents players from joining. \\
-        /zonecfg [zone-name] autoassign:off blockheads:on deathmessages:on friendlyfire:off glasswalls:on instabreak:off 
-                             minteams:1 minplayers:1 monumentheal:5 nocreatures:off nodrops:off pvpinzone:on realdeaths:off 
+        /zonecfg [zone-name] autoassign:off blockheads:on deathmessages:on friendlyfire:off glasswalls:on instabreak:off
+                             minteams:1 minplayers:1 monumentheal:5 nocreatures:off nodrops:off pvpinzone:on realdeaths:off
                              resetonempty:off resetonconfigchange:off resetonload:off resetonunload:off unbreakable:off \\
         /zonecfg lobbymaterial:<floor/outline/gate/light> -> while holding block, change the look of the lobby (use air block to keep original floor). \\
-        /zonecfg material:<main/stand/light> -> while holding block, change the look of the monument, flag, cake and bomb. 
+        /zonecfg material:<main/stand/light> -> while holding block, change the look of the monument, flag, cake and bomb.
         \\\\ Team defaults \\
         /zonecfg [zone-name] lifepool:7 -> each death consumes a life from the team's pool, an empty lifepool end the battle and gives a point to the other teams. \\
         /zonecfg maxscore:10 -> once a team reaches this value, the game is ended. \\
@@ -215,26 +215,26 @@ commands:
         /zonecfg loadout:<extra-loadout-name>:<permission> -> add/update a loadout that requires a permission. \\
         /zonecfg deleteloadout:<extra-loadout-name> -> removes the specified loadout from the choices. \\
         /zonecfg playerloadoutasdefault:true -> the player can bring a copy of his outside-world inventory to fight, it replaces the default loadout. \\
-        /zonecfg reward:default -> sets the winner's reward to your current items. 
+        /zonecfg reward:default -> sets the winner's reward to your current items.
         \\\\ Print config \\
-        /zonecfg [zone-name] print (or /zonecfg -p) -> prints out the warzone settings. \\ 
-    aliases: 
+        /zonecfg [zone-name] print (or /zonecfg -p) -> prints out the warzone settings. \\
+    aliases:
         - setzoneconfig
   teamcfg:
     description: War> Use named parameters to change team-specific settings. May require a /resetzone.
     usage: Use named parameters to change the team-specific settings. May require a /resetzone. Provide a zone name if not standing in warzone or lobby.
         \\\\ Team config \\
-        /teamcfg [zone-name] <team-name> lifepool:7 -> each death consumes a life from the team's pool, an empty lifepool end the battle and gives a point to the other teams. \\ 
+        /teamcfg [zone-name] <team-name> lifepool:7 -> each death consumes a life from the team's pool, an empty lifepool end the battle and gives a point to the other teams. \\
         /teamcfg <team-name> maxscore:10 -> once a team reaches this value, the game is ended. \\
         /teamcfg <team-name> teamsize:10 flagmustbehome:on flagpointsonly:off flagreturn:<both/flag/spawn> nohunger:off respawntimer:0 saturation:10 spawnstyle:<small/flat/big/invisible> \\
         /teamcfg <team-name> loadout:default -> sets the default respawn inventory to your current items. \\
-        /teamcfg <team-name> loadout:<extra-loadout-name> -> adds an extra loadout (i.e. another player class) that the players can toggle to by sneaking while inside the spawn. \\ 
+        /teamcfg <team-name> loadout:<extra-loadout-name> -> adds an extra loadout (i.e. another player class) that the players can toggle to by sneaking while inside the spawn. \\
         /teamcfg <team-name> deleteloadout:<extra-loadout-name> -> removes the specified loadout from the choices. \\
-        /teamcfg <team-name> playerloadoutasdefault:true -> the player can bring a copy of his outside-world inventory to fight, it replaces the default loadout. \\ 
-        /teamcfg <team-name> reward:default -> sets the winner's reward to your current items.  
+        /teamcfg <team-name> playerloadoutasdefault:true -> the player can bring a copy of his outside-world inventory to fight, it replaces the default loadout. \\
+        /teamcfg <team-name> reward:default -> sets the winner's reward to your current items.
         \\\\ Print config \\
-        /teamcfg [zone-name] <team-name> print (or /teamcfg -p) -> prints out the team settings. \\  
-    aliases: 
+        /teamcfg [zone-name] <team-name> print (or /teamcfg -p) -> prints out the team settings. \\
+    aliases:
         - setteamconfig
   zonemaker:
     description: War> Toggles between player mode and zone maker mode. Or gives/removes access to zonemaker commands for another player.
@@ -275,17 +275,18 @@ commands:
     description: War> Change gobal settings and the default warzone configuration values.
     usage: Change global settings and the default warzone and team configuration values.
         \\\\ War config \\
-        /warcfg buildinzonesonly:on disablebuildmessage:off -> makes war.build permission required to build outside warzones. \\ 
+        /warcfg buildinzonesonly:on disablebuildmessage:off -> makes war.build permission required to build outside warzones. \\
         /warcfg pvpinzonesonly:on disablepvpmessage:off tntinzonesonly:off -> pvp and tnt denied outside zones (use war.pvp permission to allow pvp). \\
         /warcfg maxzones:12 keepoldzoneversions:on -> manage War's resource usage. \\
         /warcfg warhubmaterial:<floor/outline/gate/light> -> while holding block, change the look of the warhub (use air block to keep original floor). \\
-        /warcfg rallypoint:<warzone-name> -> changes game-end teleport destination from lobby to current location - useful for chaining warzones together in a sequence, or preventing players from rejoining immediately. 
+        /warcfg rallypoint:<warzone-name> -> changes game-end teleport destination from lobby to current location - useful for chaining warzones together in a sequence, or preventing players from re
+        return false;joining immediately.
         \\\\ Warzone defaults \\
         /warcfg autoassign:off blockheads:on deathmessages:on disabled:off friendlyfire:off glasswalls:on
                 instabreak:off minteams:1 minplayers:1 monumentheal:5 nocreatures:off nodrops:off pvpinzone:on
                 realdeaths:off resetonempty:off resetonconfigchange:off resetonload:off resetonunload:off unbreakable:off souphealing:on\\
         /warcfg lobbymaterial:<floor/outline/gate/light> -> while holding block, change the look of the lobby (use air block to keep original floor). \\
-        /warcfg material:<main/stand/light> -> while holding block, change the look of the monument, flag, cake and bomb. 
+        /warcfg material:<main/stand/light> -> while holding block, change the look of the monument, flag, cake and bomb.
         \\\\ Team defaults \\
         /warcfg lifepool:7 -> each death consumes a life from the team's pool, a death with an empty lifepool ends the battle and gives a point to the other teams. \\
         /warcfg maxscore:10 -> once a team reaches this value, the game is ended. \\
@@ -294,10 +295,10 @@ commands:
         /warcfg loadout:<extra-loadout-name> -> adds an extra loadout (i.e. another player class) that the players can toggle to by sneaking while inside the spawn. \\
         /warcfg deleteloadout:<extra-loadout-name> -> removes the specified loadout from the choices. \\
         /warcfg playerloadoutasdefault:true -> the player can bring a copy of his outside-world inventory to fight, it replaces the default loadout. \\
-        /warcfg reward:default -> sets the winner's reward to your current items. 
+        /warcfg reward:default -> sets the winner's reward to your current items.
         \\\\ Print config \\
-        /warcfg print (or /warcfg -p) -> prints out the current War settings. \\ 
-    aliases: 
+        /warcfg print (or /warcfg -p) -> prints out the current War settings. \\
+    aliases:
         - setwarconfig
 # Fallback
   war:

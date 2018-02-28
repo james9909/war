@@ -120,7 +120,6 @@ public class KillstreakReward {
                 } else {
                     // just added a point
                     playerTeam.resetSign();
-                    zone.getLobby().resetTeamGateSign(playerTeam);
                 }
             }
             if (killSection.getBoolean("reward.airstrike")) {

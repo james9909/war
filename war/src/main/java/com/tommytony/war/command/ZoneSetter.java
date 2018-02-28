@@ -5,8 +5,6 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.config.WarConfig;
 import com.tommytony.war.mapper.WarYmlMapper;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
-import com.tommytony.war.structure.ZoneLobby;
-import com.tommytony.war.utility.Direction;
 import com.tommytony.war.volume.NotNorthwestException;
 import com.tommytony.war.volume.NotSoutheastException;
 import com.tommytony.war.volume.TooBigException;
@@ -219,9 +217,6 @@ public class ZoneSetter {
     private void resetWarzone(Warzone warzone, StringBuilder msgString) {
         if (warzone.getVolume().isSaved()) {
             War.war.msg(this.player, "Resetting " + warzone.getName() + " blocks.");
-            if (warzone.getLobby() != null && warzone.getLobby().getVolume() != null) {
-                warzone.getLobby().getVolume().resetBlocks();
-            }
             warzone.getVolume().resetBlocks();
             msgString.append(warzone.getVolume().size()).append(" blocks reset. ");
         }
@@ -247,17 +242,6 @@ public class ZoneSetter {
             msgString.append("Saving new warzone blocks...");
             War.war.msg(this.player, msgString.toString());
             warzone.saveState(false); // we just changed the volume, cant reset walls
-
-            if (warzone.getLobby() == null) {
-                // Set default lobby on south side
-                ZoneLobby lobby = new ZoneLobby(warzone, Direction.SOUTH());
-                warzone.setLobby(lobby);
-                if (War.war.getWarHub() != null) { // warhub has to change
-                    War.war.getWarHub().getVolume().resetBlocks();
-                    War.war.getWarHub().initialize();
-                }
-                War.war.msg(this.player, "Default lobby created on south side of zone. Use /setzonelobby <n/s/e/w> to change its position.");
-            }
 
             warzone.initializeZone();
             WarzoneYmlMapper.save(warzone);

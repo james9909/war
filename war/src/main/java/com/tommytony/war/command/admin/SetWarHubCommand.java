@@ -43,12 +43,6 @@ public class SetWarHubCommand extends AbstractWarAdminCommand {
             } else {
                 War.war.setWarHub(new WarHub(player.getLocation()));
                 War.war.getWarHub().initialize();
-                for (Warzone zone : War.war.getWarzones()) {
-                    if (zone.getLobby() != null) {
-                        zone.getLobby().getVolume().resetBlocks();
-                        zone.getLobby().initialize();
-                    }
-                }
                 this.msg("War hub created.");
                 War.war.log(this.getSender().getName() + " created the warhub", Level.INFO);
             }

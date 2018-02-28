@@ -60,10 +60,6 @@ public class SetTeamCommand extends AbstractZoneMakerCommand {
                 Team newTeam = new Team(teamKind.toString(), teamKind, Collections.<Location>emptyList(), zone);
                 newTeam.setRemainingLives(newTeam.getTeamConfig().resolveInt(TeamConfig.LIFEPOOL));
                 zone.getTeams().add(newTeam);
-                if (zone.getLobby() != null) {
-                    zone.getLobby().setLocation(zone.getTeleport());
-                    zone.getLobby().initialize();
-                }
                 newTeam.addTeamSpawn(player.getLocation());
                 this.msg("Team " + newTeam.getName() + " created with spawn here.");
                 War.war.log(this.getSender().getName() + " created team " + newTeam.getName() + " in warzone " + zone.getName(), Level.INFO);

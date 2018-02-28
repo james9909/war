@@ -38,9 +38,6 @@ public class RestoreWarzonesJob implements Runnable {
                         throw new RuntimeException(ex);
                     }
 
-                    if (zone.getLobby() != null) {
-                        zone.getLobby().getVolume().resetBlocks();
-                    }
                     if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.RESETONLOAD)) {
                         zone.getVolume().resetBlocks();
                     }

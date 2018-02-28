@@ -9,7 +9,6 @@ import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.TeamSpawnStyle;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.structure.Monument;
-import com.tommytony.war.structure.ZoneLobby;
 import com.tommytony.war.utility.Direction;
 import com.tommytony.war.volume.Volume;
 import com.tommytony.war.volume.ZoneVolume;
@@ -64,17 +63,6 @@ public class WarzoneTxtMapper {
                     // war.getLogger().info("Failed to reload warzone-" + name + ".txt file after creating it.");
                     e.printStackTrace();
                 }
-            }
-
-            // teleport
-            String teleportStr = warzoneConfig.getString("teleport");
-            if (teleportStr != null && !teleportStr.equals("")) {
-                String[] teleportSplit = teleportStr.split(",");
-                int teleX = Integer.parseInt(teleportSplit[0]);
-                int teleY = Integer.parseInt(teleportSplit[1]);
-                int teleZ = Integer.parseInt(teleportSplit[2]);
-                int yaw = Integer.parseInt(teleportSplit[3]);
-                warzone.setTeleport(new Location(world, teleX, teleY, teleZ, yaw, 0));
             }
 
             // ff
@@ -335,9 +323,6 @@ public class WarzoneTxtMapper {
                 }
             }
 
-            // lobby
-            String lobbyStr = warzoneConfig.getString("lobby");
-
             warzoneConfig.close();
 
             if (createNewVolume) {
@@ -369,49 +354,6 @@ public class WarzoneTxtMapper {
                     } catch (SQLException e) {
                         War.war.getLogger().log(Level.WARNING, "Failed to load some ambiguous old volume", e);
                     }
-                }
-            }
-
-            // lobby
-            BlockFace lobbyFace = null;
-            if (lobbyStr != null && !lobbyStr.equals("")) {
-                String[] lobbyStrSplit = lobbyStr.split(",");
-                if (lobbyStrSplit.length > 0) {
-                    // lobby orientation
-                    switch (lobbyStrSplit[0]) {
-                        case "south":
-                            lobbyFace = Direction.SOUTH();
-                            break;
-                        case "east":
-                            lobbyFace = Direction.EAST();
-                            break;
-                        case "north":
-                            lobbyFace = Direction.NORTH();
-                            break;
-                        case "west":
-                            lobbyFace = Direction.WEST();
-                            break;
-                    }
-
-                    // lobby world
-                    World lobbyWorld = world;    // by default, warzone world
-                    if (lobbyStrSplit.length > 1) {
-                        World strWorld = War.war.getServer().getWorld(lobbyStrSplit[1]);
-                        if (strWorld != null) {
-                            lobbyWorld = strWorld;
-                        }
-                    }
-
-                    // create the lobby
-                    Volume lobbyVolume = null;
-                    try {
-                        lobbyVolume = VolumeMapper.loadVolume("lobby", warzone.getName(), lobbyWorld);
-                    } catch (SQLException e) {
-                        // if the zone is this old is there any reason the lobby should be nimitz format
-                        War.war.getLogger().log(Level.WARNING, "Failed to load lobby for a really old warzone", e);
-                    }
-                    ZoneLobby lobby = new ZoneLobby(warzone, lobbyFace, lobbyVolume);
-                    warzone.setLobby(lobby);
                 }
             }
 

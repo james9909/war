@@ -10,8 +10,6 @@ import com.tommytony.war.structure.Bomb;
 import com.tommytony.war.structure.Cake;
 import com.tommytony.war.structure.CapturePoint;
 import com.tommytony.war.structure.Monument;
-import com.tommytony.war.structure.ZoneLobby;
-import com.tommytony.war.utility.Direction;
 import com.tommytony.war.volume.Volume;
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +22,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -68,13 +65,6 @@ public class WarzoneYmlMapper {
 
             // Create the zone
             Warzone warzone = new Warzone(world, name);
-
-            // teleport
-            int teleX = warzoneRootSection.getInt(zoneInfoPrefix + "teleport.x");
-            int teleY = warzoneRootSection.getInt(zoneInfoPrefix + "teleport.y");
-            int teleZ = warzoneRootSection.getInt(zoneInfoPrefix + "teleport.z");
-            int teleYaw = warzoneRootSection.getInt(zoneInfoPrefix + "teleport.yaw");
-            warzone.setTeleport(new Location(world, teleX, teleY, teleZ, teleYaw, 0));
 
             // defaultLoadouts
             if (warzoneRootSection.contains("team.default.loadout")) {
@@ -366,75 +356,6 @@ public class WarzoneYmlMapper {
                 }
             }
 
-            // lobby
-            String lobbyPrefix = zoneInfoPrefix + "lobby.";
-
-            // lobby orientation
-            String lobbyOrientation = warzoneRootSection.getString(lobbyPrefix + "orientation");
-            BlockFace lobbyFace = null;
-            switch (lobbyOrientation) {
-                case "south":
-                    lobbyFace = Direction.SOUTH();
-                    break;
-                case "east":
-                    lobbyFace = Direction.EAST();
-                    break;
-                case "north":
-                    lobbyFace = Direction.NORTH();
-                    break;
-                case "west":
-                    lobbyFace = Direction.WEST();
-                    break;
-            }
-
-            // lobby materials
-            if (warzoneRootSection.isItemStack(lobbyPrefix + "materials.floor")) {
-                warzone.getLobbyMaterials().setFloorBlock(warzoneRootSection.getItemStack(lobbyPrefix + "materials.floor"));
-            } else {
-                ConfigurationSection floorMaterialSection = warzoneRootSection.getConfigurationSection(lobbyPrefix + "materials.floor");
-                if (floorMaterialSection != null) {
-                    warzone.getLobbyMaterials().setFloorBlock(new ItemStack(floorMaterialSection.getInt("id"), 1, (short) floorMaterialSection.getInt("data")));
-                }
-            }
-            if (warzoneRootSection.isItemStack(lobbyPrefix + "materials.outline")) {
-                warzone.getLobbyMaterials().setOutlineBlock(warzoneRootSection.getItemStack(lobbyPrefix + "materials.outline"));
-            } else {
-                ConfigurationSection floorMaterialSection = warzoneRootSection.getConfigurationSection(lobbyPrefix + "materials.outline");
-                if (floorMaterialSection != null) {
-                    warzone.getLobbyMaterials().setOutlineBlock(new ItemStack(floorMaterialSection.getInt("id"), 1, (short) floorMaterialSection.getInt("data")));
-                }
-            }
-            if (warzoneRootSection.isItemStack(lobbyPrefix + "materials.gate")) {
-                warzone.getLobbyMaterials().setGateBlock(warzoneRootSection.getItemStack(lobbyPrefix + "materials.gate"));
-            } else {
-                ConfigurationSection floorMaterialSection = warzoneRootSection.getConfigurationSection(lobbyPrefix + "materials.gate");
-                if (floorMaterialSection != null) {
-                    warzone.getLobbyMaterials().setGateBlock(new ItemStack(floorMaterialSection.getInt("id"), 1, (short) floorMaterialSection.getInt("data")));
-                }
-            }
-            if (warzoneRootSection.isItemStack(lobbyPrefix + "materials.light")) {
-                warzone.getLobbyMaterials().setLightBlock(warzoneRootSection.getItemStack(lobbyPrefix + "materials.light"));
-            } else {
-                ConfigurationSection floorMaterialSection = warzoneRootSection.getConfigurationSection(lobbyPrefix + "materials.light");
-                if (floorMaterialSection != null) {
-                    warzone.getLobbyMaterials().setLightBlock(new ItemStack(floorMaterialSection.getInt("id"), 1, (short) floorMaterialSection.getInt("data")));
-                }
-            }
-
-            // lobby world
-            String lobbyWorldName = warzoneRootSection.getString(lobbyPrefix + "world");
-            World lobbyWorld = War.war.getServer().getWorld(lobbyWorldName);
-
-            // create the lobby
-            Volume lobbyVolume = null;
-            try {
-                lobbyVolume = warzone.loadStructure("lobby", lobbyWorld, connection);
-            } catch (SQLException e) {
-                War.war.getLogger().log(Level.WARNING, "Failed to load warzone lobby", e);
-            }
-            ZoneLobby lobby = new ZoneLobby(warzone, lobbyFace, lobbyVolume);
-            warzone.setLobby(lobby);
-
             // warzone materials
             if (warzoneRootSection.isItemStack(zoneInfoPrefix + "materials.main")) {
                 warzone.getWarzoneMaterials().setMainBlock(warzoneRootSection.getItemStack(zoneInfoPrefix + "materials.main"));
@@ -489,45 +410,8 @@ public class WarzoneYmlMapper {
         // authors
         warzoneInfoSection.set("authors", warzone.getAuthors());
 
-        // teleport
-        ConfigurationSection teleSection = warzoneInfoSection.createSection("teleport");
-        teleSection.set("x", warzone.getTeleport().getBlockX());
-        teleSection.set("y", warzone.getTeleport().getBlockY());
-        teleSection.set("z", warzone.getTeleport().getBlockZ());
-        teleSection.set("yaw", toIntYaw(warzone.getTeleport().getYaw()));
-
         // world
         warzoneInfoSection.set("world", warzone.getWorld().getName());
-
-        // lobby
-        if (warzone.getLobby() != null) {
-            String lobbyOrientation = "";
-            if (Direction.SOUTH() == warzone.getLobby().getWall()) {
-                lobbyOrientation = "south";
-            } else if (Direction.EAST() == warzone.getLobby().getWall()) {
-                lobbyOrientation = "east";
-            } else if (Direction.NORTH() == warzone.getLobby().getWall()) {
-                lobbyOrientation = "north";
-            } else if (Direction.WEST() == warzone.getLobby().getWall()) {
-                lobbyOrientation = "west";
-            }
-
-            ConfigurationSection lobbySection = warzoneInfoSection.createSection("lobby");
-            lobbySection.set("orientation", lobbyOrientation);
-            lobbySection.set("world", warzone.getLobby().getVolume().getWorld().getName());
-
-            lobbySection.set("materials.floor", warzone.getLobbyMaterials().getFloorBlock());
-            lobbySection.set("materials.outline", warzone.getLobbyMaterials().getOutlineBlock());
-            lobbySection.set("materials.gate", warzone.getLobbyMaterials().getGateBlock());
-            lobbySection.set("materials.light", warzone.getLobbyMaterials().getLightBlock());
-        }
-
-        // materials
-        if (warzone.getLobby() != null) {
-            warzoneInfoSection.set("materials.main", warzone.getWarzoneMaterials().getMainBlock());
-            warzoneInfoSection.set("materials.stand", warzone.getWarzoneMaterials().getStandBlock());
-            warzoneInfoSection.set("materials.light", warzone.getWarzoneMaterials().getLightBlock());
-        }
 
         // rallyPoint
         if (warzone.getRallyPoint() != null) {
@@ -753,13 +637,6 @@ public class WarzoneYmlMapper {
             }
         }
 
-        if (warzone.getLobby() != null) {
-            try {
-                ZoneVolumeMapper.saveStructure(warzone.getLobby().getVolume(), connection);
-            } catch (SQLException e) {
-                War.war.getLogger().log(Level.WARNING, "Failed to save warzone structures volume", e);
-            }
-        }
         try {
             connection.close();
         } catch (SQLException ignored) {

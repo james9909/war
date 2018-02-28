@@ -60,10 +60,6 @@ class EditTeamUI extends ChestUI {
             }
             final Warzone zone = team.getZone();
             zone.getTeams().remove(team);
-            if (zone.getLobby() != null) {
-                zone.getLobby().setLocation(zone.getTeleport());
-                zone.getLobby().initialize();
-            }
             WarzoneYmlMapper.save(zone);
             War.war.msg(player, "Team " + team.getName() + " removed.");
         });

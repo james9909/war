@@ -23,12 +23,11 @@ import com.tommytony.war.mapper.ZoneVolumeMapper;
 import com.tommytony.war.structure.Bomb;
 import com.tommytony.war.structure.Cake;
 import com.tommytony.war.structure.CapturePoint;
-import com.tommytony.war.structure.HubLobbyMaterials;
 import com.tommytony.war.structure.Monument;
 import com.tommytony.war.structure.WarzoneMaterials;
-import com.tommytony.war.structure.ZoneLobby;
 import com.tommytony.war.structure.ZoneWallGuard;
 import com.tommytony.war.utility.Direction;
+import com.tommytony.war.utility.InventoryManager;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.LoadoutSelection;
 import com.tommytony.war.utility.PlayerState;
@@ -111,7 +110,6 @@ public class Warzone {
     private ZoneVolume volume;
     private World world;
     private Location teleport;
-    private ZoneLobby lobby;
     private Location rallyPoint;
     private List<ZoneWallGuard> zoneWallGuards = new ArrayList<>();
     private HashMap<String, PlayerState> playerStates = new HashMap<>();
@@ -125,10 +123,10 @@ public class Warzone {
     private HashMap<Player, Team> delayedJoinPlayers = new HashMap<>();
     private List<LogKillsDeathsJob.KillsDeathsRecord> killsDeathsTracker = new ArrayList<>();
     private InventoryBag defaultInventories = new InventoryBag();
+    private InventoryManager inventoryManager;
 
     private Scoreboard scoreboard;
 
-    private HubLobbyMaterials lobbyMaterials;
     private WarzoneMaterials warzoneMaterials = new WarzoneMaterials(new ItemStack(Material.OBSIDIAN), new ItemStack(Material.FENCE), new ItemStack(Material.GLOWSTONE));
 
     private boolean isEndOfGame = false;
@@ -147,12 +145,12 @@ public class Warzone {
         this.warzoneConfig = new WarzoneConfigBag(this);
         this.teamDefaultConfig = new TeamConfigBag();    // don't use ctor with Warzone, as this changes config resolution
         this.volume = new ZoneVolume(name, this.getWorld(), this);
-        this.lobbyMaterials = War.war.getWarhubMaterials().clone();
         this.pvpReady = true;
         this.scoreboardType = this.getWarzoneConfig().getScoreboardType(WarzoneConfig.SCOREBOARD);
         if (scoreboardType == ScoreboardType.SWITCHING) {
             scoreboardType = ScoreboardType.LIFEPOOL;
         }
+        this.inventoryManager = new InventoryManager();
     }
 
     public static Warzone getZoneByName(String name) {
@@ -297,10 +295,6 @@ public class Warzone {
                 for (Cake cake : this.cakes) {
                     cake.getVolume().resetBlocks();
                 }
-
-                if (this.lobby != null) {
-                    this.lobby.getVolume().resetBlocks();
-                }
             }
 
             this.volume.saveBlocks();
@@ -399,14 +393,6 @@ public class Warzone {
         for (Cake cake : this.cakes) {
             cake.getVolume().resetBlocks();
             cake.addCakeBlocks();
-        }
-
-        // reset lobby (here be demons)
-        if (this.lobby != null) {
-            if (this.lobby.getVolume() != null) {
-                this.lobby.getVolume().resetBlocks();
-            }
-            this.lobby.initialize();
         }
 
         this.flagThieves.clear();
@@ -650,22 +636,35 @@ public class Warzone {
     }
 
     public void keepPlayerState(Player player) {
-        PlayerInventory inventory = player.getInventory();
-        ItemStack[] contents = inventory.getContents();
-
-        String playerTitle = player.getName();
-
-        this.playerStates.put(player.getName(), new PlayerState(player.getGameMode(), contents, inventory.getHelmet(), inventory.getChestplate(), inventory.getLeggings(), inventory.getBoots(), player.getHealth(), player.getExhaustion(), player.getSaturation(), player.getFoodLevel(), player.getActivePotionEffects(), playerTitle, player.getLevel(), player.getExp(), player.getAllowFlight()));
+        PlayerState ps = playerStates.get(player.getName());
+        if (ps == null) {
+            ps = new PlayerState(player);
+            playerStates.put(player.getName(), ps);
+        }
+        ps.update();
+        // Store inventory
+        try {
+            inventoryManager.saveInventory(player);
+        } catch (Exception e) {
+            e.printStackTrace();
+            War.war.getLogger().severe("Failed to store inventory for " + player.getName());
+        }
     }
 
     public void restorePlayerState(Player player) {
-        PlayerState originalState = this.playerStates.remove(player.getName());
-        PlayerInventory playerInv = player.getInventory();
+        try {
+            inventoryManager.restoreInventory(player);
+        } catch (Exception e) {
+            e.printStackTrace();
+            War.war.getLogger().severe("Failed to restore inventory for " + player.getName());
+        }
+
+        PlayerState originalState = this.playerStates.get(player.getName());
         if (originalState != null) {
             // prevent item hacking thru CRAFTING personal inventory slots
             this.preventItemHackingThroughOpenedInventory(player);
 
-            this.playerInvFromInventoryStash(playerInv, originalState);
+            // this.playerInvFromInventoryStash(playerInv, originalState);
             player.setGameMode(originalState.getGamemode());
             double maxH = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
             player.setHealth(Math.max(Math.min(originalState.getHealth(), maxH), 0.0D));
@@ -676,6 +675,9 @@ public class Warzone {
             player.setLevel(originalState.getLevel());
             player.setExp(originalState.getExp());
             player.setAllowFlight(originalState.canFly());
+            player.teleport(originalState.getLocation());
+        } else {
+            player.performCommand("/warhub");
         }
         player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
     }
@@ -690,36 +692,6 @@ public class Warzone {
 
         // Prevent player from keeping items he was transferring in his inventory
         openedInv.setCursor(null);
-    }
-
-    private void playerInvFromInventoryStash(PlayerInventory playerInv, PlayerState originalContents) {
-        playerInv.clear();
-
-        playerInv.clear(playerInv.getSize());
-        playerInv.clear(playerInv.getSize() + 1);
-        playerInv.clear(playerInv.getSize() + 2);
-        playerInv.clear(playerInv.getSize() + 3); // helmet/blockHead
-
-        int invIndex = 0;
-        for (ItemStack item : originalContents.getContents()) {
-            if (item != null && item.getType() != Material.AIR) {
-                playerInv.setItem(invIndex, item);
-            }
-            invIndex++;
-        }
-
-        if (originalContents.getHelmet() != null) {
-            playerInv.setHelmet(originalContents.getHelmet());
-        }
-        if (originalContents.getChest() != null) {
-            playerInv.setChestplate(originalContents.getChest());
-        }
-        if (originalContents.getLegs() != null) {
-            playerInv.setLeggings(originalContents.getLegs());
-        }
-        if (originalContents.getFeet() != null) {
-            playerInv.setBoots(originalContents.getFeet());
-        }
     }
 
     public boolean hasMonument(String monumentName) {
@@ -989,14 +961,6 @@ public class Warzone {
             this.zoneWallGuards.remove(playerGuard);
         }
         playerGuards.clear();
-    }
-
-    public ZoneLobby getLobby() {
-        return this.lobby;
-    }
-
-    public void setLobby(ZoneLobby lobby) {
-        this.lobby = lobby;
     }
 
     public Team autoAssign(Player player) {
@@ -1290,6 +1254,10 @@ public class Warzone {
         player.teleport(destination);
     }
 
+    public void handlePlayerLeave(Player player, boolean removeFromTeam) {
+        this.handlePlayerLeave(player);
+    }
+
     private void handlePlayerLeave(Player player) {
         Team playerTeam = Team.getTeamByPlayerName(player.getName());
         if (playerTeam != null) {
@@ -1508,7 +1476,6 @@ public class Warzone {
                 Player tp = it.next();
                 it.remove(); // Remove player from team first to prevent anti-tp
                 t.removePlayer(tp);
-                tp.teleport(this.getEndTeleport(LeaveCause.SCORECAP));
                 if (winnersStr.contains(t.getName())) {
                     // give reward
                     rewardPlayer(tp, t.getInventories().resolveReward());
@@ -1549,13 +1516,6 @@ public class Warzone {
         return this.deadMenInventories.containsKey(playerName);
     }
 
-    public void restoreDeadmanInventory(Player player) {
-        if (this.isDeadMan(player.getName())) {
-            this.playerInvFromInventoryStash(player.getInventory(), this.deadMenInventories.get(player.getName()));
-            this.deadMenInventories.remove(player.getName());
-        }
-    }
-
     public Location getRallyPoint() {
         return this.rallyPoint;
     }
@@ -1571,11 +1531,7 @@ public class Warzone {
                 final Player player = it.next();
                 it.remove();
                 team.removePlayer(player);
-                player.teleport(this.getTeleport());
             }
-        }
-        if (this.getLobby() != null) {
-            this.getLobby().getVolume().resetBlocks();
         }
         if (this.getWarzoneConfig().getBoolean(WarzoneConfig.RESETONUNLOAD)) {
             this.getVolume().resetBlocks();
@@ -1704,10 +1660,7 @@ public class Warzone {
             int i = 0;
             for (String name : sortedNames) {
                 if (i == currentIndex) {
-                    if (playerTeam.getTeamConfig().resolveBoolean(TeamConfig.PLAYERLOADOUTASDEFAULT) && name.equals("default")) {
-                        // Use player's own inventory as loadout
-                        this.resetInventory(playerTeam, player, this.getPlayerInventoryFromSavedState(player));
-                    } else if (isFirstRespawn && firstLoadout != null && name.equals("default") && (!firstLoadout.requiresPermission() || player.hasPermission(firstLoadout.getPermission()))) {
+                    if (isFirstRespawn && firstLoadout != null && name.equals("default") && (!firstLoadout.requiresPermission() || player.hasPermission(firstLoadout.getPermission()))) {
                         // Get the loadout for the first spawn
                         this.resetInventory(playerTeam, player, firstLoadout.getContents());
                     } else {
@@ -1721,36 +1674,6 @@ public class Warzone {
                 i++;
             }
         }
-    }
-
-    private HashMap<Integer, ItemStack> getPlayerInventoryFromSavedState(Player player) {
-        HashMap<Integer, ItemStack> playerItems = new HashMap<>();
-        PlayerState originalState = this.playerStates.get(player.getName());
-
-        if (originalState != null) {
-            int invIndex = 0;
-            playerItems = new HashMap<>();
-            for (ItemStack item : originalState.getContents()) {
-                if (item != null && item.getType() != Material.AIR) {
-                    playerItems.put(invIndex, item);
-                }
-                invIndex++;
-            }
-            if (originalState.getFeet() != null) {
-                playerItems.put(100, originalState.getFeet());
-            }
-            if (originalState.getLegs() != null) {
-                playerItems.put(101, originalState.getLegs());
-            }
-            if (originalState.getChest() != null) {
-                playerItems.put(102, originalState.getChest());
-            }
-            if (originalState.getHelmet() != null) {
-                playerItems.put(103, originalState.getHelmet());
-            }
-        }
-
-        return playerItems;
     }
 
     public WarzoneConfigBag getWarzoneConfig() {
@@ -1792,14 +1715,6 @@ public class Warzone {
 //	public Object getGameEndLock() {
 //		return gameEndLock;
 //	}
-
-    public HubLobbyMaterials getLobbyMaterials() {
-        return this.lobbyMaterials;
-    }
-
-    public void setLobbyMaterials(HubLobbyMaterials lobbyMaterials) {
-        this.lobbyMaterials = lobbyMaterials;
-    }
 
     public boolean isOpponentSpawnPeripheryBlock(Team team, Block block) {
         for (Team maybeOpponent : this.getTeams()) {
@@ -2041,7 +1956,7 @@ public class Warzone {
     }
 
     /**
-     * Get the proper ending teleport location for players leaving the warzone. <p> Specifically, it gets teleports in this order: <ul> <li>Rally point (if scorecap) <li>Warhub (if autojoin) <li>Lobby </ul> </p>
+     * Get the proper ending teleport location for players leaving the warzone. <p> Specifically, it gets teleports in this order: <ul> <li>Rally point (if scorecap) <li>Warhub (if autojoin)</ul> </p>
      *
      * @param reason Reason for leaving zone
      */

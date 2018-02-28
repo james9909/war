@@ -106,7 +106,6 @@ public class CapturePointTimer extends BukkitRunnable {
                         } else {
                             // just added a point
                             team.resetSign();
-                            zone.getLobby().resetTeamGateSign(team);
                         }
                     }
                 }

@@ -172,7 +172,7 @@ public class ZoneWallGuard {
     private void glassify(Block block, BlockFace wall) {
         // face here means which wall we are working on
 
-        if (shouldGlassify(block.getType()) && (this.warzone.getLobby() == null || (this.warzone.getLobby() != null && !this.warzone.getLobby().blockIsAGateBlock(block, wall)))) {
+        if (shouldGlassify(block.getType())) {
             if (wall == Direction.NORTH()) {
                 if (this.warzone.getVolume().isNorthWallBlock(block)) {
                     this.glassified.add(block.getState());

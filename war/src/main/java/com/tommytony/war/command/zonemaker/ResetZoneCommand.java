@@ -26,9 +26,6 @@ public class ResetZoneCommand extends AbstractZoneMakerCommand {
                 Player p = it.next();
                 it.remove();
                 team.removePlayer(p);
-                if (!zone.getReallyDeadFighters().contains(p.getName())) {
-                    p.teleport(zone.getEndTeleport(LeaveCause.RESET));
-                }
             }
             team.resetPoints();
             team.getPlayers().clear();

@@ -12,7 +12,6 @@ import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.structure.Bomb;
 import com.tommytony.war.structure.Cake;
 import com.tommytony.war.structure.WarHub;
-import com.tommytony.war.structure.ZoneLobby;
 import com.tommytony.war.utility.Direction;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.LoadoutSelection;
@@ -75,7 +74,7 @@ public class WarPlayerListener implements Listener {
             Player player = event.getPlayer();
             Warzone zone = Warzone.getZoneByPlayerName(player.getName());
             if (zone != null) {
-                zone.handlePlayerLeave(player, zone.getEndTeleport(LeaveCause.DISCONNECT), true);
+                zone.handlePlayerLeave(player, true);
             }
 
             if (War.war.isWandBearer(player)) {
@@ -233,7 +232,7 @@ public class WarPlayerListener implements Listener {
 
             if (warzone != null) {
                 // kick player from warzone as well
-                warzone.handlePlayerLeave(player, warzone.getEndTeleport(LeaveCause.DISCONNECT), true);
+                warzone.handlePlayerLeave(player, true);
             }
         }
     }
@@ -373,7 +372,6 @@ public class WarPlayerListener implements Listener {
         }
 
         Warzone locZone = Warzone.getZoneByLocation(playerLoc);
-        ZoneLobby locLobby = ZoneLobby.getLobbyByLocation(playerLoc);
 
         boolean isMaker = War.war.isZoneMaker(player);
 
@@ -398,40 +396,6 @@ public class WarPlayerListener implements Listener {
             for (Warzone zone : War.war.getWarzones()) {
                 zone.dropZoneWallGuardIfAny(player);
             }
-        }
-
-        // Warzone lobby gates
-        if (locLobby != null && currentTeam == null && locLobby.isInAnyGate(playerLoc)) {
-            Warzone zone = locLobby.getZone();
-            Team locTeamGate = locLobby.getTeamGate(playerLoc);
-            if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.DISABLED) || zone.isReinitializing()) {
-                War.war.badMsg(player, "join.disabled");
-                event.setTo(zone.getTeleport());
-            } else if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.JOINMIDBATTLE) && zone.isEnoughPlayers()) {
-                War.war.badMsg(player, "join.progress");
-                event.setTo(zone.getTeleport());
-            } else if (zone.isFull()) {
-                War.war.badMsg(player, "join.full.all");
-                event.setTo(zone.getTeleport());
-            } else if (zone.isFull(player)) {
-                War.war.badMsg(player, "join.permission.all");
-                event.setTo(zone.getTeleport());
-            } else if (locTeamGate != null && locTeamGate.isFull()) {
-                War.war.badMsg(player, "join.full.single", locTeamGate.getName());
-                event.setTo(zone.getTeleport());
-            } else if (locTeamGate != null && !War.war.canPlayWar(player, locTeamGate)) {
-                War.war.badMsg(player, "join.permission.single", locTeamGate.getName());
-                event.setTo(zone.getTeleport());
-            } else if (zone.getLobby().isAutoAssignGate(playerLoc)) {
-                zone.autoAssign(player);
-            } else if (locTeamGate != null) {
-                zone.assign(player, locTeamGate);
-            }
-            return;
-        } else if (locLobby != null && currentTeam == null && locLobby.isInWarHubLinkGate(playerLoc) && War.war.getWarHub() != null) {
-            War.war.msg(player, "warhub.teleport");
-            event.setTo(War.war.getWarHub().getLocation());
-            return;
         }
 
         // Warhub zone gates
@@ -463,24 +427,10 @@ public class WarPlayerListener implements Listener {
             }
         }
 
-        boolean isLeaving = playerWarzone != null && playerWarzone.getLobby().isLeavingZone(playerLoc);
         Team playerTeam = Team.getTeamByPlayerName(player.getName());
-        if (isLeaving) { // already in a team and in warzone, leaving
-            // same as leave
-            if (playerTeam != null) {
-                boolean atSpawnAlready = playerTeam.isSpawnLocation(playerLoc);
-                if (!atSpawnAlready) {
-                    playerWarzone
-                        .handlePlayerLeave(player, playerWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.AUTOJOIN) ? War.war.getWarHub().getLocation() : playerWarzone.getTeleport(), event, true);
-                    return;
-                }
-                return;
-            }
-        }
-
         if (playerWarzone != null) {
             // Player belongs to a warzone team but is outside: he snuck out or is at spawn and died
-            if (locZone == null && playerTeam != null && playerWarzone.getLobby() != null && !playerWarzone.getLobby().getVolume().contains(playerLoc) && !isLeaving) {
+            if (locZone == null && playerTeam != null) {
                 List<BlockFace> nearestWalls = playerWarzone.getNearestWalls(playerLoc);
                 if (!playerWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
                     War.war.badMsg(player, "zone.leavenotice");
@@ -648,7 +598,6 @@ public class WarPlayerListener implements Listener {
 
                             playerWarzone.respawnPlayer(event, playerTeam, player);
                             playerTeam.resetSign();
-                            playerWarzone.getLobby().resetTeamGateSign(playerTeam);
                         }
                     }
 
@@ -720,7 +669,6 @@ public class WarPlayerListener implements Listener {
 
                             playerWarzone.respawnPlayer(event, playerTeam, player);
                             playerTeam.resetSign();
-                            playerWarzone.getLobby().resetTeamGateSign(playerTeam);
                         }
                     }
 
@@ -786,7 +734,6 @@ public class WarPlayerListener implements Listener {
 
                                 playerWarzone.respawnPlayer(event, playerTeam, player);
                                 playerTeam.resetSign();
-                                playerWarzone.getLobby().resetTeamGateSign(playerTeam);
                             }
                         }
 
@@ -803,7 +750,7 @@ public class WarPlayerListener implements Listener {
                 playerWarzone.getLoadoutSelections().get(player.getName()).setStillInSpawn(false);
             }
 
-        } else if (locZone != null && locZone.getLobby() != null && !locZone.getLobby().isLeavingZone(playerLoc) && !isMaker) {
+        } else if (locZone != null && !isMaker) {
             // player is not in any team, but inside warzone boundaries, get him out
             Warzone zone = Warzone.getZoneByLocation(playerLoc);
             event.setTo(zone.getTeleport());
@@ -844,7 +791,6 @@ public class WarPlayerListener implements Listener {
             if (deadZone.hasPlayerState(event.getPlayer().getName())) {
                 deadZone.restorePlayerState(event.getPlayer());
             }
-            event.setRespawnLocation(deadZone.getEndTeleport(LeaveCause.DISCONNECT));
             return;
         } else if (playingZone == null) {
             // Player not playing war

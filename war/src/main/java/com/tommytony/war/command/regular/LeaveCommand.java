@@ -34,7 +34,7 @@ public class LeaveCommand extends AbstractWarCommand {
             return false;
         }
 
-        zone.handlePlayerLeave(player, zone.getEndTeleport(LeaveCause.COMMAND), true);
+        zone.handlePlayerLeave(player, true);
         return true;
     }
 }

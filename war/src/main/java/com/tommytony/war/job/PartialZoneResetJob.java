@@ -3,7 +3,6 @@ package com.tommytony.war.job;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.mapper.ZoneVolumeMapper;
-import com.tommytony.war.structure.ZoneLobby;
 import com.tommytony.war.volume.ZoneVolume;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -115,8 +114,7 @@ public class PartialZoneResetJob extends BukkitRunnable implements Cloneable {
 
     private void sendMessageToAllWarzonePlayers(String message) {
         for (Player player : War.war.getServer().getOnlinePlayers()) {
-            ZoneLobby lobby = ZoneLobby.getLobbyByLocation(player);
-            if (player != PartialZoneResetJob.sendersToNotify.get(zone) && (zone.getPlayers().contains(player) || (lobby != null && lobby.getZone() == zone))) {
+            if (player != PartialZoneResetJob.sendersToNotify.get(zone) && zone.getPlayers().contains(player)) {
                 War.war.msg(player, message);
             }
         }

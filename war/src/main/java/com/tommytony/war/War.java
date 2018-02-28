@@ -28,7 +28,6 @@ import com.tommytony.war.structure.Cake;
 import com.tommytony.war.structure.HubLobbyMaterials;
 import com.tommytony.war.structure.Monument;
 import com.tommytony.war.structure.WarHub;
-import com.tommytony.war.structure.ZoneLobby;
 import com.tommytony.war.ui.UIManager;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.PlayerState;
@@ -555,43 +554,6 @@ public class War extends JavaPlugin {
                     this.inventoryToLoadout(player, reward);
                     warzone.getDefaultInventories().setReward(reward);
                     returnMessage.append(" game end reward updated.");
-                }
-                if (namedParams.containsKey("lobbymaterial")) {
-                    String whichBlocks = namedParams.get("lobbymaterial");
-                    ItemStack blockInHand = player.getInventory().getItemInMainHand();
-                    boolean updatedLobbyMaterials = false;
-
-                    if (!blockInHand.getType().isBlock() && !blockInHand.getType().equals(Material.AIR)) {
-                        this.badMsg(player, "Can only use blocks or air as lobby material.");
-                    } else {
-                        switch (whichBlocks) {
-                            case "floor":
-                                warzone.getLobbyMaterials().setFloorBlock(blockInHand);
-                                returnMessage.append(" lobby floor material set to ").append(blockInHand.getType());
-                                updatedLobbyMaterials = true;
-                                break;
-                            case "outline":
-                                warzone.getLobbyMaterials().setOutlineBlock(blockInHand);
-                                returnMessage.append(" lobby outline material set to ").append(blockInHand.getType());
-                                updatedLobbyMaterials = true;
-                                break;
-                            case "gate":
-                                warzone.getLobbyMaterials().setGateBlock(blockInHand);
-                                returnMessage.append(" lobby gate material set to ").append(blockInHand.getType());
-                                updatedLobbyMaterials = true;
-                                break;
-                            case "light":
-                                warzone.getLobbyMaterials().setLightBlock(blockInHand);
-                                returnMessage.append(" lobby light material set to ").append(blockInHand.getType());
-                                updatedLobbyMaterials = true;
-                                break;
-                        }
-
-                        if (updatedLobbyMaterials && warzone.getLobby() != null) {
-                            warzone.getLobby().getVolume().resetBlocks();
-                            warzone.getLobby().initialize();
-                        }
-                    }
                 }
                 if (namedParams.containsKey("material")) {
                     String whichBlocks = namedParams.get("material");
@@ -1197,10 +1159,6 @@ public class War extends JavaPlugin {
 
     public List<String> getCommandWhitelist() {
         return this.commandWhitelist;
-    }
-
-    public boolean inAnyWarzoneLobby(Location location) {
-        return ZoneLobby.getLobbyByLocation(location) != null;
     }
 
     public List<String> getZoneMakersImpersonatingPlayers() {

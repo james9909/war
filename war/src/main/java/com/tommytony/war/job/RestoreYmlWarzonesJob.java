@@ -31,9 +31,6 @@ public class RestoreYmlWarzonesJob implements Runnable {
                             War.war.log("Failed to load warzone " + warzoneName + ": " + ex.getMessage(), Level.WARNING);
                             throw new RuntimeException(ex);
                         }
-                        if (zone.getLobby() != null) {
-                            zone.getLobby().getVolume().resetBlocks();
-                        }
                         if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.RESETONLOAD)) {
                             zone.getVolume().resetBlocks();
                         }

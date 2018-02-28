@@ -36,7 +36,6 @@ import com.tommytony.war.command.zonemaker.SetTeamFlagCommand;
 import com.tommytony.war.command.zonemaker.SetWarConfigCommand;
 import com.tommytony.war.command.zonemaker.SetZoneCommand;
 import com.tommytony.war.command.zonemaker.SetZoneConfigCommand;
-import com.tommytony.war.command.zonemaker.SetZoneLobbyCommand;
 import com.tommytony.war.command.zonemaker.ZoneMakerCommand;
 import com.tommytony.war.ui.WarUI;
 import java.util.logging.Level;
@@ -120,9 +119,6 @@ public class WarCommandHandler {
                     break;
                 case "deletezone":
                     commandObj = new DeleteZoneCommand(this, sender, arguments);
-                    break;
-                case "setzonelobby":
-                    commandObj = new SetZoneLobbyCommand(this, sender, arguments);
                     break;
                 case "savezone":
                     commandObj = new SaveZoneCommand(this, sender, arguments);

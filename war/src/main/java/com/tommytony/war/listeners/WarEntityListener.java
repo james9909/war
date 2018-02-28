@@ -266,10 +266,6 @@ public class WarEntityListener implements Listener {
                         }
                         inOneZone = true;
                         break;
-                    } else if (zone.getLobby() != null && zone.getLobby().getVolume().contains(block)) {
-                        dontExplode.add(block);
-                        inOneZone = true;
-                        break;
                     } else if (zone.getVolume().contains(block)) {
                         inOneZone = true;
                     }

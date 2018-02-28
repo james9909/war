@@ -51,13 +51,6 @@ public class RestoreWarhubJob implements Runnable {
             hub.getVolume().resetBlocks();
             hub.initialize();
 
-            // In the previous job started by the mapper, warzones were created, but their lobbies are missing the war hub gate (because it didn't exist yet)
-            for (Warzone zone : War.war.getWarzones()) {
-                if (zone.getLobby() != null) {
-                    zone.getLobby().getVolume().resetBlocks();
-                    zone.getLobby().initialize();
-                }
-            }
             War.war.log("Warhub ready.", Level.INFO);
         } else {
             War.war.log("Failed to restore warhub. The specified world (name: " + worldName + ") does not exist!", Level.WARNING);

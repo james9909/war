@@ -481,9 +481,6 @@ public class Team {
 			spawnEntry.getValue().resetBlocks();
 			this.initializeTeamSpawn(spawnEntry.getKey()); // reset everything instead of just sign
 		}
-		if (this.warzone.getLobby() != null) {
-			this.warzone.getLobby().resetTeamGateSign(this);
-		}
 		if (War.war.getWarHub() != null) {
 			War.war.getWarHub().resetZoneSign(warzone);
 		}

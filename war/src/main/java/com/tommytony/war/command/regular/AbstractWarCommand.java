@@ -3,7 +3,6 @@ package com.tommytony.war.command.regular;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
-import com.tommytony.war.structure.ZoneLobby;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -110,13 +109,6 @@ public abstract class AbstractWarCommand {
 
         Player player = (Player) this.getSender();
         Warzone zone = Warzone.getZoneByLocation(player);
-        if (zone == null) {
-            ZoneLobby lobby = ZoneLobby.getLobbyByLocation(player);
-            if (lobby == null) {
-                return null;
-            }
-            return lobby.getZone();
-        }
         return zone;
     }
 }

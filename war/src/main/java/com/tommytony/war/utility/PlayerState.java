@@ -2,85 +2,47 @@ package com.tommytony.war.utility;
 
 import java.util.Collection;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 
 public class PlayerState {
 
-    private final float exhaustion;
-    private final float saturation;
-    private final int foodLevel;
-    private final double health;
-    private final GameMode gamemode;
-    private final Collection<PotionEffect> potionEffects;
-    private final String playerTitle;
-    private final float exp;
-    private final int level;
-    private final boolean fly;
-    private ItemStack[] contents;
-    private ItemStack helmet;
-    private ItemStack chest;
-    private ItemStack legs;
-    private ItemStack feet;
+    private Player player;
 
-    public PlayerState(GameMode gamemode, ItemStack[] contents, ItemStack helmet, ItemStack chest, ItemStack legs, ItemStack feet, double health, float exhaustion, float saturation, int foodLevel,
-        Collection<PotionEffect> potionEffects, String playerTitle, int level, float exp, boolean fly) {
-        this.gamemode = gamemode;
-        this.health = health;
-        this.exhaustion = exhaustion;
-        this.saturation = saturation;
-        this.foodLevel = foodLevel;
-        this.potionEffects = potionEffects;
-        this.playerTitle = playerTitle;
-        this.level = level;
-        this.exp = exp;
-        this.fly = fly;
-        this.setContents(contents);
-        this.setHelmet(helmet);
-        this.setChest(chest);
-        this.setLegs(legs);
-        this.setFeet(feet);
+    private float exhaustion;
+    private float saturation;
+    private int foodLevel;
+    private double health;
+    private GameMode gamemode;
+    private Collection<PotionEffect> potionEffects;
+    private float exp;
+    private int level;
+    private boolean fly;
+    private Location location;
+
+    public PlayerState(Player player) {
+        this.player = player;
+        this.update();
     }
 
-    public ItemStack[] getContents() {
-        return this.contents;
+    public void update() {
+        this.location = player.getLocation();
+        this.gamemode = player.getGameMode();
+        this.health = player.getHealth();
+        this.exhaustion = player.getExhaustion();
+        this.saturation = player.getSaturation();
+        this.foodLevel = player.getFoodLevel();
+        this.potionEffects = player.getActivePotionEffects();
+        this.exp =  player.getExp();
+        this.level = player.getLevel();
+        this.fly = player.isFlying();
     }
 
-    public void setContents(ItemStack[] contents) {
-        this.contents = contents;
-    }
-
-    public ItemStack getHelmet() {
-        return this.helmet;
-    }
-
-    public void setHelmet(ItemStack helmet) {
-        this.helmet = helmet;
-    }
-
-    public ItemStack getChest() {
-        return this.chest;
-    }
-
-    public void setChest(ItemStack chest) {
-        this.chest = chest;
-    }
-
-    public ItemStack getLegs() {
-        return this.legs;
-    }
-
-    public void setLegs(ItemStack legs) {
-        this.legs = legs;
-    }
-
-    public ItemStack getFeet() {
-        return this.feet;
-    }
-
-    public void setFeet(ItemStack feet) {
-        this.feet = feet;
+    public Player getPlayer() {
+        return player;
     }
 
     public float getExhaustion() {
@@ -107,10 +69,6 @@ public class PlayerState {
         return potionEffects;
     }
 
-    public String getPlayerTitle() {
-        return playerTitle;
-    }
-
     public float getExp() {
         return exp;
     }
@@ -123,4 +81,7 @@ public class PlayerState {
         return fly;
     }
 
+    public Location getLocation() {
+        return location;
+    }
 }

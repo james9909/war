@@ -138,10 +138,6 @@ public class WarzoneConfigBag {
                 } else if (warzoneConfig.getConfigType().equals(Boolean.class)) {
                     String onOff = namedParams.get(namedParam);
                     this.bag.put(warzoneConfig, onOff.equals("on") || onOff.equals("true"));
-                    if (this.warzone != null && namedParam.equals(WarzoneConfig.AUTOASSIGN.toString())) {
-                        this.warzone.getLobby().setLocation(this.warzone.getTeleport());
-                        this.warzone.getLobby().initialize();
-                    }
                 } else if (warzoneConfig.getConfigType().equals(ScoreboardType.class)) {
                     String type = namedParams.get(namedParam);
                     this.bag.put(warzoneConfig, ScoreboardType.getFromString(type));

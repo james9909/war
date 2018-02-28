@@ -44,10 +44,6 @@ public class EditTeamsListUI extends ChestUI {
                     Team newTeam = new Team(kind.toString(), kind, Collections.<Location>emptyList(), warzone);
                     newTeam.setRemainingLives(newTeam.getTeamConfig().resolveInt(TeamConfig.LIFEPOOL));
                     warzone.getTeams().add(newTeam);
-                    if (warzone.getLobby() != null) {
-                        warzone.getLobby().setLocation(warzone.getTeleport());
-                        warzone.getLobby().initialize();
-                    }
                     newTeam.addTeamSpawn(player.getLocation());
                     player.sendTitle("", "Team " + newTeam.getName() + " created with spawn here.", 10, 20, 10);
                 });

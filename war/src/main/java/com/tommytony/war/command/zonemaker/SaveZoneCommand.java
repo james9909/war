@@ -5,7 +5,6 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.config.WarConfig;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
-import com.tommytony.war.structure.ZoneLobby;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -63,14 +62,7 @@ public class SaveZoneCommand extends AbstractZoneMakerCommand {
         if (this.getSender() instanceof Player) {
             Player player = (Player) commandSender;
 
-            Warzone zoneByLoc = Warzone.getZoneByLocation(player);
-            ZoneLobby lobbyByLoc = ZoneLobby.getLobbyByLocation(player);
-            if (zoneByLoc == null && lobbyByLoc != null) {
-                zoneByLoc = lobbyByLoc.getZone();
-            }
-            if (zoneByLoc != null) {
-                zone = zoneByLoc;
-            }
+            zone = Warzone.getZoneByLocation(player);
         }
 
         if (zone == null) {
@@ -138,9 +130,6 @@ public class SaveZoneCommand extends AbstractZoneMakerCommand {
         if (this.args.length > 0) {
             // the config may have changed, requiring a reset for spawn styles etc.
             zone.getVolume().resetBlocks();
-        }
-        if (zone.getLobby() != null) {
-            zone.getLobby().getVolume().resetBlocks();
         }
         zone.initializeZone(); // bring back team spawns etc
 

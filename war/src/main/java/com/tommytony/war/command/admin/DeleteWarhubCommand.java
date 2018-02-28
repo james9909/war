@@ -31,12 +31,6 @@ public class DeleteWarhubCommand extends AbstractWarAdminCommand {
             War.war.getWarHub().getVolume().resetBlocks();
             VolumeMapper.delete(War.war.getWarHub().getVolume());
             War.war.setWarHub((WarHub) null);
-            for (Warzone zone : War.war.getWarzones()) {
-                if (zone.getLobby() != null) {
-                    zone.getLobby().getVolume().resetBlocks();
-                    zone.getLobby().initialize();
-                }
-            }
 
             this.msg("War hub removed.");
             War.war.log(this.getSender().getName() + " deleted warhub", Level.INFO);

@@ -49,10 +49,6 @@ public class DeleteTeamCommand extends AbstractZoneMakerCommand {
                 spawnVolume.resetBlocks();
             }
             zone.getTeams().remove(team);
-            if (zone.getLobby() != null) {
-                zone.getLobby().setLocation(zone.getTeleport());
-                zone.getLobby().initialize();
-            }
             WarzoneYmlMapper.save(zone);
             this.msg("Team " + team.getName() + " removed.");
             War.war.log(this.getSender().getName() + " deleted team " + team.getName() + " in warzone " + zone.getName(), Level.INFO);

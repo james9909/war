@@ -606,6 +606,7 @@ public class Warzone {
             ps = new PlayerState(player);
             playerStates.put(player.getName(), ps);
         }
+
         ps.update();
         // Store inventory
         try {
@@ -964,10 +965,7 @@ public class Warzone {
         attachment.setPermission("war.playing." + this.getName().toLowerCase(), true);
         team.addPlayer(player);
         team.resetSign();
-        if (this.hasPlayerState(player.getName())) {
-            War.war.getLogger().log(Level.WARNING, "Player {0} in warzone {1} already has a stored state - they may have lost items", new Object[]{player.getName(), this.getName()});
-            this.playerStates.remove(player.getName());
-        }
+
         this.getReallyDeadFighters().remove(player.getName());
         this.keepPlayerState(player);
         War.war.msg(player, "join.inventorystored");

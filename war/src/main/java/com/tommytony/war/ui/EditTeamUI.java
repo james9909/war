@@ -55,6 +55,12 @@ class EditTeamUI extends ChestUI {
         item.setItemMeta(meta);
         this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new EditLoadoutsListUI(null, team)));
 
+        item = new ItemStack(Material.CHEST, 1);
+        meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.YELLOW + "Edit Options");
+        item.setItemMeta(meta);
+        this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new EditTeamConfigUI(null, team)));
+
         item = new ItemStack(Material.TNT, 1);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.DARK_RED + "" + ChatColor.BOLD + "Delete");
@@ -71,17 +77,6 @@ class EditTeamUI extends ChestUI {
             WarzoneYmlMapper.save(zone);
             War.war.msg(player, "Team " + team.getName() + " removed.");
         });
-        item = new ItemStack(Material.SNOW_BALL);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.GRAY + "" + ChatColor.BOLD + "Restore Defaults");
-        item.setItemMeta(meta);
-        this.addItem(inv, getSize() - 2, item, () -> {
-            team.getTeamConfig().reset();
-            TeamConfigBag.afterUpdate(team, player, "All options set to defaults in team " + team.getName() + " by " + player.getName(), false);
-            War.war.getUIManager().assignUI(player, new EditTeamUI(team));
-        });
-        final TeamConfigBag config = team.getTeamConfig();
-        UIConfigHelper.addTeamConfigOptions(this, player, inv, config, team, team.getZone(), i);
     }
 
     @Override

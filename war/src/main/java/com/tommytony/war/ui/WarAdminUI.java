@@ -17,7 +17,7 @@ public class WarAdminUI extends ChestUI {
     public void build(final Player player, Inventory inv) {
         Runnable editWarAction = () -> War.war.getUIManager().assignUI(player, new EditWarConfigUI());
         Runnable editZoneAction = () -> War.war.getUIManager().assignUI(player, new EditZoneConfigUI(null));
-        Runnable editTeamAction = () -> War.war.getUIManager().assignUI(player, new EditTeamConfigUI(null));
+        Runnable editTeamAction = () -> War.war.getUIManager().assignUI(player, new EditTeamConfigUI(null, null));
         Runnable editRewardsAction = () -> War.war.getUIManager().assignUI(player, new EditRewardsListUI(null, null));
         Runnable editLoadoutsAction = () -> War.war.getUIManager().assignUI(player, new EditLoadoutsListUI(null, null));
 

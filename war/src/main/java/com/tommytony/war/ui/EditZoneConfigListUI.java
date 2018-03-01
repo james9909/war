@@ -21,7 +21,7 @@ public class EditZoneConfigListUI extends ChestUI {
     @Override
     public void build(Player player, Inventory inv) {
         Runnable editZoneAction = () -> War.war.getUIManager().assignUI(player, new EditZoneConfigUI(zone));
-        Runnable editTeamAction = () -> War.war.getUIManager().assignUI(player, new EditTeamConfigUI(zone));
+        Runnable editTeamAction = () -> War.war.getUIManager().assignUI(player, new EditTeamConfigUI(zone, null));
 
         ItemStack item;
         ItemMeta meta;

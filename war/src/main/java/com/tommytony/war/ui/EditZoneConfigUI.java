@@ -39,7 +39,7 @@ public class EditZoneConfigUI extends ChestUI {
             this.addItem(inv, getSize() - 1, item, () -> {
                 zone.getWarzoneConfig().reset();
                 WarzoneConfigBag.afterUpdate(zone, player, "All warzone options set to defaults in warzone " + zone.getName() + " by " + player.getName(), false);
-                War.war.getUIManager().assignUI(player, new EditZoneConfigListUI(zone));
+                War.war.getUIManager().assignUI(player, new EditZoneConfigUI(zone));
             });
         }
     }

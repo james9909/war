@@ -31,17 +31,7 @@ public class WarzoneYmlMapper {
 
     @SuppressWarnings("deprecation")
     public static Warzone load(String name) { // removed createNewVolume, as it did nothing
-        File warzoneTxtFile = new File(War.war.getDataFolder().getPath() + "/warzone-" + name + ".txt");
         File warzoneYmlFile = new File(War.war.getDataFolder().getPath() + "/warzone-" + name + ".yml");
-
-        // Convert from TXT to YML if needed
-        if (warzoneTxtFile.exists() && !warzoneYmlFile.exists()) {
-            // Since we're converting, WarTxtMapper didn't load the warzones.
-            // We need to load the old-text-format-Warzone into memory.
-            Warzone zoneToConvert = WarzoneTxtMapper.load(name, false);
-            WarzoneYmlMapper.save(zoneToConvert);
-            War.war.log("Converted warzone-" + name + ".txt to warzone-" + name + ".yml", Level.INFO);
-        }
 
         if (!warzoneYmlFile.exists()) {
             War.war.log("File warzone-" + name + ".yml not found", Level.WARNING);

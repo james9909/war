@@ -23,16 +23,10 @@ public class WarYmlMapper {
     public static void load() {
         (War.war.getDataFolder()).mkdir();
         (new File(War.war.getDataFolder().getPath() + "/dat")).mkdir();
-        File warTxtFile = new File(War.war.getDataFolder().getPath() + "/war.txt");
         File warYmlFile = new File(War.war.getDataFolder().getPath() + "/war.yml");
 
         boolean newWar = false;
-        if (warTxtFile.exists() && !warYmlFile.exists()) {
-            // Load both War and warzones (with delay) in old format, save War to new format immediatly
-            WarTxtMapper.load(true);
-            // Warzones are getting loaded by TxtMapper launched job. That job will in turn save the Warzones to their new format.
-            return;
-        } else if (!warTxtFile.exists() && !warYmlFile.exists()) {
+        if (!warYmlFile.exists()) {
             // Save defaults to disk
             newWar = true;
             WarYmlMapper.save();
@@ -69,6 +63,7 @@ public class WarYmlMapper {
 
 		ConfigurationSection rewardsSection = warRootSection.getConfigurationSection("team.default.reward");
         if (rewardsSection != null) {
+
             Reward winReward = RewardYmlMapper.fromConfigToReward(rewardsSection, "win");
             War.war.getDefaultInventories().setWinReward(winReward);
 

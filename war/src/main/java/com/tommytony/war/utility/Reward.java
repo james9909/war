@@ -27,6 +27,10 @@ public class Reward {
         }
     }
 
+    public boolean hasRewards() {
+        return rewards != null && !rewards.isEmpty();
+    }
+
     public List<ItemStack> getRewards() {
         return rewards;
     }

@@ -242,7 +242,7 @@ public class UIConfigHelper {
     private static void onWarzoneConfigUpdate(Player player, WarzoneConfig option, WarzoneConfigBag config, Warzone warzone) {
         if (warzone != null) {
             WarzoneConfigBag.afterUpdate(warzone, player, option.name() + " set to " + config.getValue(option).toString(), false);
-            War.war.getUIManager().assignUI(player, new EditZoneConfigUI(warzone));
+            War.war.getUIManager().assignUI(player, new EditZoneConfigListUI(warzone));
         } else {
             WarConfigBag.afterUpdate(player, option.name() + " set to " + config.getValue(option).toString(), false);
             War.war.getUIManager().assignUI(player, new WarAdminUI());

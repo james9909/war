@@ -7,6 +7,7 @@ import com.tommytony.war.config.TeamConfigBag;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.TeamSpawnStyle;
 import com.tommytony.war.utility.Direction;
+import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.volume.Volume;
 import java.io.File;
 import java.text.MessageFormat;

@@ -29,8 +29,19 @@ public class InventoryBag {
         this.loadouts.add(new Loadout(name, loadoutChest));
     }
 
-    public void addLoadout(Loadout loadout) {
-        this.loadouts.add(loadout);
+    public void addLoadout(Loadout newLoadout) {
+        for (Loadout loadout : loadouts) {
+            if (loadout.getName().equalsIgnoreCase(newLoadout.getName())) {
+                loadout.setItems(newLoadout.getItems());
+                loadout.setHelmet(newLoadout.getHelmet());
+                loadout.setChestplate(newLoadout.getChestplate());
+                loadout.setLeggings(newLoadout.getLeggings());
+                loadout.setBoots(newLoadout.getBoots());
+                loadout.setOffhand(newLoadout.getOffhand());
+                return;
+            }
+        }
+        this.loadouts.add(newLoadout);
     }
 
     public void removeLoadout(String name) {
@@ -92,7 +103,7 @@ public class InventoryBag {
     }
 
     public boolean hasWinReward() {
-        return winReward != null && winReward.hasRewards();
+        return winReward != null && !winReward.getRewards().isEmpty();
     }
 
     public Reward getWinReward() {
@@ -114,7 +125,7 @@ public class InventoryBag {
     }
 
     public boolean hasLossReward() {
-        return lossReward != null && lossReward.hasRewards();
+        return lossReward != null && !lossReward.hasRewards();
     }
 
     public Reward getLossReward() {
@@ -155,16 +166,6 @@ public class InventoryBag {
             }
         }
         return null;
-    }
-
-    public void setLoadout(String name, Chest loadoutChest) {
-        for (Loadout loadout : loadouts) {
-            if (loadout.getName().equals(name)) {
-                loadout.setLoadoutChest(loadoutChest);
-                return;
-            }
-        }
-        loadouts.add(new Loadout(name, loadoutChest));
     }
 
     public boolean containsLoadout(String name) {

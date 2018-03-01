@@ -49,6 +49,12 @@ class EditTeamUI extends ChestUI {
         item.setItemMeta(meta);
         this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new EditRewardsListUI(null, team)));
 
+        item = new ItemStack(Material.CHEST, 1);
+        meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.YELLOW + "Edit Loadouts");
+        item.setItemMeta(meta);
+        this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new EditLoadoutsListUI(null, team)));
+
         item = new ItemStack(Material.TNT, 1);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.DARK_RED + "" + ChatColor.BOLD + "Delete");

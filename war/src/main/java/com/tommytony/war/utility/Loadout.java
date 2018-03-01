@@ -12,6 +12,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -23,11 +24,14 @@ import org.bukkit.inventory.PlayerInventory;
 public class Loadout implements Comparable<Loadout> {
 
     private String name;
-    private Chest loadoutChest;
 
     private ItemStack[] items;
-    private ItemStack[] armor;
     private ItemStack offhand;
+
+    private ItemStack helmet;
+    private ItemStack chestplate;
+    private ItemStack leggings;
+    private ItemStack boots;
 
     private static HashSet<Material> HELMETS = new HashSet<>();
     private static HashSet<Material> CHESTPLATES = new HashSet<>();
@@ -67,9 +71,17 @@ public class Loadout implements Comparable<Loadout> {
     }
 
     public Loadout(String name, Chest loadoutChest) {
+        this(name, loadoutChest.getBlockInventory());
+    }
+
+    public Loadout(String name, Inventory inventory) {
         this.name = name;
-        this.loadoutChest = loadoutChest;
-        getItemsFromChest();
+        setItemsFromInventory(inventory);
+    }
+
+    public Loadout(String name, ItemStack[] items) {
+        this.name = name;
+        this.items = items;
     }
 
     public static Loadout getLoadout(List<Loadout> loadouts, String name) {
@@ -93,23 +105,25 @@ public class Loadout implements Comparable<Loadout> {
         this.name = name;
     }
 
-    private void getItemsFromChest() {
-        if (loadoutChest != null) {
-            ItemStack[] contents = loadoutChest.getInventory().getContents();
-            int length = contents.length;
-            items = Arrays.copyOfRange(contents, 0, length-5);
-            offhand = contents[length-5];
-            armor = Arrays.copyOfRange(contents, length-4, length);
-        }
+    public void setItemsFromInventory(Inventory inventory) {
+        ItemStack[] contents = inventory.getContents();
+        setItemsFromItemList(contents);
     }
 
-    public void setLoadoutChest(Chest loadoutChest) {
-        this.loadoutChest = loadoutChest;
-        getItemsFromChest();
+    public void setArmor(ItemStack[] armor) {
+        helmet = armor[0];
+        chestplate = armor[1];
+        leggings = armor[2];
+        boots = armor[3];
     }
 
-    public Chest getLoadoutChest() {
-        return loadoutChest;
+    public void setItemsFromItemList(ItemStack[] itemsList) {
+        int length = itemsList.length;
+        items = Arrays.copyOfRange(itemsList, 0, length-5);
+        offhand = itemsList[length-5];
+
+        ItemStack[] armor = Arrays.copyOfRange(itemsList, length-4, length);
+        setArmor(armor);
     }
 
     public void giveItems(Player player) {
@@ -122,25 +136,68 @@ public class Loadout implements Comparable<Loadout> {
             }
         }
 
-        if (armor != null) {
-            for (ItemStack item : armor) {
-                if (item == null) {
-                    continue;
-                }
-                Material type = item.getType();
-                if (HELMETS.contains(type)) {
-                    inventory.setHelmet(item);
-                } else if (CHESTPLATES.contains(type)) {
-                    inventory.setChestplate(item);
-                } else if (LEGGINGS.contains(type)) {
-                    inventory.setLeggings(item);
-                } else if (BOOTS.contains(type)) {
-                    inventory.setBoots(item);
-                }
-            }
-        }
         if (offhand != null) {
             inventory.setItemInOffHand(offhand);
         }
+        if (helmet != null) {
+            inventory.setHelmet(helmet);
+        }
+        if (chestplate != null) {
+            inventory.setChestplate(chestplate);
+        }
+        if (leggings != null) {
+            inventory.setLeggings(leggings);
+        }
+        if (boots != null) {
+            inventory.setBoots(boots);
+        }
+    }
+
+    public ItemStack[] getItems() {
+        return items;
+    }
+
+    public void setItems(ItemStack[] items) {
+        this.items = items;
+    }
+
+    public ItemStack getOffhand() {
+        return offhand;
+    }
+
+    public void setOffhand(ItemStack offhand) {
+        this.offhand = offhand;
+    }
+
+    public ItemStack getHelmet() {
+        return helmet;
+    }
+
+    public void setHelmet(ItemStack helmet) {
+        this.helmet = helmet;
+    }
+
+    public ItemStack getLeggings() {
+        return leggings;
+    }
+
+    public void setLeggings(ItemStack leggings) {
+        this.leggings = leggings;
+    }
+
+    public ItemStack getChestplate() {
+        return chestplate;
+    }
+
+    public void setChestplate(ItemStack chestplate) {
+        this.chestplate = chestplate;
+    }
+
+    public ItemStack getBoots() {
+        return boots;
+    }
+
+    public void setBoots(ItemStack boots) {
+        this.boots = boots;
     }
 }

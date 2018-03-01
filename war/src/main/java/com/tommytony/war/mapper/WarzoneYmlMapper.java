@@ -70,7 +70,7 @@ public class WarzoneYmlMapper {
             // defaultLoadouts
             if (warzoneRootSection.contains("team.default.loadout")) {
                 ConfigurationSection loadoutsSection = warzoneRootSection.getConfigurationSection("team.default.loadout");
-                // warzone.getDefaultInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection, new HashMap<>()));
+                warzone.getDefaultInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection));
             }
 
             // defaultReward
@@ -279,11 +279,11 @@ public class WarzoneYmlMapper {
                     if (warzoneRootSection.contains(teamLoadoutPrefix)) {
                         // team specific loadouts
                         ConfigurationSection loadoutsSection = warzoneRootSection.getConfigurationSection(teamLoadoutPrefix);
-                        // team.getInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection, new HashMap<>()));
+                        team.getInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection));
                     } else if (warzoneRootSection.contains(teamLoadoutPrefix.toLowerCase())) {
                         // try lowercase instead
                         ConfigurationSection loadoutsSection = warzoneRootSection.getConfigurationSection(teamLoadoutPrefix.toLowerCase());
-                        // team.getInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection, new HashMap<>()));
+                        team.getInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection));
                     }
 
                     String teamRewardPrefix = "team." + teamName + ".reward";

@@ -4,14 +4,12 @@ import com.tommytony.war.War;
 import com.tommytony.war.utility.Loadout;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Chest;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 
 public class LoadoutYmlMapper {
 
@@ -29,12 +27,8 @@ public class LoadoutYmlMapper {
         List<Loadout> loadouts = new ArrayList<>();
         for (String name : loadoutNames) {
             Loadout loadout = fromConfigToLoadout(config, name);
-            if (loadout == null) {
-                War.war.getLogger().warning("Failed to load class " + name);
-            } else {
-                loadouts.add(loadout);
-                War.war.getLogger().info("Loaded class " + loadout.getName());
-            }
+            loadouts.add(loadout);
+            War.war.getLogger().info("Loaded class " + loadout.getName());
         }
         Collections.sort(loadouts);
         return loadouts;
@@ -48,13 +42,28 @@ public class LoadoutYmlMapper {
      * @return new style loadout
      */
     public static Loadout fromConfigToLoadout(ConfigurationSection config, String loadoutName) {
-        String chestLocation = config.getString(loadoutName + ".chest");
-        Location location = getLocationFromString(chestLocation);
-        BlockState state = location.getBlock().getState();
-        if (state instanceof Chest) {
-            return new Loadout(loadoutName, (Chest) state);
+        ConfigurationSection section = config.createSection(loadoutName);
+        List<Integer> slots = section.getIntegerList("items");
+
+        HashMap<Integer, ItemStack> map = new HashMap<>();
+        for (Integer slot : slots) {
+            ItemStack item = section.getItemStack("items." + slot.toString());
+            map.put(slot, item);
         }
-        return null;
+
+        ItemStack helmet = (ItemStack) section.get("helmet");
+        ItemStack chestplate = (ItemStack) section.get("chestplate");
+        ItemStack leggings = (ItemStack) section.get("leggings");
+        ItemStack boots = (ItemStack) section.get("boots");
+        ItemStack offhand = (ItemStack) section.get("offhand");
+
+        ItemStack[] items = mapToItems(map);
+
+        Loadout loadout = new Loadout(loadoutName, items);
+        loadout.setArmor(new ItemStack[]{helmet, chestplate, leggings, boots});
+        loadout.setOffhand(offhand);
+
+        return loadout;
     }
 
     /**
@@ -65,9 +74,7 @@ public class LoadoutYmlMapper {
      */
     public static void fromLoadoutsToConfig(List<Loadout> loadouts, ConfigurationSection section) {
         Collections.sort(loadouts);
-        List<String> names = new ArrayList<>();
         for (Loadout ldt : loadouts) {
-            names.add(ldt.getName());
             LoadoutYmlMapper.fromLoadoutToConfig(ldt, section);
         }
     }
@@ -79,31 +86,38 @@ public class LoadoutYmlMapper {
      * @param section Section of the configuration to write to
      */
     public static void fromLoadoutToConfig(Loadout loadout, ConfigurationSection section) {
-        LoadoutYmlMapper.fromLoadoutToConfig(loadout.getName(), loadout.getLoadoutChest(), section);
-    }
+        if (loadout != null) {
+            ConfigurationSection loadoutSection = section.createSection(loadout.getName());
 
-    public static void fromLoadoutToConfig(String loadoutName, Chest loadoutChest, ConfigurationSection section) {
-        ConfigurationSection loadoutSection = section.createSection(loadoutName);
+            ConfigurationSection itemsSection = loadoutSection.createSection("items");
+            HashMap<Integer, ItemStack> map = itemsToMap(loadout.getItems());
+            for (Integer slot : map.keySet()) {
+                itemsSection.set(slot.toString(), map.get(slot));
+            }
 
-        if (loadoutSection != null) {
-            Location location = loadoutChest.getLocation();
-            loadoutSection.set("chest", getLocationString(location));
+            loadoutSection.set("helmet", loadout.getHelmet());
+            loadoutSection.set("chestplate", loadout.getChestplate());
+            loadoutSection.set("leggings", loadout.getLeggings());
+            loadoutSection.set("boots", loadout.getBoots());
+            loadoutSection.set("offhand", loadout.getOffhand());
         }
     }
 
-    public static String getLocationString(Location location) {
-        return String.format("%s:%f,%f,%f", location.getWorld().getName(), location.getX(), location.getY(), location.getZ());
+    public static HashMap<Integer, ItemStack> itemsToMap(ItemStack[] items) {
+        HashMap<Integer, ItemStack> map = new HashMap<>();
+        for (int i = 0; i < items.length; i++) {
+            if (items[i] != null) {
+                map.put(i, items[i]);
+            }
+        }
+        return map;
     }
 
-    public static Location getLocationFromString(String locationString) {
-        String[] split = locationString.split(":");
-        World world = Bukkit.getWorld(split[0]);
-        String[] coords = split[1].split(",");
-
-        double x = Double.parseDouble(coords[0]);
-        double y = Double.parseDouble(coords[1]);
-        double z = Double.parseDouble(coords[2]);
-
-        return new Location(world, x, y, z);
+    public static ItemStack[] mapToItems(HashMap<Integer, ItemStack> map) {
+        ItemStack[] items = new ItemStack[9*4];
+        for (Integer key : map.keySet()) {
+            items[key] = map.get(key);
+        }
+        return items;
     }
 }

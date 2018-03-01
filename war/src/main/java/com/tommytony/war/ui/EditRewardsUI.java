@@ -29,11 +29,15 @@ public class EditRewardsUI extends ChestUI {
         this.reward = reward;
         this.zone = zone;
         this.team = team;
+        this.win = win;
     }
 
     @Override
     public void build(Player player, Inventory inv) {
-        List<ItemStack> items = reward.getRewards();
+        List<ItemStack> items = new ArrayList<>();
+        if (reward != null) {
+            items = reward.getRewards();
+        }
         for (ItemStack item : items) {
             if (item != null) {
                 inv.addItem(item);
@@ -113,6 +117,6 @@ public class EditRewardsUI extends ChestUI {
 
     @Override
     public int getSize() {
-        return 27;
+        return 9;
     }
 }

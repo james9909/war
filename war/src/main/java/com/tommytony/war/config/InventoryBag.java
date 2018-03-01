@@ -92,7 +92,7 @@ public class InventoryBag {
     }
 
     public boolean hasWinReward() {
-        return winReward != null;
+        return winReward != null && !winReward.getRewards().isEmpty();
     }
 
     public Reward getWinReward() {
@@ -114,7 +114,7 @@ public class InventoryBag {
     }
 
     public boolean hasLossReward() {
-        return lossReward != null;
+        return lossReward != null && !lossReward.getRewards().isEmpty();
     }
 
     public Reward getLossReward() {

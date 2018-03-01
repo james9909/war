@@ -225,7 +225,7 @@ public class War extends JavaPlugin {
         this.getDefaultInventories().setWinReward(winReward);
 
         List<ItemStack> lossRewardList = new ArrayList<>();
-        winRewardList.add(new ItemStack(Material.COAL, 1));
+        lossRewardList.add(new ItemStack(Material.COAL, 1));
         Reward lossReward = new Reward(lossRewardList);
         this.getDefaultInventories().setLossReward(lossReward);
 

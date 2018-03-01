@@ -10,7 +10,7 @@ public class RewardYmlMapper {
 
     public static Reward fromConfigToReward(ConfigurationSection config, String name) {
         if (config == null) {
-            return null;
+            return new Reward();
         }
         List<?> itemsList = config.getList(name + ".items");
         List<ItemStack> items = (ArrayList<ItemStack>) itemsList;

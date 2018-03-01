@@ -15,23 +15,34 @@ public class WarAdminUI extends ChestUI {
 
     @Override
     public void build(final Player player, Inventory inv) {
-        ItemStack item;
-        ItemMeta meta;
-        int i = 0;
+        Runnable editWarAction = () -> War.war.getUIManager().assignUI(player, new AdminEditWarConfigUI());
+        Runnable editZoneAction = () -> War.war.getUIManager().assignUI(player, new AdminEditZoneConfigUI());
+        Runnable editTeamAction = () -> War.war.getUIManager().assignUI(player, new AdminEditTeamConfigUI());
+        Runnable editRewardsAction = () -> War.war.getUIManager().assignUI(player, new EditRewardsListUI(null, null));
 
-        i = UIConfigHelper.addWarConfigOptions(this, player, inv, War.war.getWarConfig(), i);
-        item = new ItemStack(Material.STAINED_GLASS_PANE);
-        meta = item.getItemMeta();
-        meta.setDisplayName(">>>> Warzone Default Config >>>>");
+        ItemStack item = new ItemStack(Material.CHEST);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.YELLOW + "Edit War Config");
         item.setItemMeta(meta);
-        this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new WarAdminUI()));
-        i = UIConfigHelper.addWarzoneConfigOptions(this, player, inv, War.war.getWarzoneDefaultConfig(), null, i);
-        item = new ItemStack(Material.STAINED_GLASS_PANE);
+        this.addItem(inv, 0, item, editWarAction);
+
+        item = new ItemStack(Material.CHEST);
         meta = item.getItemMeta();
-        meta.setDisplayName(">>>> Team Default Config >>>>");
+        meta.setDisplayName(ChatColor.YELLOW + "Edit Warzone Config");
         item.setItemMeta(meta);
-        this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new WarAdminUI()));
-        UIConfigHelper.addTeamConfigOptions(this, player, inv, War.war.getTeamDefaultConfig(), null, null, i);
+        this.addItem(inv, 1, item, editZoneAction);
+
+        item = new ItemStack(Material.CHEST);
+        meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.YELLOW + "Edit Team Config");
+        item.setItemMeta(meta);
+        this.addItem(inv, 2, item, editTeamAction);
+
+        item = new ItemStack(Material.CHEST);
+        meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.YELLOW + "Edit Rewards");
+        item.setItemMeta(meta);
+        this.addItem(inv, 3, item, editRewardsAction);
     }
 
     @Override
@@ -41,6 +52,6 @@ public class WarAdminUI extends ChestUI {
 
     @Override
     public int getSize() {
-        return 9 * 7;
+        return 9;
     }
 }

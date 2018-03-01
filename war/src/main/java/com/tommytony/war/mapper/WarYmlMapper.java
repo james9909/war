@@ -8,6 +8,7 @@ import com.tommytony.war.job.RestoreYmlWarhubJob;
 import com.tommytony.war.job.RestoreYmlWarzonesJob;
 import com.tommytony.war.structure.WarHub;
 import com.tommytony.war.utility.Direction;
+import com.tommytony.war.utility.Reward;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -64,6 +65,15 @@ public class WarYmlMapper {
             if (command != null && !command.equals("")) {
                 War.war.getCommandWhitelist().add(command);
             }
+        }
+
+		ConfigurationSection rewardsSection = warRootSection.getConfigurationSection("team.default.reward");
+        if (rewardsSection != null) {
+            Reward winReward = RewardYmlMapper.fromConfigToReward(rewardsSection, "win");
+            War.war.getDefaultInventories().setWinReward(winReward);
+
+            Reward lossReward = RewardYmlMapper.fromConfigToReward(rewardsSection, "loss");
+            War.war.getDefaultInventories().setLossReward(lossReward);
         }
 
         // default loadouts
@@ -123,6 +133,12 @@ public class WarYmlMapper {
         ConfigurationSection teamDefault = warRootSection.createSection("team.default");
         ConfigurationSection teamConfigSection = teamDefault.createSection("config");
         War.war.getTeamDefaultConfig().saveTo(teamConfigSection);
+
+        // defaultReward
+        ConfigurationSection rewardsSection = teamDefault.createSection("reward");
+        RewardYmlMapper.fromRewardToConfig(rewardsSection, "win", War.war.getDefaultInventories().getWinReward());
+        RewardYmlMapper.fromRewardToConfig(rewardsSection, "loss", War.war.getDefaultInventories().getLossReward());
+
 
         ConfigurationSection warInfoSection = warRootSection.createSection("war.info");
 

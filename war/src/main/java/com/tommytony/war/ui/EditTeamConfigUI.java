@@ -11,11 +11,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class AdminEditTeamConfigUI extends ChestUI {
+public class EditTeamConfigUI extends ChestUI {
 
     private Warzone zone;
 
-    AdminEditTeamConfigUI(Warzone zone) {
+    EditTeamConfigUI(Warzone zone) {
         super();
         this.zone = zone;
     }

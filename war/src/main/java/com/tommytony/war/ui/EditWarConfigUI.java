@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-public class AdminEditWarConfigUI extends ChestUI {
+public class EditWarConfigUI extends ChestUI {
 
     @Override
     public void build(Player player, Inventory inv) {

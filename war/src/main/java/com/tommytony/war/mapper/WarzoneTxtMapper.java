@@ -141,7 +141,7 @@ public class WarzoneTxtMapper {
             if (rewardStr != null && !rewardStr.equals("")) {
                 HashMap<Integer, ItemStack> reward = new HashMap<>();
                 // LoadoutTxtMapper.fromStringToLoadout(rewardStr, reward);
-                warzone.getDefaultInventories().setReward(reward);
+                // warzone.getDefaultInventories().setReward(reward);
             }
 
             // unbreakableZoneBlocks

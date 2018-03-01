@@ -3,17 +3,17 @@ package com.tommytony.war.config;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.utility.Loadout;
+import com.tommytony.war.utility.Reward;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import org.bukkit.block.Chest;
-import org.bukkit.inventory.ItemStack;
 
 public class InventoryBag {
 
     private List<Loadout> loadouts = new ArrayList<>();
-    private HashMap<Integer, ItemStack> reward = null;
+    private Reward winReward = null;
+    private Reward lossReward = null;
 
     private Warzone warzone;
 
@@ -91,25 +91,47 @@ public class InventoryBag {
         }
     }
 
-    public boolean hasReward() {
-        return reward != null;
+    public boolean hasWinReward() {
+        return winReward != null;
     }
 
-    public HashMap<Integer, ItemStack> getReward() {
-        return reward;
+    public Reward getWinReward() {
+        return winReward;
     }
 
-    public void setReward(HashMap<Integer, ItemStack> reward) {
-        this.reward = reward;
+    public void setWinReward(Reward winReward) {
+        this.winReward = winReward;
     }
 
-    public HashMap<Integer, ItemStack> resolveReward() {
-        if (this.hasReward()) {
-            return reward;
-        } else if (warzone != null && warzone.getDefaultInventories().hasReward()) {
-            return warzone.getDefaultInventories().resolveReward();
+    public Reward resolveWinReward() {
+        if (this.hasWinReward()) {
+            return winReward;
+        } else if (warzone != null && warzone.getDefaultInventories().hasWinReward()) {
+            return warzone.getDefaultInventories().resolveWinReward();
         } else {
-            return War.war.getDefaultInventories().resolveReward();
+            return War.war.getDefaultInventories().resolveWinReward();
+        }
+    }
+
+    public boolean hasLossReward() {
+        return lossReward != null;
+    }
+
+    public Reward getLossReward() {
+        return lossReward;
+    }
+
+    public void setLossReward(Reward lossReward) {
+        this.lossReward = lossReward;
+    }
+
+    public Reward resolveLossReward() {
+        if (this.hasLossReward()) {
+            return lossReward;
+        } else if (warzone != null && warzone.getDefaultInventories().hasLossReward()) {
+            return warzone.getDefaultInventories().resolveLossReward();
+        } else {
+            return War.war.getDefaultInventories().resolveLossReward();
         }
     }
 

@@ -178,8 +178,8 @@ public class TeamConfigBag {
         return null;
     }
 
-    public TeamSpawnStyle resolveSpawnStyle() {
-        if (this.contains(TeamConfig.SPAWNSTYLE)) {
+    public TeamSpawnStyle resolveSpawnStyle() {pawnStyle() {
+        if (this.contains(Team        if (this.contains(TeamConfig.SPAWNSTYLE)) {
             return (TeamSpawnStyle) this.bag.get(TeamConfig.SPAWNSTYLE);
         } else if (this.warzone != null && this.warzone.getTeamDefaultConfig().contains(TeamConfig.SPAWNSTYLE)) {
             // use War default config

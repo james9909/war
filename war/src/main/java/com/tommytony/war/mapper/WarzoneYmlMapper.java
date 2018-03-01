@@ -10,6 +10,7 @@ import com.tommytony.war.structure.Bomb;
 import com.tommytony.war.structure.Cake;
 import com.tommytony.war.structure.CapturePoint;
 import com.tommytony.war.structure.Monument;
+import com.tommytony.war.utility.Reward;
 import com.tommytony.war.volume.Volume;
 import java.io.File;
 import java.io.IOException;
@@ -75,9 +76,14 @@ public class WarzoneYmlMapper {
             // defaultReward
             if (warzoneRootSection.contains("team.default.reward")) {
                 ConfigurationSection rewardsSection = warzoneRootSection.getConfigurationSection("team.default.reward");
-                HashMap<Integer, ItemStack> reward = new HashMap<>();
-                // LoadoutYmlMapper.fromConfigToLoadout(rewardsSection, reward, "default");
-                warzone.getDefaultInventories().setReward(reward);
+
+                // win reward
+                Reward winReward = RewardYmlMapper.fromConfigToReward(rewardsSection, "win");
+                warzone.getDefaultInventories().setWinReward(winReward);
+
+                // loss reward
+                Reward lossReward = RewardYmlMapper.fromConfigToReward(rewardsSection, "loss");
+                warzone.getDefaultInventories().setLossReward(lossReward);
             }
 
             // Team default settings
@@ -282,17 +288,22 @@ public class WarzoneYmlMapper {
 
                     String teamRewardPrefix = "team." + teamName + ".reward";
                     if (warzoneRootSection.contains(teamRewardPrefix)) {
-                        // team specific reward
                         ConfigurationSection rewardsSection = warzoneRootSection.getConfigurationSection(teamRewardPrefix);
-                        HashMap<Integer, ItemStack> reward = new HashMap<>();
-                        // LoadoutYmlMapper.fromConfigToLoadout(rewardsSection, reward, "default");
-                        warzone.getDefaultInventories().setReward(reward);
+
+                        Reward winReward = RewardYmlMapper.fromConfigToReward(rewardsSection, "win");
+                        team.getInventories().setWinReward(winReward);
+
+                        Reward lossReward = RewardYmlMapper.fromConfigToReward(rewardsSection, "loss");
+                        team.getInventories().setLossReward(lossReward);
                     } else if (warzoneRootSection.contains(teamRewardPrefix.toLowerCase())) {
                         // try lowercase instead
                         ConfigurationSection rewardsSection = warzoneRootSection.getConfigurationSection(teamRewardPrefix.toLowerCase());
-                        HashMap<Integer, ItemStack> reward = new HashMap<>();
-                        // LoadoutYmlMapper.fromConfigToLoadout(rewardsSection, reward, "default");
-                        warzone.getDefaultInventories().setReward(reward);
+
+                        Reward winReward = RewardYmlMapper.fromConfigToReward(rewardsSection, "win");
+                        team.getInventories().setWinReward(winReward);
+
+                        Reward lossReward = RewardYmlMapper.fromConfigToReward(rewardsSection, "loss");
+                        team.getInventories().setLossReward(lossReward);
                     }
                 }
             }
@@ -531,9 +542,14 @@ public class WarzoneYmlMapper {
         }
 
         // defaultReward
-        if (warzone.getDefaultInventories().hasReward()) {
+        if (warzone.getDefaultInventories().hasWinReward()) {
             ConfigurationSection rewardsSection = teamsSection.createSection("default.reward");
-            // LoadoutYmlMapper.fromLoadoutToConfig("default", warzone.getDefaultInventories().getReward(), rewardsSection);
+            RewardYmlMapper.fromRewardToConfig(rewardsSection, "win", warzone.getDefaultInventories().getWinReward());
+        }
+
+        if (warzone.getDefaultInventories().hasLossReward()) {
+            ConfigurationSection rewardsSection = teamsSection.createSection("default.reward");
+            RewardYmlMapper.fromRewardToConfig(rewardsSection, "loss", warzone.getDefaultInventories().getLossReward());
         }
 
         for (Team team : teams) {
@@ -547,6 +563,16 @@ public class WarzoneYmlMapper {
                 // team specific loadouts
                 ConfigurationSection loadoutsSection = teamsSection.createSection(team.getName() + ".loadout");
                 LoadoutYmlMapper.fromLoadoutsToConfig(warzone.getDefaultInventories().getNewLoadouts(), loadoutsSection);
+            }
+
+            if (team.getInventories().hasWinReward()) {
+                ConfigurationSection rewardsSection = teamsSection.createSection(team.getName() + ".reward");
+                RewardYmlMapper.fromRewardToConfig(rewardsSection, "win", team.getInventories().getWinReward());
+            }
+
+            if (team.getInventories().hasLossReward()) {
+                ConfigurationSection rewardsSection = teamsSection.createSection(team.getName() + ".reward");
+                RewardYmlMapper.fromRewardToConfig(rewardsSection, "loss", team.getInventories().getLossReward());
             }
 
             ConfigurationSection teamInfoSection = teamsSection.createSection(team.getName() + ".info");

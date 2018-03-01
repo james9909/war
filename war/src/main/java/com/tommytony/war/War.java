@@ -27,6 +27,7 @@ import com.tommytony.war.structure.HubLobbyMaterials;
 import com.tommytony.war.structure.WarHub;
 import com.tommytony.war.ui.UIManager;
 import com.tommytony.war.utility.PlayerState;
+import com.tommytony.war.utility.Reward;
 import com.tommytony.war.utility.SizeCounter;
 import com.tommytony.war.utility.WarLogFormatter;
 import java.io.File;
@@ -218,9 +219,15 @@ public class War extends JavaPlugin {
 
         this.getDefaultInventories().clearLoadouts();
 
-        HashMap<Integer, ItemStack> reward = new HashMap<>();
-        reward.put(0, new ItemStack(Material.CAKE, 1));
-        this.getDefaultInventories().setReward(reward);
+        List<ItemStack> winRewardList = new ArrayList<>();
+        winRewardList.add(new ItemStack(Material.CAKE, 1));
+        Reward winReward = new Reward(winRewardList);
+        this.getDefaultInventories().setWinReward(winReward);
+
+        List<ItemStack> lossRewardList = new ArrayList<>();
+        winRewardList.add(new ItemStack(Material.COAL, 1));
+        Reward lossReward = new Reward(lossRewardList);
+        this.getDefaultInventories().setLossReward(lossReward);
 
         this.getCommandWhitelist().add("who");
         this.getZoneMakerNames().add("tommytony");

@@ -31,6 +31,7 @@ import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.LoadoutSelection;
 import com.tommytony.war.utility.PlayerState;
 import com.tommytony.war.utility.PotionEffectHelper;
+import com.tommytony.war.utility.Reward;
 import com.tommytony.war.volume.Volume;
 import com.tommytony.war.volume.ZoneVolume;
 import java.sql.Connection;
@@ -1441,7 +1442,10 @@ public class Warzone {
                 t.removePlayer(tp);
                 if (winnersStr.contains(t.getName())) {
                     // give reward
-                    rewardPlayer(tp, t.getInventories().resolveReward());
+                    Reward winReward = t.getInventories().resolveWinReward();
+                    if (winReward != null) {
+                        winReward.rewardPlayer(tp);
+                    }
                     if (doEcoReward) {
                         EconomyResponse r;
                         if (ecoReward > 0) {
@@ -1453,6 +1457,11 @@ public class Warzone {
                             War.war.getLogger().log(Level.WARNING, "Failed to reward player {0} ${1}. Error: {2}", new Object[]{tp.getName(), ecoReward, r.errorMessage});
                         }
                     }
+                } else {
+                    Reward lossReward = t.getInventories().resolveLossReward();
+                    if (lossReward != null) {
+                        lossReward.rewardPlayer(tp);
+                    }
                 }
             }
             t.resetPoints();
@@ -1463,15 +1472,6 @@ public class Warzone {
             this.reinitialize();
         } else {
             this.initializeZone();
-        }
-    }
-
-    public void rewardPlayer(Player player, Map<Integer, ItemStack> reward) {
-        for (Integer slot : reward.keySet()) {
-            ItemStack item = reward.get(slot);
-            if (item != null) {
-                player.getInventory().addItem(item);
-            }
         }
     }
 

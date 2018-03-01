@@ -42,11 +42,6 @@ class EditTeamUI extends ChestUI {
                 player.sendTitle("", ChatColor.RED + "Can't add a spawn outside of the zone!", 10, 20, 10);
             }
         });
-        item = new ItemStack(Material.CHEST, 1);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "Loadouts");
-        item.setItemMeta(meta);
-        this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new EditLoadoutListUI(team)));
         item = new ItemStack(Material.TNT, 1);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.DARK_RED + "" + ChatColor.BOLD + "Delete");

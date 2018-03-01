@@ -84,6 +84,10 @@ commands:
     description: War> Team chat.
     usage: Team chat.
         Ex - /team <message>
+  class:
+    description: War> Use to select a class
+    usage: Use to select a class. Must be in a warzone
+        Ex - /class <class-name>
 # Warzone maker commands (must have the 'war.zonemaker' permission or be added as a zone-maker in /plugins/War/war.txt)
 # Battle-related commands
   nextbattle:
@@ -91,6 +95,10 @@ commands:
     usage: Warzone blocks are restored, teams are respawned but score remains unaffected. All zone-makers can do this, even if they are not an author of the zone. Provide a zone name if not standing in warzone or lobby.
         Ex - /nextbattle [zone-name]
 # Warzone creation commands
+  classchest:
+    description: War> Set or remove global classes
+    usage: Set or remove global classes. When setting a class, look at a chest containing the class items.
+        Ex - /classchest <set|remove> <class-name>
   setzone:
     description: War> Use to create a warzone. Lobby is created and blocks are saved when the second corner is set. You can only edit zones you create or those listing you as author (add authors with /setzoneconfig author:yourname).
     usage: Use to create a warzone. Lobby is created and blocks are saved when the second corner is set. You can only edit zones you create or those listing you as author (add authors with /setzoneconfig author:yourname). Warzones must be at least 10 blocks wide in all directions.
@@ -210,11 +218,6 @@ commands:
         /zonecfg [zone-name] lifepool:7 -> each death consumes a life from the team's pool, an empty lifepool end the battle and gives a point to the other teams. \\
         /zonecfg maxscore:10 -> once a team reaches this value, the game is ended. \\
         /zonecfg teamsize:10 flagmustbehome:on flagpointsonly:off flagreturn:<both/flag/spawn> nohunger:off respawntimer:0 saturation:10 spawnstyle:<small/flat/big/invisible> \\
-        /zonecfg loadout:default -> sets the default respawn inventory to your current items. \\
-        /zonecfg loadout:<extra-loadout-name> -> adds an extra loadout (i.e. another player class) that the players can toggle to by sneaking while inside the spawn. \\
-        /zonecfg loadout:<extra-loadout-name>:<permission> -> add/update a loadout that requires a permission. \\
-        /zonecfg deleteloadout:<extra-loadout-name> -> removes the specified loadout from the choices. \\
-        /zonecfg playerloadoutasdefault:true -> the player can bring a copy of his outside-world inventory to fight, it replaces the default loadout. \\
         /zonecfg reward:default -> sets the winner's reward to your current items.
         \\\\ Print config \\
         /zonecfg [zone-name] print (or /zonecfg -p) -> prints out the warzone settings. \\
@@ -227,10 +230,6 @@ commands:
         /teamcfg [zone-name] <team-name> lifepool:7 -> each death consumes a life from the team's pool, an empty lifepool end the battle and gives a point to the other teams. \\
         /teamcfg <team-name> maxscore:10 -> once a team reaches this value, the game is ended. \\
         /teamcfg <team-name> teamsize:10 flagmustbehome:on flagpointsonly:off flagreturn:<both/flag/spawn> nohunger:off respawntimer:0 saturation:10 spawnstyle:<small/flat/big/invisible> \\
-        /teamcfg <team-name> loadout:default -> sets the default respawn inventory to your current items. \\
-        /teamcfg <team-name> loadout:<extra-loadout-name> -> adds an extra loadout (i.e. another player class) that the players can toggle to by sneaking while inside the spawn. \\
-        /teamcfg <team-name> deleteloadout:<extra-loadout-name> -> removes the specified loadout from the choices. \\
-        /teamcfg <team-name> playerloadoutasdefault:true -> the player can bring a copy of his outside-world inventory to fight, it replaces the default loadout. \\
         /teamcfg <team-name> reward:default -> sets the winner's reward to your current items.
         \\\\ Print config \\
         /teamcfg [zone-name] <team-name> print (or /teamcfg -p) -> prints out the team settings. \\
@@ -291,10 +290,6 @@ commands:
         /warcfg lifepool:7 -> each death consumes a life from the team's pool, a death with an empty lifepool ends the battle and gives a point to the other teams. \\
         /warcfg maxscore:10 -> once a team reaches this value, the game is ended. \\
         /warcfg teamsize:10 flagmustbehome:on flagpointsonly:off flagreturn:<both/flag/spawn> nohunger:off respawntimer:0 saturation:10 spawnstyle:<small/flat/big/invisible> \\
-        /warcfg loadout:default -> sets the default respawn inventory to your current items. \\
-        /warcfg loadout:<extra-loadout-name> -> adds an extra loadout (i.e. another player class) that the players can toggle to by sneaking while inside the spawn. \\
-        /warcfg deleteloadout:<extra-loadout-name> -> removes the specified loadout from the choices. \\
-        /warcfg playerloadoutasdefault:true -> the player can bring a copy of his outside-world inventory to fight, it replaces the default loadout. \\
         /warcfg reward:default -> sets the winner's reward to your current items.
         \\\\ Print config \\
         /warcfg print (or /warcfg -p) -> prints out the current War settings. \\

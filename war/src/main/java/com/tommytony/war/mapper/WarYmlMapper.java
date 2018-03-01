@@ -12,12 +12,10 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
 
 public class WarYmlMapper {
 
@@ -68,15 +66,9 @@ public class WarYmlMapper {
             }
         }
 
-        // defaultLoadouts
-        ConfigurationSection loadoutsSection = warRootSection.getConfigurationSection("team.default.loadout");
-        War.war.getDefaultInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection, new HashMap<>()));
-
-        // defaultReward
-        ConfigurationSection rewardsSection = warRootSection.getConfigurationSection("team.default.reward");
-        HashMap<Integer, ItemStack> reward = new HashMap<>();
-        LoadoutYmlMapper.fromConfigToLoadout(rewardsSection, reward, "default");
-        War.war.getDefaultInventories().setReward(reward);
+        // default loadouts
+        ConfigurationSection loadoutsSection = warRootSection.getConfigurationSection("classes");
+        War.war.getDefaultInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection));
 
         // War settings
         ConfigurationSection warConfigSection = warRootSection.getConfigurationSection("war.config");
@@ -115,6 +107,10 @@ public class WarYmlMapper {
         (new File(War.war.getDataFolder().getPath())).mkdir();
         (new File(War.war.getDataFolder().getPath() + "/dat")).mkdir();
 
+        // default loadouts
+        ConfigurationSection loadoutsSection = warRootSection.createSection("classes");
+        LoadoutYmlMapper.fromLoadoutsToConfig(War.war.getDefaultInventories().getLoadouts(), loadoutsSection);
+
         // War settings
         ConfigurationSection warConfigSection = warRootSection.createSection("war.config");
         War.war.getWarConfig().saveTo(warConfigSection);
@@ -127,14 +123,6 @@ public class WarYmlMapper {
         ConfigurationSection teamDefault = warRootSection.createSection("team.default");
         ConfigurationSection teamConfigSection = teamDefault.createSection("config");
         War.war.getTeamDefaultConfig().saveTo(teamConfigSection);
-
-        // defaultLoadouts
-        ConfigurationSection loadoutSection = teamDefault.createSection("loadout");
-        LoadoutYmlMapper.fromLoadoutsToConfig(War.war.getDefaultInventories().getNewLoadouts(), loadoutSection);
-
-        // defaultReward
-        ConfigurationSection rewardsSection = teamDefault.createSection("reward");
-        LoadoutYmlMapper.fromLoadoutToConfig("default", War.war.getDefaultInventories().getReward(), rewardsSection);
 
         ConfigurationSection warInfoSection = warRootSection.createSection("war.info");
 

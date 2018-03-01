@@ -17,7 +17,6 @@ import com.tommytony.war.job.LoadoutResetJob;
 import com.tommytony.war.job.LogKillsDeathsJob;
 import com.tommytony.war.job.LogKillsDeathsJob.KillsDeathsRecord;
 import com.tommytony.war.job.ZoneTimeJob;
-import com.tommytony.war.mapper.LoadoutYmlMapper;
 import com.tommytony.war.mapper.VolumeMapper;
 import com.tommytony.war.mapper.ZoneVolumeMapper;
 import com.tommytony.war.structure.Bomb;
@@ -43,12 +42,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -545,7 +542,7 @@ public class Warzone {
         }
     }
 
-    private void resetInventory(Team team, Player player, Map<Integer, ItemStack> loadout) {
+    private void resetInventory(Team team, Player player, Loadout loadout) {
         // Reset inventory to loadout
         PlayerInventory playerInv = player.getInventory();
         playerInv.clear();
@@ -554,40 +551,8 @@ public class Warzone {
         playerInv.clear(playerInv.getSize() + 2);
         playerInv.clear(playerInv.getSize() + 3); // helmet/blockHead
 
-        Loadout banned = Loadout.getLoadout(team.getInventories().resolveNewLoadouts(), "banned");
-        Set<Material> bannedMaterials = new HashSet<>();
-        if (banned != null) {
-            for (ItemStack bannedItem : banned.getContents().values()) {
-                bannedMaterials.add(bannedItem.getType());
-            }
-        }
-
-        for (Integer slot : loadout.keySet()) {
-            ItemStack item = loadout.get(slot);
-            if (item == null || item.getType() == Material.AIR) {
-                continue;
-            }
-            if (bannedMaterials.contains(item.getType())) {
-                continue;
-            }
-
-            switch (slot) {
-                case 100:
-                    playerInv.setBoots(item.clone());
-                    break;
-                case 101:
-                    playerInv.setLeggings(item.clone());
-                    break;
-                case 102:
-                    playerInv.setChestplate(item.clone());
-                    break;
-                case 103:
-                    playerInv.setHelmet(item.clone());
-                    break;
-                default:
-                    playerInv.addItem(item.clone());
-                    break;
-            }
+        if (loadout != null) {
+            loadout.giveItems(player);
         }
         if (this.getWarzoneConfig().getBoolean(WarzoneConfig.BLOCKHEADS)) {
             playerInv.setHelmet(team.getKind().getHat());
@@ -1635,44 +1600,19 @@ public class Warzone {
             // Make sure that inventory resets dont occur if player has already tp'ed out (due to game end, or somesuch)
             // - repawn timer + this method is why inventories were getting wiped as players exited the warzone.
             List<Loadout> loadouts = playerTeam.getInventories().resolveNewLoadouts();
-            List<String> sortedNames = LoadoutYmlMapper.sortNames(Loadout.toLegacyFormat(loadouts));
-            sortedNames.remove("first");
-            sortedNames.remove("banned");
-            for (Iterator<String> it = sortedNames.iterator(); it.hasNext(); ) {
-                String loadoutName = it.next();
-                Loadout ldt = Loadout.getLoadout(loadouts, loadoutName);
-                if (ldt == null) {
-                    War.war.getLogger().warning("Failed to resolve loadout " + loadoutName);
-                    it.remove();
-                }
-                if (ldt.requiresPermission() && !player.hasPermission(ldt.getPermission())) {
-                    it.remove();
-                }
-            }
-            if (sortedNames.isEmpty()) {
+            if (loadouts.isEmpty()) {
                 // Fix for zones that mistakenly only specify a `first' loadout, but do not add any others.
-                this.resetInventory(playerTeam, player, Collections.<Integer, ItemStack>emptyMap());
+                this.resetInventory(playerTeam, player, null);
                 War.war.msg(player, "404 No loadouts found");
                 return;
             }
-            int currentIndex = selection.getSelectedIndex();
-            Loadout firstLoadout = Loadout.getLoadout(loadouts, "first");
-            int i = 0;
-            for (String name : sortedNames) {
-                if (i == currentIndex) {
-                    if (isFirstRespawn && firstLoadout != null && name.equals("default") && (!firstLoadout.requiresPermission() || player.hasPermission(firstLoadout.getPermission()))) {
-                        // Get the loadout for the first spawn
-                        this.resetInventory(playerTeam, player, firstLoadout.getContents());
-                    } else {
-                        // Use the loadout from the list in the settings
-                        this.resetInventory(playerTeam, player, Loadout.getLoadout(loadouts, name).getContents());
-                    }
-                    if (isFirstRespawn && playerTeam.getInventories().resolveLoadouts().keySet().size() > 1 || isToggle) {
-                        War.war.msg(player, "zone.loadout.equip", name);
-                    }
-                }
-                i++;
+
+            int loadoutIndex = selection.getSelectedLoadout();
+            Loadout loadout = loadouts.get(0);
+            if (loadoutIndex < loadouts.size()) {
+                loadout = loadouts.get(loadoutIndex);
             }
+            this.resetInventory(playerTeam, player, loadout);
         }
     }
 

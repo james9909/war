@@ -70,33 +70,6 @@ public class WarzoneTxtMapper {
                 warzone.getWarzoneConfig().put(WarzoneConfig.FRIENDLYFIRE, warzoneConfig.getBoolean("friendlyFire"));
             }
 
-            // loadout
-            warzone.getDefaultInventories().clearLoadouts();
-
-            String loadoutStr = warzoneConfig.getString("loadout");
-            if (loadoutStr != null && !loadoutStr.equals("")) {
-                warzone.getDefaultInventories().setLoadout("default", new HashMap<>());
-                LoadoutTxtMapper.fromStringToLoadout(loadoutStr, warzone.getDefaultInventories().getLoadout("default"));
-            }
-
-            // extraLoadouts
-            String extraLoadoutStr = warzoneConfig.getString("extraLoadouts");
-            String[] extraLoadoutsSplit = extraLoadoutStr.split(",");
-
-            for (String nameStr : extraLoadoutsSplit) {
-                if (nameStr != null && !nameStr.equals("")) {
-                    warzone.getDefaultInventories().setLoadout(nameStr, new HashMap<>());
-                }
-            }
-
-            for (String extraName : extraLoadoutsSplit) {
-                if (extraName != null && !extraName.equals("")) {
-                    String loadoutString = warzoneConfig.getString(extraName + "Loadout");
-                    HashMap<Integer, ItemStack> loadout = warzone.getDefaultInventories().getLoadout(extraName);
-                    LoadoutTxtMapper.fromStringToLoadout(loadoutString, loadout);
-                }
-            }
-
             // authors
             if (warzoneConfig.containsKey("author") && !warzoneConfig.getString("author").equals("")) {
                 for (String authorStr : warzoneConfig.getString("author").split(",")) {
@@ -167,7 +140,7 @@ public class WarzoneTxtMapper {
             String rewardStr = warzoneConfig.getString("reward");
             if (rewardStr != null && !rewardStr.equals("")) {
                 HashMap<Integer, ItemStack> reward = new HashMap<>();
-                LoadoutTxtMapper.fromStringToLoadout(rewardStr, reward);
+                // LoadoutTxtMapper.fromStringToLoadout(rewardStr, reward);
                 warzone.getDefaultInventories().setReward(reward);
             }
 

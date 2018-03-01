@@ -3,7 +3,6 @@ package com.tommytony.war.listeners;
 import com.tommytony.war.Team;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
-import com.tommytony.war.Warzone.LeaveCause;
 import com.tommytony.war.command.ZoneSetter;
 import com.tommytony.war.config.FlagReturn;
 import com.tommytony.war.config.TeamConfig;
@@ -760,19 +759,12 @@ public class WarPlayerListener implements Listener {
     @EventHandler
     public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
         if (War.war.isLoaded() && event.isSneaking()) {
-            Warzone playerWarzone = Warzone.getZoneByLocation(event.getPlayer());
-            Team playerTeam = Team.getTeamByPlayerName(event.getPlayer().getName());
-            if (playerWarzone != null && playerTeam != null && playerTeam.getInventories().resolveLoadouts().keySet().size() > 1 && playerTeam.isSpawnLocation(event.getPlayer().getLocation())) {
+            Player player = event.getPlayer();
+            Warzone playerWarzone = Warzone.getZoneByLocation(player);
+            Team playerTeam = Team.getTeamByPlayerName(player.getName());
+            if (playerWarzone != null && playerTeam != null && playerTeam.getInventories().resolveLoadouts().size() > 1 && playerTeam.isSpawnLocation(event.getPlayer().getLocation())) {
                 if (playerWarzone.getLoadoutSelections().keySet().contains(event.getPlayer().getName()) && playerWarzone.getLoadoutSelections().get(event.getPlayer().getName()).isStillInSpawn()) {
-
-                    LoadoutSelection selection = playerWarzone.getLoadoutSelections().get(event.getPlayer().getName());
-                    List<Loadout> loadouts = new ArrayList<>(playerTeam.getInventories().resolveNewLoadouts());
-                    loadouts.removeIf(ldt -> ldt.getName().equals("first") || (ldt.requiresPermission() && !event.getPlayer().hasPermission(ldt.getPermission())));
-
-                    int currentIndex = (selection.getSelectedIndex() + 1) % loadouts.size();
-                    selection.setSelectedIndex(currentIndex);
-
-                    playerWarzone.equipPlayerLoadoutSelection(event.getPlayer(), playerTeam, false, true);
+                    player.performCommand(War.war.getWarConfig().getString(WarConfig.LOADOUTCMD));
                 } else {
                     War.war.badMsg(event.getPlayer(), "zone.loadout.reenter");
                 }

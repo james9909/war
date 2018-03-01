@@ -38,7 +38,7 @@ public class PlayerState {
         this.potionEffects = player.getActivePotionEffects();
         this.exp =  player.getExp();
         this.level = player.getLevel();
-        this.fly = player.isFlying();
+        this.fly = player.getAllowFlight();
     }
 
     public Player getPlayer() {

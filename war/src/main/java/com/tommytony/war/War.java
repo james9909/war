@@ -23,17 +23,12 @@ import com.tommytony.war.listeners.WarEntityListener;
 import com.tommytony.war.listeners.WarPlayerListener;
 import com.tommytony.war.mapper.WarYmlMapper;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
-import com.tommytony.war.structure.Bomb;
-import com.tommytony.war.structure.Cake;
 import com.tommytony.war.structure.HubLobbyMaterials;
-import com.tommytony.war.structure.Monument;
 import com.tommytony.war.structure.WarHub;
 import com.tommytony.war.ui.UIManager;
-import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.PlayerState;
 import com.tommytony.war.utility.SizeCounter;
 import com.tommytony.war.utility.WarLogFormatter;
-import com.tommytony.war.volume.Volume;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -171,6 +166,7 @@ public class War extends JavaPlugin {
         warConfig.put(WarConfig.LANGUAGE, Locale.getDefault().toString());
         warConfig.put(WarConfig.AUTOJOIN, "");
         warConfig.put(WarConfig.TPWARMUP, 0);
+        warConfig.put(WarConfig.LOADOUTCMD, "");
 
         warzoneDefaultConfig.put(WarzoneConfig.AUTOASSIGN, false);
         warzoneDefaultConfig.put(WarzoneConfig.BLOCKHEADS, true);
@@ -206,7 +202,6 @@ public class War extends JavaPlugin {
         teamDefaultConfig.put(TeamConfig.LIFEPOOL, 7);
         teamDefaultConfig.put(TeamConfig.MAXSCORE, 10);
         teamDefaultConfig.put(TeamConfig.NOHUNGER, false);
-        teamDefaultConfig.put(TeamConfig.PLAYERLOADOUTASDEFAULT, false);
         teamDefaultConfig.put(TeamConfig.RESPAWNTIMER, 0);
         teamDefaultConfig.put(TeamConfig.SATURATION, 10);
         teamDefaultConfig.put(TeamConfig.SPAWNSTYLE, TeamSpawnStyle.SMALL);
@@ -222,28 +217,6 @@ public class War extends JavaPlugin {
         teamDefaultConfig.put(TeamConfig.BORDERDROP, false);
 
         this.getDefaultInventories().clearLoadouts();
-        HashMap<Integer, ItemStack> defaultLoadout = new HashMap<>();
-
-        ItemStack stoneSword = new ItemStack(Material.STONE_SWORD, 1, (byte) 8);
-        stoneSword.setDurability((short) 8);
-        defaultLoadout.put(0, stoneSword);
-
-        ItemStack bow = new ItemStack(Material.BOW, 1, (byte) 8);
-        bow.setDurability((short) 8);
-        defaultLoadout.put(1, bow);
-
-        ItemStack arrows = new ItemStack(Material.ARROW, 7);
-        defaultLoadout.put(2, arrows);
-
-        ItemStack stonePick = new ItemStack(Material.IRON_PICKAXE, 1, (byte) 8);
-        stonePick.setDurability((short) 8);
-        defaultLoadout.put(3, stonePick);
-
-        ItemStack stoneSpade = new ItemStack(Material.STONE_SPADE, 1, (byte) 8);
-        stoneSword.setDurability((short) 8);
-        defaultLoadout.put(4, stoneSpade);
-
-        this.getDefaultInventories().addLoadout("default", defaultLoadout);
 
         HashMap<Integer, ItemStack> reward = new HashMap<>();
         reward.put(0, new ItemStack(Material.CAKE, 1));
@@ -383,16 +356,6 @@ public class War extends JavaPlugin {
         }
     }
 
-    /**
-     * Converts the player-inventory to a loadout hashmap
-     *
-     * @param player player to get the inventory to get the items from
-     * @param loadout the hashmap to save to
-     */
-    private void inventoryToLoadout(Player player, HashMap<Integer, ItemStack> loadout) {
-        this.inventoryToLoadout(player.getInventory(), loadout);
-    }
-
     public String updateTeamFromNamedParams(Team team, CommandSender commandSender, String[] arguments) {
         try {
             Map<String, String> namedParams = new HashMap<>();
@@ -409,59 +372,6 @@ public class War extends JavaPlugin {
 
             StringBuilder returnMessage = new StringBuilder();
             returnMessage.append(team.getTeamConfig().updateFromNamedParams(namedParams));
-
-            if (commandSender instanceof Player) {
-                Player player = (Player) commandSender;
-                if (namedParams.containsKey("loadout")) {
-                    String loadoutName = namedParams.get("loadout");
-                    HashMap<Integer, ItemStack> loadout = team.getInventories().getLoadout(loadoutName);
-                    if (loadout == null) {
-                        // Check if any loadouts exist, if not gotta use the default inventories then add the newly created one
-                        if (!team.getInventories().hasLoadouts()) {
-                            Warzone warzone = team.getZone();
-                            for (String key : warzone.getDefaultInventories().resolveLoadouts().keySet()) {
-                                HashMap<Integer, ItemStack> transferredLoadout = warzone.getDefaultInventories().resolveLoadouts().get(key);
-                                if (transferredLoadout != null) {
-                                    team.getInventories().setLoadout(key, transferredLoadout);
-                                } else {
-                                    War.war.log("Failed to transfer loadout " + key + " down to team " + team.getName() + " in warzone " + warzone.getName(), Level.WARNING);
-                                }
-                            }
-                        }
-
-                        loadout = new HashMap<>();
-                        team.getInventories().setLoadout(loadoutName, loadout);
-                        returnMessage.append(loadoutName + " respawn loadout added.");
-                    } else {
-                        returnMessage.append(loadoutName + " respawn loadout updated.");
-                    }
-                    this.inventoryToLoadout(player, loadout);
-                    Loadout ldt = team.getInventories().getNewLoadout(loadoutName);
-                    if (thirdParameter.containsKey("loadout")) {
-                        String permission = thirdParameter.get("loadout");
-                        ldt.setPermission(permission);
-                        returnMessage.append(' ').append(loadoutName).append(" respawn loadout permission set to ").append(permission).append('.');
-                    } else if (ldt.requiresPermission()) {
-                        ldt.setPermission(null);
-                        returnMessage.append(' ').append(loadoutName).append(" respawn loadout permission deleted.");
-                    }
-                }
-                if (namedParams.containsKey("deleteloadout")) {
-                    String loadoutName = namedParams.get("deleteloadout");
-                    if (team.getInventories().containsLoadout(loadoutName)) {
-                        team.getInventories().removeLoadout(loadoutName);
-                        returnMessage.append(" " + loadoutName + " loadout removed.");
-                    } else {
-                        returnMessage.append(" " + loadoutName + " loadout not found.");
-                    }
-                }
-                if (namedParams.containsKey("reward")) {
-                    HashMap<Integer, ItemStack> reward = new HashMap<>();
-                    this.inventoryToLoadout(player, reward);
-                    team.getInventories().setReward(reward);
-                    returnMessage.append(" game end reward updated.");
-                }
-            }
 
             return returnMessage.toString();
         } catch (Exception e) {
@@ -504,112 +414,6 @@ public class War extends JavaPlugin {
             returnMessage.append(warzone.getWarzoneConfig().updateFromNamedParams(namedParams));
             returnMessage.append(warzone.getTeamDefaultConfig().updateFromNamedParams(namedParams));
 
-            if (commandSender instanceof Player) {
-                Player player = (Player) commandSender;
-                if (namedParams.containsKey("loadout")) {
-                    String loadoutName = namedParams.get("loadout");
-                    HashMap<Integer, ItemStack> loadout = warzone.getDefaultInventories().getLoadout(loadoutName);
-                    if (loadout == null) {
-                        loadout = new HashMap<>();
-
-                        // Check if any loadouts exist, if not gotta use the default inventories then add the newly created one
-                        if (!warzone.getDefaultInventories().hasLoadouts()) {
-                            for (String key : warzone.getDefaultInventories().resolveLoadouts().keySet()) {
-                                HashMap<Integer, ItemStack> transferredLoadout = warzone.getDefaultInventories().resolveLoadouts().get(key);
-                                if (transferredLoadout != null) {
-                                    warzone.getDefaultInventories().setLoadout(key, transferredLoadout);
-                                } else {
-                                    War.war.log("Failed to transfer loadout " + key + " down to warzone " + warzone.getName(), Level.WARNING);
-                                }
-                            }
-                        }
-
-                        warzone.getDefaultInventories().setLoadout(loadoutName, loadout);
-                        returnMessage.append(loadoutName).append(" respawn loadout added.");
-                    } else {
-                        returnMessage.append(loadoutName).append(" respawn loadout updated.");
-                    }
-                    this.inventoryToLoadout(player, loadout);
-                    Loadout ldt = warzone.getDefaultInventories().getNewLoadout(loadoutName);
-                    if (thirdParameter.containsKey("loadout")) {
-                        String permission = thirdParameter.get("loadout");
-                        ldt.setPermission(permission);
-                        returnMessage.append(' ').append(loadoutName).append(" respawn loadout permission set to ").append(permission).append('.');
-                    } else if (ldt.requiresPermission()) {
-                        ldt.setPermission(null);
-                        returnMessage.append(' ').append(loadoutName).append(" respawn loadout permission deleted.");
-                    }
-                }
-                if (namedParams.containsKey("deleteloadout")) {
-                    String loadoutName = namedParams.get("deleteloadout");
-                    if (warzone.getDefaultInventories().containsLoadout(loadoutName)) {
-                        warzone.getDefaultInventories().removeLoadout(loadoutName);
-                        returnMessage.append(" " + loadoutName + " loadout removed.");
-                    } else {
-                        returnMessage.append(" " + loadoutName + " loadout not found.");
-                    }
-                }
-                if (namedParams.containsKey("reward")) {
-                    HashMap<Integer, ItemStack> reward = new HashMap<>();
-                    this.inventoryToLoadout(player, reward);
-                    warzone.getDefaultInventories().setReward(reward);
-                    returnMessage.append(" game end reward updated.");
-                }
-                if (namedParams.containsKey("material")) {
-                    String whichBlocks = namedParams.get("material");
-                    ItemStack blockInHand = player.getInventory().getItemInMainHand();
-                    boolean updatedMaterials = false;
-
-                    if (!blockInHand.getType().isBlock()) {
-                        this.badMsg(player, "Can only use blocks as material.");
-                    } else {
-                        switch (whichBlocks) {
-                            case "main":
-                                warzone.getWarzoneMaterials().setMainBlock(blockInHand);
-                                returnMessage.append(" main material set to ").append(blockInHand.getType());
-                                updatedMaterials = true;
-                                break;
-                            case "stand":
-                                warzone.getWarzoneMaterials().setStandBlock(blockInHand);
-                                returnMessage.append(" stand material set to ").append(blockInHand.getType());
-                                updatedMaterials = true;
-                                break;
-                            case "light":
-                                warzone.getWarzoneMaterials().setLightBlock(blockInHand);
-                                returnMessage.append(" light material set to ").append(blockInHand.getType());
-                                updatedMaterials = true;
-                                break;
-                        }
-
-                        if (updatedMaterials) {
-                            // reset all structures
-                            for (Monument monument : warzone.getMonuments()) {
-                                monument.getVolume().resetBlocks();
-                                monument.addMonumentBlocks();
-                            }
-                            for (Cake cake : warzone.getCakes()) {
-                                cake.getVolume().resetBlocks();
-                                cake.addCakeBlocks();
-                            }
-                            for (Bomb bomb : warzone.getBombs()) {
-                                bomb.getVolume().resetBlocks();
-                                bomb.addBombBlocks();
-                            }
-                            for (Team team : warzone.getTeams()) {
-                                for (Volume spawnVolume : team.getSpawnVolumes().values()) {
-                                    spawnVolume.resetBlocks();
-                                }
-                                team.initializeTeamSpawns();
-                                if (team.getTeamFlag() != null) {
-                                    team.getFlagVolume().resetBlocks();
-                                    team.initializeTeamFlag();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
             return returnMessage.toString();
         } catch (Exception e) {
             return "PARSE-ERROR";
@@ -636,92 +440,6 @@ public class War extends JavaPlugin {
             returnMessage.append(this.getWarzoneDefaultConfig().updateFromNamedParams(namedParams));
             returnMessage.append(this.getTeamDefaultConfig().updateFromNamedParams(namedParams));
 
-            if (commandSender instanceof Player) {
-                Player player = (Player) commandSender;
-                if (namedParams.containsKey("loadout")) {
-                    String loadoutName = namedParams.get("loadout");
-                    HashMap<Integer, ItemStack> loadout = this.getDefaultInventories().getLoadout(loadoutName);
-                    if (loadout == null) {
-                        loadout = new HashMap<>();
-                        this.getDefaultInventories().addLoadout(loadoutName, loadout);
-                        returnMessage.append(loadoutName + " respawn loadout added.");
-                    } else {
-                        returnMessage.append(loadoutName + " respawn loadout updated.");
-                    }
-                    this.inventoryToLoadout(player, loadout);
-                    Loadout ldt = this.getDefaultInventories().getNewLoadout(loadoutName);
-                    if (thirdParameter.containsKey("loadout")) {
-                        String permission = thirdParameter.get("loadout");
-                        ldt.setPermission(permission);
-                        returnMessage.append(' ').append(loadoutName).append(" respawn loadout permission set to ").append(permission).append('.');
-                    } else if (ldt.requiresPermission()) {
-                        ldt.setPermission(null);
-                        returnMessage.append(' ').append(loadoutName).append(" respawn loadout permission deleted.");
-                    }
-                }
-                if (namedParams.containsKey("deleteloadout")) {
-                    String loadoutName = namedParams.get("deleteloadout");
-                    if (this.getDefaultInventories().containsLoadout(loadoutName)) {
-                        if (this.getDefaultInventories().getNewLoadouts().size() > 1) {
-                            this.getDefaultInventories().removeLoadout(loadoutName);
-                            returnMessage.append(" " + loadoutName + " loadout removed.");
-                        } else {
-                            returnMessage.append(" Can't remove only loadout.");
-                        }
-                    } else {
-                        returnMessage.append(" " + loadoutName + " loadout not found.");
-                    }
-                }
-                if (namedParams.containsKey("reward")) {
-                    HashMap<Integer, ItemStack> reward = new HashMap<>();
-                    this.inventoryToLoadout(player, reward);
-                    this.getDefaultInventories().setReward(reward);
-                    returnMessage.append(" game end reward updated.");
-                }
-                if (namedParams.containsKey("rallypoint")) {
-                    String zoneName = namedParams.get("rallypoint");
-                    this.setZoneRallyPoint(zoneName, player);
-                    returnMessage.append(" rallypoint set for zone " + zoneName + ".");
-                }
-                if (namedParams.containsKey("warhubmaterial")) {
-                    String whichBlocks = namedParams.get("warhubmaterial");
-                    ItemStack blockInHand = player.getInventory().getItemInMainHand();
-                    boolean updatedWarhubMaterials = false;
-
-                    if (!blockInHand.getType().isBlock() && !blockInHand.getType().equals(Material.AIR)) {
-                        this.badMsg(player, "Can only use blocks or air as warhub material.");
-                    } else {
-                        switch (whichBlocks) {
-                            case "floor":
-                                this.warhubMaterials.setFloorBlock(blockInHand);
-                                returnMessage.append(" warhub floor material set to ").append(blockInHand.getType());
-                                updatedWarhubMaterials = true;
-                                break;
-                            case "outline":
-                                this.warhubMaterials.setOutlineBlock(blockInHand);
-                                returnMessage.append(" warhub outline material set to ").append(blockInHand.getType());
-                                updatedWarhubMaterials = true;
-                                break;
-                            case "gate":
-                                this.warhubMaterials.setGateBlock(blockInHand);
-                                returnMessage.append(" warhub gate material set to ").append(blockInHand.getType());
-                                updatedWarhubMaterials = true;
-                                break;
-                            case "light":
-                                this.warhubMaterials.setLightBlock(blockInHand);
-                                returnMessage.append(" warhub light material set to ").append(blockInHand.getType());
-                                updatedWarhubMaterials = true;
-                                break;
-                        }
-
-                        if (updatedWarhubMaterials && War.war.getWarHub() != null) {
-                            War.war.getWarHub().getVolume().resetBlocks();
-                            War.war.getWarHub().initialize();
-                        }
-                    }
-                }
-            }
-
             return returnMessage.toString();
         } catch (Exception e) {
             return "PARSE-ERROR";
@@ -735,7 +453,7 @@ public class War extends JavaPlugin {
 
         String teamConfigStr = "";
         InventoryBag invs = team.getInventories();
-        teamConfigStr += getLoadoutsString(invs);
+        // teamConfigStr += getLoadoutsString(invs);
 
         for (TeamConfig teamConfig : TeamConfig.values()) {
             Object value = team.getTeamConfig().getValue(teamConfig);
@@ -747,6 +465,7 @@ public class War extends JavaPlugin {
         return " ::" + teamColor + "Team " + team.getName() + teamColor + " config" + normalColor + "::" + ifEmptyInheritedForTeam(teamConfigStr);
     }
 
+    /*
     private String getLoadoutsString(InventoryBag invs) {
         StringBuilder loadoutsString = new StringBuilder();
         ChatColor loadoutColor = ChatColor.GREEN;
@@ -770,6 +489,7 @@ public class War extends JavaPlugin {
 
         return loadoutsString.toString();
     }
+    */
 
     public String printConfig(Warzone zone) {
         ChatColor teamColor = ChatColor.AQUA;
@@ -786,7 +506,7 @@ public class War extends JavaPlugin {
         }
 
         String teamDefaultsStr = "";
-        teamDefaultsStr += getLoadoutsString(zone.getDefaultInventories());
+        // teamDefaultsStr += getLoadoutsString(zone.getDefaultInventories());
         for (TeamConfig teamConfig : TeamConfig.values()) {
             Object value = zone.getTeamDefaultConfig().getValue(teamConfig);
             if (value != null) {
@@ -835,7 +555,7 @@ public class War extends JavaPlugin {
         }
 
         String teamDefaultsStr = "";
-        teamDefaultsStr += getLoadoutsString(this.getDefaultInventories());
+        // teamDefaultsStr += getLoadoutsString(this.getDefaultInventories());
         for (TeamConfig teamConfig : TeamConfig.values()) {
             teamDefaultsStr += " " + teamConfig.toStringWithValue(this.getTeamDefaultConfig().getValue(teamConfig)).replace(":", ":" + teamColor) + normalColor;
         }

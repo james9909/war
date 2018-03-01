@@ -39,11 +39,6 @@ class EditZoneUI extends ChestUI {
         this.addItem(inv, 1, item, () -> War.war.getUIManager().assignUI(player, new EditTeamsListUI(zone)));
         item = new ItemStack(Material.CHEST);
         meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "Loadouts");
-        item.setItemMeta(meta);
-        this.addItem(inv, 2, item, () -> War.war.getUIManager().assignUI(player, new EditLoadoutListUI(zone)));
-        item = new ItemStack(Material.CHEST);
-        meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.YELLOW + "Structures");
         item.setItemMeta(meta);
         item = new ItemStack(Material.NETHER_STAR);

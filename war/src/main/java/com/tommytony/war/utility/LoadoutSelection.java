@@ -3,12 +3,11 @@ package com.tommytony.war.utility;
 public class LoadoutSelection {
 
     private boolean stillInSpawn;
-    private int selectedIndex;
+    private int selectedLoadout;
 
-    public LoadoutSelection(boolean stillInSpawn, int selectedIndex) {
+    public LoadoutSelection(boolean stillInSpawn, int selectedLoadout) {
         this.stillInSpawn = stillInSpawn;
-        this.selectedIndex = selectedIndex;
-
+        this.selectedLoadout = selectedLoadout;
     }
 
     public boolean isStillInSpawn() {
@@ -19,11 +18,11 @@ public class LoadoutSelection {
         this.stillInSpawn = stillInSpawn;
     }
 
-    public int getSelectedIndex() {
-        return selectedIndex;
+    public int getSelectedLoadout() {
+        return selectedLoadout;
     }
 
-    public void setSelectedIndex(int selectedIndex) {
-        this.selectedIndex = selectedIndex;
+    public void setSelectedLoadout(int selectedLoadout) {
+        this.selectedLoadout = selectedLoadout;
     }
 }

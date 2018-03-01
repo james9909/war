@@ -74,32 +74,7 @@ public class WarTxtMapper {
             }
         }
 
-        // defaultLoadout
         War.war.getDefaultInventories().clearLoadouts();
-
-        String loadoutStr = warConfig.getString("defaultLoadout");
-        if (loadoutStr != null && !loadoutStr.equals("")) {
-            War.war.getDefaultInventories().addLoadout("default", new HashMap<>());
-            LoadoutTxtMapper.fromStringToLoadout(loadoutStr, War.war.getDefaultInventories().getLoadout("default"));
-        }
-
-        // defaultExtraLoadouts
-        String extraLoadoutStr = warConfig.getString("defaultExtraLoadouts");
-        String[] extraLoadoutsSplit = extraLoadoutStr.split(",");
-
-        for (String nameStr : extraLoadoutsSplit) {
-            if (nameStr != null && !nameStr.equals("")) {
-                War.war.getDefaultInventories().addLoadout(nameStr, new HashMap<>());
-            }
-        }
-
-        for (String extraName : extraLoadoutsSplit) {
-            if (extraName != null && !extraName.equals("")) {
-                String loadoutString = warConfig.getString(extraName + "Loadout");
-                HashMap<Integer, ItemStack> loadout = War.war.getDefaultInventories().getLoadout(extraName);
-                LoadoutTxtMapper.fromStringToLoadout(loadoutString, loadout);
-            }
-        }
 
         // maxZones
         if (warConfig.keyExists("maxZones")) {
@@ -191,12 +166,6 @@ public class WarTxtMapper {
         String flagReturn = warConfig.getString("defaultFlagReturn");
         if (flagReturn != null && !flagReturn.equals("")) {
             War.war.getTeamDefaultConfig().put(TeamConfig.FLAGRETURN, FlagReturn.getFromString(flagReturn));
-        }
-
-        // defaultReward
-        String defaultRewardStr = warConfig.getString("defaultReward");
-        if (defaultRewardStr != null && !defaultRewardStr.equals("")) {
-            LoadoutTxtMapper.fromStringToLoadout(defaultRewardStr, War.war.getDefaultInventories().getReward());
         }
 
         // defaultUnbreakableZoneBlocks

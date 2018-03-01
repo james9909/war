@@ -8,7 +8,6 @@ public enum TeamConfig {
     LIFEPOOL(Integer.class, "Lifepool", "Sets maximum team lives"),
     MAXSCORE(Integer.class, "Max Score", "Sets the point limit for when a team will win"),
     NOHUNGER(Boolean.class, "No Hunger", "If true, player hunger will not decrease"),
-    PLAYERLOADOUTASDEFAULT(Boolean.class, "Player Loadout As Default", "If true, the default loadout will be the items the player brings into the zone"),
     RESPAWNTIMER(Integer.class, "Respawn Time", "Time, in seconds, required to wait after each death"),
     SATURATION(Integer.class, "Saturation", "Set player saturation to this level after each death"),
     SPAWNSTYLE(TeamSpawnStyle.class, "Spawn Style", "Sets the type spawn point\nOptions: small, big, flat, invisible"),

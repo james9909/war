@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import org.bukkit.block.Chest;
 import org.bukkit.inventory.ItemStack;
 
 public class InventoryBag {
@@ -24,8 +25,8 @@ public class InventoryBag {
         this.warzone = null;
     }
 
-    public void addLoadout(String name, HashMap<Integer, ItemStack> loadout) {
-        this.loadouts.add(new Loadout(name, loadout, null));
+    public void addLoadout(String name, Chest loadoutChest) {
+        this.loadouts.add(new Loadout(name, loadoutChest));
     }
 
     public void addLoadout(Loadout loadout) {
@@ -54,8 +55,8 @@ public class InventoryBag {
         return loadouts.size() > 0;
     }
 
-    public HashMap<String, HashMap<Integer, ItemStack>> getLoadouts() {
-        return Loadout.toLegacyFormat(loadouts);
+    public List<Loadout> getLoadouts() {
+        return loadouts;
     }
 
     public void setLoadouts(List<Loadout> loadouts) {
@@ -66,7 +67,7 @@ public class InventoryBag {
         return loadouts;
     }
 
-    public HashMap<String, HashMap<Integer, ItemStack>> resolveLoadouts() {
+    public List<Loadout> resolveLoadouts() {
         if (this.hasLoadouts()) {
             return this.getLoadouts();
         } else if (warzone != null && warzone.getDefaultInventories().hasLoadouts()) {
@@ -74,7 +75,7 @@ public class InventoryBag {
         } else if (War.war.getDefaultInventories().hasLoadouts()) {
             return War.war.getDefaultInventories().resolveLoadouts();
         } else {
-            return new HashMap<>();
+            return new ArrayList<>();
         }
     }
 
@@ -116,10 +117,10 @@ public class InventoryBag {
         this.loadouts.clear();
     }
 
-    public HashMap<Integer, ItemStack> getLoadout(String loadoutName) {
-        for (Loadout ldt : loadouts) {
-            if (ldt.getName().equals(loadoutName)) {
-                return ldt.getContents();
+    public Loadout getLoadout(String loadoutName) {
+        for (Loadout loadout : loadouts) {
+            if (loadout.getName().equals(loadoutName)) {
+                return loadout;
             }
         }
         return null;
@@ -134,14 +135,14 @@ public class InventoryBag {
         return null;
     }
 
-    public void setLoadout(String name, HashMap<Integer, ItemStack> contents) {
-        for (Loadout ldt : loadouts) {
-            if (ldt.getName().equals(name)) {
-                ldt.setContents(contents);
+    public void setLoadout(String name, Chest loadoutChest) {
+        for (Loadout loadout : loadouts) {
+            if (loadout.getName().equals(name)) {
+                loadout.setLoadoutChest(loadoutChest);
                 return;
             }
         }
-        loadouts.add(new Loadout(name, contents, null));
+        loadouts.add(new Loadout(name, loadoutChest));
     }
 
     public boolean containsLoadout(String name) {

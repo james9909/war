@@ -7,6 +7,7 @@ import com.tommytony.war.command.admin.NotWarAdminException;
 import com.tommytony.war.command.admin.SetWarHubCommand;
 import com.tommytony.war.command.admin.UnloadWarCommand;
 import com.tommytony.war.command.regular.AbstractWarCommand;
+import com.tommytony.war.command.regular.ChooseClassCommand;
 import com.tommytony.war.command.regular.JoinCommand;
 import com.tommytony.war.command.regular.LeaveCommand;
 import com.tommytony.war.command.regular.TeamCommand;
@@ -21,6 +22,7 @@ import com.tommytony.war.command.zonemaker.DeleteMonumentCommand;
 import com.tommytony.war.command.zonemaker.DeleteTeamCommand;
 import com.tommytony.war.command.zonemaker.DeleteTeamFlagCommand;
 import com.tommytony.war.command.zonemaker.DeleteZoneCommand;
+import com.tommytony.war.command.zonemaker.ClassChestCommand;
 import com.tommytony.war.command.zonemaker.NextBattleCommand;
 import com.tommytony.war.command.zonemaker.NotZoneMakerException;
 import com.tommytony.war.command.zonemaker.RenameZoneCommand;
@@ -111,6 +113,9 @@ public class WarCommandHandler {
                 case "leave":
                     commandObj = new LeaveCommand(this, sender, arguments);
                     break;
+                case "class":
+                    commandObj = new ChooseClassCommand(this, sender, arguments);
+                    break;
                 case "team":
                     commandObj = new TeamCommand(this, sender, arguments);
                     break;
@@ -195,6 +200,9 @@ public class WarCommandHandler {
                 case "zonemaker":
                 case "zm":
                     commandObj = new ZoneMakerCommand(this, sender, arguments);
+                    break;
+                case "classchest":
+                    commandObj = new ClassChestCommand(this, sender, args);
                     break;
             }
             // we are not responsible for any other command

@@ -3,6 +3,7 @@ package com.tommytony.war.ui;
 import com.google.common.collect.ImmutableList;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
+import com.tommytony.war.config.WarzoneConfig;
 import java.text.MessageFormat;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -31,9 +32,21 @@ public class JoinZoneUI extends ChestUI {
             meta.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + zone.getName());
             meta.setLore(ImmutableList
                 .of(MessageFormat.format(ChatColor.GRAY + "{0}/{1} players", zone.getPlayerCount(), zone.getMaxPlayers()), MessageFormat.format(ChatColor.GRAY + "{0} teams", zone.getTeams().size()),
-                    ChatColor.DARK_GRAY + "Click to teleport"));
+                    ChatColor.DARK_GRAY + "Click to join"));
             item.setItemMeta(meta);
-            this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new JoinTeamUI(zone)));
+            this.addItem(inv, i++, item, () -> {
+                if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.DISABLED)) {
+                    War.war.badMsg(player, "join.disabled");
+                } else if (zone.isReinitializing()) {
+                    War.war.badMsg(player, "join.disabled");
+                } else if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.JOINMIDBATTLE) && zone.isEnoughPlayers()) {
+                    War.war.badMsg(player, "join.progress");
+                } else if (zone.isFull()) {
+                    War.war.badMsg(player, "join.full.all");
+                } else {
+                    zone.autoAssign(player);
+                }
+            });
         }
     }
 

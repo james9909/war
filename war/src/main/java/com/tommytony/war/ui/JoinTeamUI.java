@@ -45,8 +45,6 @@ public class JoinTeamUI extends ChestUI {
                         War.war.badMsg(player, "join.disabled");
                     } else if (warzone.isReinitializing()) {
                         War.war.badMsg(player, "join.disabled");
-                    } else if (warzone.getWarzoneConfig().getBoolean(WarzoneConfig.AUTOASSIGN)) {
-                        War.war.badMsg(player, "join.aarequired");
                     } else if (!warzone.getWarzoneConfig().getBoolean(WarzoneConfig.JOINMIDBATTLE) && warzone.isEnoughPlayers()) {
                         War.war.badMsg(player, "join.progress");
                     } else {

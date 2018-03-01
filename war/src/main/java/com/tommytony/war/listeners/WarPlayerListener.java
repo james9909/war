@@ -589,7 +589,6 @@ public class WarPlayerListener implements Listener {
                                 playerWarzone.restorePlayerState(player);
                             }
                             playerWarzone.handleScoreCapReached(playerTeam.getName());
-                            event.setTo(playerWarzone.getTeleport());
                         } else {
                             // just added a point
                             victim.getFlagVolume().resetBlocks(); // bring back flag to team that lost it

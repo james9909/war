@@ -765,7 +765,7 @@ public class WarPlayerListener implements Listener {
                 if (playerWarzone.getLoadoutSelections().keySet().contains(event.getPlayer().getName()) && playerWarzone.getLoadoutSelections().get(event.getPlayer().getName()).isStillInSpawn()) {
                     player.performCommand(War.war.getWarConfig().getString(WarConfig.LOADOUTCMD));
                 } else {
-                    War.war.badMsg(event.getPlayer(), "zone.loadout.reenter");
+                    War.war.badMsg(event.getPlayer(), "zone.class.reenter");
                 }
             }
         }

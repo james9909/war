@@ -242,8 +242,7 @@ public class WarBlockListener implements Listener {
         if (warzone != null && warzone.isImportantBlock(block) && (!isZoneMaker || team != null)) {
             // breakage of spawn
             if (team.isSpawnLocation(block.getLocation())) {
-                // let team members loot one block the spawn for monument captures
-                War.war.badMsg(player, "build.denied.zone.multteam", team.getName());
+                War.war.badMsg(player, "build.denied.zone.spawn", team.getName());
                 event.setCancelled(true);
                 return;
             }

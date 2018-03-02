@@ -74,9 +74,8 @@ public class EditOrCreateZoneUI extends ChestUI {
     public int getSize() {
         int zones = War.war.getEnabledWarzones().size() + 1;
         if (zones % 9 == 0) {
-            return zones / 9;
-        } else {
-            return zones / 9 + 9;
+            return zones;
         }
+        return (zones / 9 + 1) * 9;
     }
 }

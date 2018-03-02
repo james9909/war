@@ -68,8 +68,8 @@ public class EditLoadoutsListUI extends ChestUI {
         List<Loadout> loadouts = getLoadouts();
         int size = loadouts.size() + 1;
         if (size % 9 == 0) {
-            return size / 9;
+            return size;
         }
-        return size / 9 + 9;
+        return (size / 9 + 1) * 9;
     }
 }

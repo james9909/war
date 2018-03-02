@@ -4,15 +4,10 @@ import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.KillstreakReward;
 import com.tommytony.war.config.MySQLConfig;
-import com.tommytony.war.job.RestoreYmlPortalsJob;
-import com.tommytony.war.job.RestoreYmlWarhubJob;
 import com.tommytony.war.job.RestoreYmlWarzonesJob;
-import com.tommytony.war.structure.WarHub;
-import com.tommytony.war.utility.Direction;
 import com.tommytony.war.utility.Reward;
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -88,24 +83,6 @@ public class WarYmlMapper {
         ConfigurationSection teamConfigSection = warRootSection.getConfigurationSection("team.default.config");
         War.war.getTeamDefaultConfig().loadFrom(teamConfigSection);
 
-        // warhub
-        ConfigurationSection hubConfigSection = warRootSection.getConfigurationSection("war.info.warhub");
-        if (hubConfigSection != null) {
-            RestoreYmlWarhubJob restoreWarhub = new RestoreYmlWarhubJob(hubConfigSection);
-            if (War.war.getServer().getScheduler().scheduleSyncDelayedTask(War.war, restoreWarhub, 20) == -1) {
-                War.war.log("Failed to schedule warhub-restore job. War hub was not loaded.", Level.WARNING);
-            }
-        }
-
-        // portals
-        ConfigurationSection portalConfigSection = warRootSection.getConfigurationSection("war.portals");
-        if (portalConfigSection != null) {
-            RestoreYmlPortalsJob restorePortals = new RestoreYmlPortalsJob(portalConfigSection);
-            if (War.war.getServer().getScheduler().scheduleSyncDelayedTask(War.war, restorePortals, 20) == -1) {
-                War.war.getLogger().warning("Failed to schedule portal-restore job. Portals were not loaded");
-            }
-        }
-
         // Killstreak config
         if (warRootSection.isConfigurationSection("war.killstreak")) {
             War.war.setKillstreakReward(new KillstreakReward(warRootSection.getConfigurationSection("war.killstreak")));
@@ -144,7 +121,6 @@ public class WarYmlMapper {
         RewardYmlMapper.fromRewardToConfig(rewardsSection, "win", War.war.getDefaultInventories().getWinReward());
         RewardYmlMapper.fromRewardToConfig(rewardsSection, "loss", War.war.getDefaultInventories().getLossReward());
 
-
         ConfigurationSection warInfoSection = warRootSection.createSection("war.info");
 
         // warzones
@@ -159,62 +135,6 @@ public class WarYmlMapper {
 
         // whitelisted commands during a game
         warInfoSection.set("commandwhitelist", War.war.getCommandWhitelist());
-
-        // warhub
-        WarHub hub = War.war.getWarHub();
-        if (hub != null) {
-            String orientationStr = "";
-            switch (hub.getOrientation()) {
-                case SOUTH:
-                    if (Direction.isLegacy) {
-                        orientationStr = "south";
-                    } else {
-                        orientationStr = "west";    // temp fix for rotating warhub
-                    }
-                    break;
-                case EAST:
-                    if (Direction.isLegacy) {
-                        orientationStr = "east";
-                    } else {
-                        orientationStr = "south";
-                    }
-                    break;
-                case NORTH:
-                    if (Direction.isLegacy) {
-                        orientationStr = "north";
-                    } else {
-                        orientationStr = "east";
-                    }
-                    break;
-                case WEST:
-                default:
-                    if (Direction.isLegacy) {
-                        orientationStr = "west";
-                    } else {
-                        orientationStr = "north";
-                    }
-                    break;
-            }
-
-            ConfigurationSection hubConfigSection = warInfoSection.createSection("warhub");
-            hubConfigSection.set("x", hub.getLocation().getBlockX());
-            hubConfigSection.set("y", hub.getLocation().getBlockY());
-            hubConfigSection.set("z", hub.getLocation().getBlockZ());
-            hubConfigSection.set("world", hub.getLocation().getWorld().getName());
-            hubConfigSection.set("orientation", orientationStr);
-
-            hubConfigSection.set("materials.floor", War.war.getWarhubMaterials().getFloorBlock());
-            hubConfigSection.set("materials.outline", War.war.getWarhubMaterials().getOutlineBlock());
-            hubConfigSection.set("materials.gate", War.war.getWarhubMaterials().getGateBlock());
-            hubConfigSection.set("materials.light", War.war.getWarhubMaterials().getLightBlock());
-
-            try {
-                VolumeMapper.save(hub.getVolume(), "");
-            } catch (SQLException e) {
-                // who really even cares
-                War.war.getLogger().log(Level.WARNING, "Failed to save warhub volume blocks", e);
-            }
-        }
 
         ConfigurationSection killstreakSection = warRootSection.createSection("war.killstreak");
         War.war.getKillstreakReward().saveTo(killstreakSection);

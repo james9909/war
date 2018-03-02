@@ -10,6 +10,7 @@ import com.tommytony.war.structure.Bomb;
 import com.tommytony.war.structure.Cake;
 import com.tommytony.war.structure.CapturePoint;
 import com.tommytony.war.structure.Monument;
+import com.tommytony.war.structure.ZonePortal;
 import com.tommytony.war.utility.Reward;
 import com.tommytony.war.volume.Volume;
 import java.io.File;
@@ -297,6 +298,13 @@ public class WarzoneYmlMapper {
                     }
                 }
             }
+
+            // portal locations
+            if (warzoneRootSection.contains("portals")) {
+                ConfigurationSection portalsSection = warzoneRootSection.getConfigurationSection("portals");
+                warzone.getPortals().addAll(ZonePortalYmlMapper.fromConfigToZonePortals(portalsSection, warzone));
+            }
+
             Connection connection = null;
             try {
                 connection = ZoneVolumeMapper.getZoneConnection(warzone.getVolume(), warzone.getName(), warzone.getWorld());
@@ -382,6 +390,17 @@ public class WarzoneYmlMapper {
                     warzone.getWarzoneMaterials().setLightBlock(new ItemStack(floorMaterialSection.getInt("id"), 1, (short) floorMaterialSection.getInt("data")));
                 }
             }
+
+            // portals
+            for (ZonePortal portal : warzone.getPortals()) {
+                try {
+                    String formattedName = String.format("portal-%s", portal.getName());
+                    portal.setVolume(warzone.loadStructure(formattedName, connection));
+                } catch (SQLException e) {
+                    War.war.getLogger().log(Level.WARNING, "Failed to load warzone structures volume", e);
+                }
+            }
+
             try {
                 connection.close();
             } catch (SQLException ignored) {
@@ -542,6 +561,11 @@ public class WarzoneYmlMapper {
             RewardYmlMapper.fromRewardToConfig(rewardsSection, "loss", warzone.getDefaultInventories().getLossReward());
         }
 
+        if (!warzone.getPortals().isEmpty()) {
+            ConfigurationSection portalSection = warzoneRootSection.createSection("portals");
+            ZonePortalYmlMapper.fromZonePortalsToConfig(portalSection, warzone.getPortals());
+        }
+
         for (Team team : teams) {
             if (!team.getTeamConfig().isEmpty()) {
                 // team specific config
@@ -644,6 +668,14 @@ public class WarzoneYmlMapper {
                 } catch (SQLException e) {
                     War.war.getLogger().log(Level.WARNING, "Failed to save warzone structures volume", e);
                 }
+            }
+        }
+
+        for (ZonePortal portal : warzone.getPortals()) {
+            try {
+                ZoneVolumeMapper.saveStructure(portal.getVolume(), connection);
+            } catch (SQLException e) {
+                War.war.getLogger().log(Level.WARNING, "Failed to save warzone structures volume", e);
             }
         }
 

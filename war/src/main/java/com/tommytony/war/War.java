@@ -25,6 +25,7 @@ import com.tommytony.war.mapper.WarYmlMapper;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
 import com.tommytony.war.structure.HubLobbyMaterials;
 import com.tommytony.war.structure.WarHub;
+import com.tommytony.war.structure.ZonePortal;
 import com.tommytony.war.ui.UIManager;
 import com.tommytony.war.utility.PlayerState;
 import com.tommytony.war.utility.Reward;
@@ -34,7 +35,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -99,6 +103,7 @@ public class War extends JavaPlugin {
     private Economy econ = null;
     private HubLobbyMaterials warhubMaterials = new HubLobbyMaterials(new ItemStack(Material.GLASS), new ItemStack(Material.WOOD), new ItemStack(Material.OBSIDIAN), new ItemStack(Material.GLOWSTONE));
     private UIManager UIManager;
+    private List<ZonePortal> portals = new ArrayList<>();
 
     public War() {
         super();
@@ -1007,5 +1012,15 @@ public class War extends JavaPlugin {
 
     public void setUIManager(UIManager UIManager) {
         this.UIManager = UIManager;
+    }
+
+    public ZonePortal getPortalByLocation(Location location) {
+        for (ZonePortal portal : portals) {
+            Location loc = portal.getLocation();
+            if (loc.getBlockX() == location.getBlockX() && loc.getBlockY() == location.getBlockY() && loc.getBlockZ() == location.getBlockZ()) {
+                return portal;
+            }
+        }
+        return null;
     }
 }

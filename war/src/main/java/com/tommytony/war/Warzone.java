@@ -24,6 +24,7 @@ import com.tommytony.war.structure.Cake;
 import com.tommytony.war.structure.CapturePoint;
 import com.tommytony.war.structure.Monument;
 import com.tommytony.war.structure.WarzoneMaterials;
+import com.tommytony.war.structure.ZonePortal;
 import com.tommytony.war.structure.ZoneWallGuard;
 import com.tommytony.war.utility.Direction;
 import com.tommytony.war.utility.InventoryManager;
@@ -122,6 +123,7 @@ public class Warzone {
     private List<LogKillsDeathsJob.KillsDeathsRecord> killsDeathsTracker = new ArrayList<>();
     private InventoryBag defaultInventories = new InventoryBag();
     private InventoryManager inventoryManager;
+    private List<ZonePortal> portals = new ArrayList<>();
 
     private Scoreboard scoreboard;
 
@@ -348,6 +350,8 @@ public class Warzone {
 
             this.initZone();
 
+            this.resetPortals();
+
             if (War.war.getWarHub() != null) {
                 War.war.getWarHub().resetZoneSign(this);
             }
@@ -391,6 +395,11 @@ public class Warzone {
         for (Cake cake : this.cakes) {
             cake.getVolume().resetBlocks();
             cake.addCakeBlocks();
+        }
+
+        // reset portals
+        for (ZonePortal portal : this.portals) {
+            portal.reset();
         }
 
         this.flagThieves.clear();
@@ -973,6 +982,7 @@ public class Warzone {
         this.respawnPlayer(team, player);
         this.broadcast("join.broadcast", player.getName(), team.getKind().getFormattedName());
         this.tryCallDelayedPlayers();
+        this.resetPortals();
         return true;
     }
 
@@ -1241,6 +1251,7 @@ public class Warzone {
                 }
             }
             this.autoTeamBalance();
+            this.resetPortals();
 
             WarPlayerLeaveEvent event1 = new WarPlayerLeaveEvent(player.getName());
             War.war.getServer().getPluginManager().callEvent(event1);
@@ -1938,6 +1949,39 @@ public class Warzone {
         } finally {
             resultSet.close();
             stmt.close();
+        }
+    }
+
+    public List<ZonePortal> getPortals() {
+        return portals;
+    }
+
+    public void addPortal(ZonePortal portal) {
+        for (int i = 0; i < portals.size(); i++) {
+            ZonePortal p = portals.get(i);
+            if (p.getName().equals(portal.getName())) {
+                portals.set(i, portal);
+                return;
+            }
+        }
+        portals.add(portal);
+    }
+
+    public boolean deletePortal(String portalName) {
+        for (Iterator<ZonePortal> it = portals.iterator(); it.hasNext(); ) {
+            ZonePortal curr = it.next();
+            if (curr.getName().equals(portalName)) {
+                curr.getVolume().resetBlocks();
+                it.remove();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void resetPortals() {
+        for (ZonePortal portal : portals) {
+            portal.reset();
         }
     }
 

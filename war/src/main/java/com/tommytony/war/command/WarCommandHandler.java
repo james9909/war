@@ -19,6 +19,7 @@ import com.tommytony.war.command.zonemaker.DeleteBombCommand;
 import com.tommytony.war.command.zonemaker.DeleteCakeCommand;
 import com.tommytony.war.command.zonemaker.DeleteCapturePointCommand;
 import com.tommytony.war.command.zonemaker.DeleteMonumentCommand;
+import com.tommytony.war.command.zonemaker.DeletePortalCommand;
 import com.tommytony.war.command.zonemaker.DeleteTeamCommand;
 import com.tommytony.war.command.zonemaker.DeleteTeamFlagCommand;
 import com.tommytony.war.command.zonemaker.DeleteZoneCommand;
@@ -38,6 +39,7 @@ import com.tommytony.war.command.zonemaker.SetTeamFlagCommand;
 import com.tommytony.war.command.zonemaker.SetWarConfigCommand;
 import com.tommytony.war.command.zonemaker.SetZoneCommand;
 import com.tommytony.war.command.zonemaker.SetZoneConfigCommand;
+import com.tommytony.war.command.zonemaker.SetZonePortalCommand;
 import com.tommytony.war.command.zonemaker.ZoneMakerCommand;
 import com.tommytony.war.ui.WarUI;
 import java.util.logging.Level;
@@ -203,6 +205,12 @@ public class WarCommandHandler {
                     break;
                 case "classchest":
                     commandObj = new ClassChestCommand(this, sender, args);
+                    break;
+                case "setportal":
+                    commandObj = new SetZonePortalCommand(this, sender, args);
+                    break;
+                case "deleteportal":
+                    commandObj = new DeletePortalCommand(this, sender, args);
                     break;
             }
             // we are not responsible for any other command

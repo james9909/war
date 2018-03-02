@@ -173,6 +173,16 @@ commands:
     usage: Renames the zone. Provide a zone name if not standing in warzone or lobby.
         Ex -
         /renamezone [zone-name] <new-name>
+  setportal:
+    description: War> Creates a portal for a warzone
+    usage: Creates a portal for a warzone at the player's location.
+        Ex -
+        /setportal <zone-name> <portal-name>
+  deleteportal:
+    description: War> Deletes a portal for a warzone
+    usage: Deletes a portal for a warzone.
+        Ex -
+        /deleteportal <zone-name> <portal-name>
   deleteteam:
     description: War> Deletes the team. Team must exist.
     usage: Deletes the team. Team must exist. Provide a zone name if not standing in warzone or lobby.

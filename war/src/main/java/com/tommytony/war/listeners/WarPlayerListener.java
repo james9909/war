@@ -523,9 +523,9 @@ public class WarPlayerListener implements Listener {
 
                         // Detect win conditions
                         if (playerTeam.getPoints() >= playerTeam.getTeamConfig().resolveInt(TeamConfig.MAXSCORE)) {
-                            if (playerWarzone.hasPlayerState(player.getName())) {
-                                playerWarzone.restorePlayerState(player);
-                            }
+                            // if (playerWarzone.hasPlayerState(player.getName())) {
+                            //     playerWarzone.restorePlayerState(player);
+                            // }
                             playerWarzone.handleScoreCapReached(playerTeam.getName());
                         } else {
                             // just added a point
@@ -585,9 +585,9 @@ public class WarPlayerListener implements Listener {
 
                         // Detect win conditions
                         if (playerTeam.getPoints() >= playerTeam.getTeamConfig().resolveInt(TeamConfig.MAXSCORE)) {
-                            if (playerWarzone.hasPlayerState(player.getName())) {
-                                playerWarzone.restorePlayerState(player);
-                            }
+                            // if (playerWarzone.hasPlayerState(player.getName())) {
+                            //     playerWarzone.restorePlayerState(player);
+                            // }
                             playerWarzone.handleScoreCapReached(playerTeam.getName());
                         } else {
                             // just added a point
@@ -655,9 +655,9 @@ public class WarPlayerListener implements Listener {
 
                             // Detect win conditions
                             if (playerTeam.getPoints() >= playerTeam.getTeamConfig().resolveInt(TeamConfig.MAXSCORE)) {
-                                if (playerWarzone.hasPlayerState(player.getName())) {
-                                    playerWarzone.restorePlayerState(player);
-                                }
+                                // if (playerWarzone.hasPlayerState(player.getName())) {
+                                //     playerWarzone.restorePlayerState(player);
+                                // }
                                 playerWarzone.handleScoreCapReached(playerTeam.getName());
                             } else {
                                 // just added a point

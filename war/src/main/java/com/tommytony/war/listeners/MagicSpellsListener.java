@@ -55,10 +55,16 @@ public class MagicSpellsListener implements Listener {
             }
 
             Spell spell = event.getSpell();
-            boolean teamKill = casterZone.getWarzoneConfig().getBoolean(WarzoneConfig.FRIENDLYFIRE);
+            boolean friendlyFire = casterZone.getWarzoneConfig().getBoolean(WarzoneConfig.FRIENDLYFIRE);
             if (casterTeam.getName().equals(targetTeam.getName())) {
-                if (!teamKill && !spell.isBeneficial()) {
+                if (!friendlyFire && !spell.isBeneficial()) {
                     // Team kill is disabled, and the spell is harmful
+                    event.setCancelled(true);
+                    return;
+                }
+            } else {
+                // Target is not on our team, and our spell is beneficial
+                if (spell.isBeneficial()) {
                     event.setCancelled(true);
                     return;
                 }
@@ -74,7 +80,7 @@ public class MagicSpellsListener implements Listener {
 
             LoadoutSelection casterLoadoutState = casterZone.getLoadoutSelections().get(caster.getName());
             if (casterTeam.isSpawnLocation(caster.getLocation()) && casterLoadoutState.isStillInSpawn()) {
-                // Target is in spawn
+                // Caster is in spawn
                 War.war.badMsg(caster, "pvp.self.spawn");
                 event.setCancelled(true);
                 return;

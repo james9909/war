@@ -47,7 +47,7 @@ public class EditLoadoutsListUI extends ChestUI {
         if (zone != null) {
             return ChatColor.RED + String.format("Edit loadouts for %s", zone.getName());
         } else if (team != null) {
-            return ChatColor.RED + String.format("Edit loadouts for %s", zone.getName());
+            return ChatColor.RED + String.format("Edit loadouts for %s", team.getName());
         } else {
             return ChatColor.RED + "Edit default loadouts";
         }
@@ -55,11 +55,11 @@ public class EditLoadoutsListUI extends ChestUI {
 
     public List<Loadout> getLoadouts() {
         if (zone != null) {
-            return zone.getDefaultInventories().resolveLoadouts();
+            return zone.getDefaultInventories().getLoadouts();
         } else if (team != null) {
-            return team.getInventories().resolveLoadouts();
+            return team.getInventories().getLoadouts();
         } else {
-            return War.war.getDefaultInventories().resolveLoadouts();
+            return War.war.getDefaultInventories().getLoadouts();
         }
     }
 

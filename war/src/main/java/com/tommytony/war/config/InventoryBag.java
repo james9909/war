@@ -25,10 +25,6 @@ public class InventoryBag {
         this.warzone = null;
     }
 
-    public void addLoadout(String name, Chest loadoutChest) {
-        this.loadouts.add(new Loadout(name, loadoutChest));
-    }
-
     public void addLoadout(Loadout newLoadout) {
         for (Loadout loadout : loadouts) {
             if (loadout.getName().equalsIgnoreCase(newLoadout.getName())) {

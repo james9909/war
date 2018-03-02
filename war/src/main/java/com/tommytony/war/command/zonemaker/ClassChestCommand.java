@@ -3,10 +3,12 @@ package com.tommytony.war.command.zonemaker;
 import com.tommytony.war.War;
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.config.WarConfigBag;
+import com.tommytony.war.utility.Loadout;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 
 public class ClassChestCommand extends AbstractZoneMakerCommand {
 
@@ -35,7 +37,8 @@ public class ClassChestCommand extends AbstractZoneMakerCommand {
                     this.badMsg("classchest.notachest");
                     return true;
                 }
-                War.war.getDefaultInventories().addLoadout(loadoutName, (Chest) state);
+                Inventory chestInventory = ((Chest) state).getBlockInventory();
+                War.war.getDefaultInventories().addLoadout(new Loadout(loadoutName, chestInventory));
                 WarConfigBag.afterUpdate(player, loadoutName + " set", false);
                 this.msg("classchest.set");
                 break;

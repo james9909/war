@@ -6,6 +6,7 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.LoadoutSelection;
+import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -42,14 +43,19 @@ public class ChooseClassCommand extends AbstractWarCommand {
 
         if (loadoutSelection.isStillInSpawn()) {
             String loadoutName = args[0];
-            Loadout loadout = War.war.getDefaultInventories().getLoadout(loadoutName);
-            if (loadout == null) {
-                this.badMsg("zone.class.notfound");
-                return true;
+            List<Loadout> loadouts = team.getInventories().resolveLoadouts();
+
+            for (Loadout loadout : loadouts) {
+                if (loadout.getName().equals(loadoutName)) {
+                    player.getInventory().clear();
+                    loadout.giveItems(player);
+                    this.msg("zone.class.equip", loadoutName);
+                    return true;
+                }
             }
-            player.getInventory().clear();
-            loadout.giveItems(player);
-            this.msg("zone.class.equip", loadoutName);
+
+            this.badMsg("zone.class.notfound");
+            return true;
         } else {
             this.badMsg("zone.class.reenter");
         }

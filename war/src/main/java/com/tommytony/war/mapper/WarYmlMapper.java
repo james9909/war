@@ -4,6 +4,7 @@ import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.KillstreakReward;
 import com.tommytony.war.config.MySQLConfig;
+import com.tommytony.war.job.RestoreYmlPortalsJob;
 import com.tommytony.war.job.RestoreYmlWarhubJob;
 import com.tommytony.war.job.RestoreYmlWarzonesJob;
 import com.tommytony.war.structure.WarHub;
@@ -93,6 +94,15 @@ public class WarYmlMapper {
             RestoreYmlWarhubJob restoreWarhub = new RestoreYmlWarhubJob(hubConfigSection);
             if (War.war.getServer().getScheduler().scheduleSyncDelayedTask(War.war, restoreWarhub, 20) == -1) {
                 War.war.log("Failed to schedule warhub-restore job. War hub was not loaded.", Level.WARNING);
+            }
+        }
+
+        // portals
+        ConfigurationSection portalConfigSection = warRootSection.getConfigurationSection("war.portals");
+        if (portalConfigSection != null) {
+            RestoreYmlPortalsJob restorePortals = new RestoreYmlPortalsJob(portalConfigSection);
+            if (War.war.getServer().getScheduler().scheduleSyncDelayedTask(War.war, restorePortals, 20) == -1) {
+                War.war.getLogger().warning("Failed to schedule portal-restore job. Portals were not loaded");
             }
         }
 

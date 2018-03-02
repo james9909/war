@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -42,13 +41,14 @@ public class LoadoutYmlMapper {
      * @return new style loadout
      */
     public static Loadout fromConfigToLoadout(ConfigurationSection config, String loadoutName) {
-        ConfigurationSection section = config.createSection(loadoutName);
-        List<Integer> slots = section.getIntegerList("items");
+        ConfigurationSection section = config.getConfigurationSection(loadoutName);
+        ConfigurationSection itemsSection = section.getConfigurationSection("items");
+        Set<String> slots = itemsSection.getKeys(false);
 
         HashMap<Integer, ItemStack> map = new HashMap<>();
-        for (Integer slot : slots) {
-            ItemStack item = section.getItemStack("items." + slot.toString());
-            map.put(slot, item);
+        for (String slot : slots) {
+            ItemStack item = itemsSection.getItemStack(slot);
+            map.put(Integer.parseInt(slot), item);
         }
 
         ItemStack helmet = (ItemStack) section.get("helmet");

@@ -30,14 +30,17 @@ public class ChooseClassCommand extends AbstractWarCommand {
 
         Warzone zone = getWarzoneByLocation();
         if (zone == null) {
+            this.badMsg("You are not in a warzone.");
             return true;
         }
         Team team = zone.getPlayerTeam(player.getName());
         if (team == null) {
+            this.badMsg("You are not on a team");
             return true;
         }
         LoadoutSelection loadoutSelection = zone.getLoadoutSelections().get(player.getName());
         if (loadoutSelection == null) {
+            this.badMsg("No loadout selection");
             return true;
         }
 
@@ -45,11 +48,13 @@ public class ChooseClassCommand extends AbstractWarCommand {
             String loadoutName = args[0];
             List<Loadout> loadouts = team.getInventories().resolveLoadouts();
 
-            for (Loadout loadout : loadouts) {
+            for (int i = 0; i < loadouts.size(); i++) {
+                Loadout loadout = loadouts.get(i);
                 if (loadout.getName().equals(loadoutName)) {
                     player.getInventory().clear();
                     loadout.giveItems(player);
                     this.msg("zone.class.equip", loadoutName);
+                    loadoutSelection.setSelectedLoadout(i);
                     return true;
                 }
             }

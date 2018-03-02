@@ -86,7 +86,12 @@ public class UIManager implements Listener {
         if (messageMap.containsKey(event.getPlayer())) {
             event.setCancelled(true);
             StringRunnable exe = messageMap.remove(event.getPlayer());
-            exe.setValue(event.getMessage());
+            String message = event.getMessage();
+            if (message.startsWith("\"") && message.endsWith("\"")) {
+                // User has surrounded their message in quotes, so strip them
+                message = message.replaceAll("\"", "");
+            }
+            exe.setValue(message);
             War.war.getServer().getScheduler().runTask(War.war, exe);
             return;
         }

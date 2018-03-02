@@ -33,7 +33,10 @@ public class WarzonesCommand extends AbstractWarCommand {
             }
         }
 
-        this.msg(warzonesMessage.toString() + ((this.getSender() instanceof Player) ? War.war.getString("zone.zoneinfo.teleport") : ""));
+        if (this.getSender() instanceof Player) {
+            warzonesMessage.append("\n").append(War.war.getString("zone.zoneinfo.teleport"));
+        }
+        this.msg(warzonesMessage.toString());
 
         return true;
     }

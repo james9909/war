@@ -26,8 +26,10 @@ public class LoadoutYmlMapper {
         List<Loadout> loadouts = new ArrayList<>();
         for (String name : loadoutNames) {
             Loadout loadout = fromConfigToLoadout(config, name);
-            loadouts.add(loadout);
-            War.war.getLogger().info("Loaded class " + loadout.getName());
+            if (loadout != null) {
+                loadouts.add(loadout);
+                War.war.getLogger().info("Loaded class " + loadout.getName());
+            }
         }
         Collections.sort(loadouts);
         return loadouts;
@@ -41,6 +43,9 @@ public class LoadoutYmlMapper {
      * @return new style loadout
      */
     public static Loadout fromConfigToLoadout(ConfigurationSection config, String loadoutName) {
+        if (config == null) {
+            return null;
+        }
         ConfigurationSection section = config.getConfigurationSection(loadoutName);
         ConfigurationSection itemsSection = section.getConfigurationSection("items");
         Set<String> slots = itemsSection.getKeys(false);

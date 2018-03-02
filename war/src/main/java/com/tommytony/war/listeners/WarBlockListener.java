@@ -243,14 +243,9 @@ public class WarBlockListener implements Listener {
             // breakage of spawn
             if (team.isSpawnLocation(block.getLocation())) {
                 // let team members loot one block the spawn for monument captures
-                if (player.getInventory().containsAtLeast(team.getKind().getBlockHead(), 1)) {
-                    War.war.badMsg(player, "build.denied.zone.multteam", team.getName());
-                    event.setCancelled(true);
-                    return;
-                } else {
-                    event.setCancelled(false); // very important, otherwise could get cancelled but unbreakableZoneBlocks further down
-                    return;
-                }
+                War.war.badMsg(player, "build.denied.zone.multteam", team.getName());
+                event.setCancelled(true);
+                return;
             }
             // stealing of flag
             if (warzone.isEnemyTeamFlagBlock(team, block)) {

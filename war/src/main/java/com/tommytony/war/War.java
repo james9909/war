@@ -103,7 +103,7 @@ public class War extends JavaPlugin {
     private Economy econ = null;
     private HubLobbyMaterials warhubMaterials = new HubLobbyMaterials(new ItemStack(Material.GLASS), new ItemStack(Material.WOOD), new ItemStack(Material.OBSIDIAN), new ItemStack(Material.GLOWSTONE));
     private UIManager UIManager;
-    private List<ZonePortal> portals = new ArrayList<>();
+    private HashMap<String, ZonePortal> portals = new HashMap<>();
 
     public War() {
         super();
@@ -1014,13 +1014,25 @@ public class War extends JavaPlugin {
         this.UIManager = UIManager;
     }
 
-    public ZonePortal getPortalByLocation(Location location) {
-        for (ZonePortal portal : portals) {
-            Location loc = portal.getLocation();
-            if (loc.getBlockX() == location.getBlockX() && loc.getBlockY() == location.getBlockY() && loc.getBlockZ() == location.getBlockZ()) {
-                return portal;
-            }
-        }
-        return null;
+    private String getCoordinates(Location location) {
+        int x = location.getBlockX();
+        int y = location.getBlockY();
+        int z = location.getBlockZ();
+        return String.format("%d,%d,%d", x, y, z);
+    }
+
+    public void addPortal(ZonePortal portal) {
+        String coordinates = getCoordinates(portal.getLocation());
+        portals.put(coordinates, portal);
+    }
+
+    public void removePortal(ZonePortal portal) {
+        String coordinates = getCoordinates(portal.getLocation());
+        portals.remove(coordinates);
+    }
+
+    public ZonePortal getZonePortal(Location other) {
+        String coordinates = getCoordinates(other);
+        return portals.getOrDefault(coordinates, null);
     }
 }

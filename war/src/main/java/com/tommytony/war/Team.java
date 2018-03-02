@@ -461,9 +461,7 @@ public class Team {
             spawnEntry.getValue().resetBlocks();
             this.initializeTeamSpawn(spawnEntry.getKey()); // reset everything instead of just sign
         }
-        if (War.war.getWarHub() != null) {
-            War.war.getWarHub().resetZoneSign(warzone);
-        }
+        warzone.resetPortals();
     }
 
     public void setSpawnVolume(Location spawnLocation, Volume volume) {

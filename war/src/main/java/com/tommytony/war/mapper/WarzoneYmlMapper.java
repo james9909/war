@@ -302,7 +302,10 @@ public class WarzoneYmlMapper {
             // portal locations
             if (warzoneRootSection.contains("portals")) {
                 ConfigurationSection portalsSection = warzoneRootSection.getConfigurationSection("portals");
-                warzone.getPortals().addAll(ZonePortalYmlMapper.fromConfigToZonePortals(portalsSection, warzone));
+                List<ZonePortal> portals = ZonePortalYmlMapper.fromConfigToZonePortals(portalsSection, warzone);
+                for (ZonePortal portal : portals) {
+                    warzone.addPortal(portal);
+                }
             }
 
             Connection connection = null;

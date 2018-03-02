@@ -11,6 +11,7 @@ import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.structure.Bomb;
 import com.tommytony.war.structure.Cake;
 import com.tommytony.war.structure.WarHub;
+import com.tommytony.war.structure.ZonePortal;
 import com.tommytony.war.utility.Direction;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.LoadoutSelection;
@@ -94,16 +95,12 @@ public class WarPlayerListener implements Listener {
             }
             if (autojoinWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.DISABLED) || autojoinWarzone.isReinitializing()) {
                 War.war.badMsg(event.getPlayer(), "join.disabled");
-                event.getPlayer().teleport(autojoinWarzone.getTeleport());
             } else if (!autojoinWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.JOINMIDBATTLE) && autojoinWarzone.isEnoughPlayers()) {
                 War.war.badMsg(event.getPlayer(), "join.progress");
-                event.getPlayer().teleport(autojoinWarzone.getTeleport());
             } else if (autojoinWarzone.isFull()) {
                 War.war.badMsg(event.getPlayer(), "join.full.all");
-                event.getPlayer().teleport(autojoinWarzone.getTeleport());
             } else if (autojoinWarzone.isFull(event.getPlayer())) {
                 War.war.badMsg(event.getPlayer(), "join.permission.all");
-                event.getPlayer().teleport(autojoinWarzone.getTeleport());
             } else { // Player will only ever be autoassigned to a team
                 autojoinWarzone.autoAssign(event.getPlayer());
             }
@@ -340,36 +337,6 @@ public class WarPlayerListener implements Listener {
         }
         latestLocations.put(player.getName(), playerLoc);
 
-        // Signs can automatically teleport you to specific or random warzones
-        if (playerLoc.getBlock().getType() == Material.SIGN_POST) {
-            Sign sign = (Sign) playerLoc.getBlock().getState();
-            if (sign.getLine(0).equals("[zone]")) {
-                Warzone indicated = Warzone.getZoneByName(sign.getLine(1));
-                if (indicated != null) {
-                    player.teleport(indicated.getTeleport());
-                } else if (sign.getLine(1).equalsIgnoreCase("$random")) {
-                    List<Warzone> warzones = War.war.getEnabledWarzones();
-                    if (warzones.size() == 0) {
-                        return;
-                    }
-                    int zone = random.nextInt(warzones.size());
-                    Warzone random = warzones.get(zone);
-                    player.teleport(random.getTeleport());
-                } else if (sign.getLine(1).equalsIgnoreCase("$active")) {
-                    List<Warzone> warzones = War.war.getActiveWarzones();
-                    if (warzones.size() == 0) {
-                        warzones = War.war.getEnabledWarzones();
-                    }
-                    if (warzones.size() == 0) {
-                        return;
-                    }
-                    int zone = random.nextInt(warzones.size());
-                    Warzone random = warzones.get(zone);
-                    player.teleport(random.getTeleport());
-                }
-            }
-        }
-
         Warzone locZone = Warzone.getZoneByLocation(playerLoc);
 
         boolean isMaker = War.war.isZoneMaker(player);
@@ -394,35 +361,6 @@ public class WarPlayerListener implements Listener {
             // make sure to delete any wall guards as you leave
             for (Warzone zone : War.war.getWarzones()) {
                 zone.dropZoneWallGuardIfAny(player);
-            }
-        }
-
-        // Warhub zone gates
-        WarHub hub = War.war.getWarHub();
-        if (hub != null && hub.getVolume().contains(player.getLocation())) {
-            Warzone zone = hub.getDestinationWarzoneForLocation(playerLoc);
-            if (zone != null && zone.getTeleport() != null) {
-                if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.AUTOJOIN) && zone.getTeams().size() >= 1 && currentTeam == null) {
-                    if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.DISABLED) || zone.isReinitializing()) {
-                        War.war.badMsg(player, "join.disabled");
-                        event.setTo(hub.getLocation());
-                    } else if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.JOINMIDBATTLE) && zone.isEnoughPlayers()) {
-                        War.war.badMsg(player, "join.progress");
-                        event.setTo(hub.getLocation());
-                    } else if (zone.isFull()) {
-                        War.war.badMsg(player, "join.full.all");
-                        event.setTo(hub.getLocation());
-                    } else if (zone.isFull(player)) {
-                        War.war.badMsg(player, "join.permission.all");
-                        event.setTo(hub.getLocation());
-                    } else {
-                        zone.autoAssign(player);
-                    }
-                    return;
-                }
-                event.setTo(zone.getTeleport());
-                War.war.msg(player, "zone.teleport", zone.getName());
-                return;
             }
         }
 
@@ -651,7 +589,6 @@ public class WarPlayerListener implements Listener {
                                 playerWarzone.restorePlayerState(player);
                             }
                             playerWarzone.handleScoreCapReached(playerTeam.getName());
-                            event.setTo(playerWarzone.getTeleport());
                         } else {
                             // just added a point
 
@@ -722,7 +659,6 @@ public class WarPlayerListener implements Listener {
                                     playerWarzone.restorePlayerState(player);
                                 }
                                 playerWarzone.handleScoreCapReached(playerTeam.getName());
-                                event.setTo(playerWarzone.getTeleport());
                             } else {
                                 // just added a point
 
@@ -752,6 +688,23 @@ public class WarPlayerListener implements Listener {
             // player is not in any team, but inside warzone boundaries, get him out
             player.performCommand("/warhub");
             War.war.badMsg(player, "zone.noteamnotice");
+        } else {
+            // player is not in a warzone
+            ZonePortal portal = War.war.getZonePortal(playerLoc);
+            if (portal != null) {
+                Warzone zone = portal.getZone();
+                if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.DISABLED) || zone.isReinitializing()) {
+                    War.war.badMsg(player, "join.disabled");
+                } else if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.JOINMIDBATTLE) && zone.isEnoughPlayers()) {
+                    War.war.badMsg(player, "join.progress");
+                } else if (zone.isFull()) {
+                    War.war.badMsg(player, "join.full.all");
+                } else if (zone.isFull(player)) {
+                    War.war.badMsg(player, "join.permission.all");
+                } else {
+                    zone.autoAssign(player);
+                }
+            }
         }
     }
 

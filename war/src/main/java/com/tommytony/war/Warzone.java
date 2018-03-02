@@ -351,10 +351,6 @@ public class Warzone {
             this.initZone();
 
             this.resetPortals();
-
-            if (War.war.getWarHub() != null) {
-                War.war.getWarHub().resetZoneSign(this);
-            }
         }
 
         // Don't forget to reset these to false, or we won't be able to score or empty lifepools anymore
@@ -1957,6 +1953,7 @@ public class Warzone {
     }
 
     public void addPortal(ZonePortal portal) {
+        War.war.addPortal(portal);
         for (int i = 0; i < portals.size(); i++) {
             ZonePortal p = portals.get(i);
             if (p.getName().equals(portal.getName())) {
@@ -1972,6 +1969,7 @@ public class Warzone {
             ZonePortal curr = it.next();
             if (curr.getName().equals(portalName)) {
                 curr.getVolume().resetBlocks();
+                War.war.removePortal(curr);
                 it.remove();
                 return true;
             }

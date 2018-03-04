@@ -65,10 +65,7 @@ public class ZoneVolumeMapper {
     public static Connection getZoneConnection(ZoneVolume volume, String zoneName, World world) throws SQLException {
         File databaseFile = new File(War.war.getDataFolder(), String.format("/dat/warzone-%s/volume-%s.sl3", zoneName, volume.getName()));
         if (!databaseFile.exists()) {
-            // Convert warzone to nimitz file format.
-            PreNimitzZoneVolumeMapper.load(volume, zoneName, world, false);
-            ZoneVolumeMapper.save(volume, zoneName);
-            War.war.log("Warzone " + zoneName + " converted to nimitz format!", Level.INFO);
+            throw new IllegalStateException("Zone database file doesn't exist!");
         }
         Connection databaseConnection = DriverManager.getConnection("jdbc:sqlite:" + databaseFile.getPath());
         Statement stmt = databaseConnection.createStatement();

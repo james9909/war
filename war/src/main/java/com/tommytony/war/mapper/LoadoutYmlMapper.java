@@ -48,6 +48,9 @@ public class LoadoutYmlMapper {
         }
         ConfigurationSection section = config.getConfigurationSection(loadoutName);
         ConfigurationSection itemsSection = section.getConfigurationSection("items");
+        if (itemsSection == null) {
+            return null;
+        }
         Set<String> slots = itemsSection.getKeys(false);
 
         HashMap<Integer, ItemStack> map = new HashMap<>();

@@ -74,11 +74,12 @@ public class WarBlockListener implements Listener {
         }
 
         // protect the hub
+        /*
         if (War.war.getWarHub() != null && War.war.getWarHub().getVolume().contains(block)) {
             War.war.badMsg(player, "build.denied.location");
             cancelAndKeepItem(event);
             return;
-        }
+        }*/
 
         // buildInZonesOnly
         if (zone == null && War.war.getWarConfig().getBoolean(WarConfig.BUILDINZONESONLY) && !War.war.canBuildOutsideZone(player)) {
@@ -329,11 +330,12 @@ public class WarBlockListener implements Listener {
         }
 
         // protect the hub
+        /*
         if (War.war.getWarHub() != null && War.war.getWarHub().getVolume().contains(block)) {
             War.war.badMsg(player, "build.denied.location");
             event.setCancelled(true);
             return;
-        }
+        }*/
 
         // buildInZonesOnly
         Warzone blockZone = Warzone.getZoneByLocation(new Location(block.getWorld(), block.getX(), block.getY(), block.getZ()));

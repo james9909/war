@@ -25,11 +25,6 @@ public class DeleteZoneCommand extends AbstractZoneMakerCommand {
 
         WarzoneYmlMapper.delete(zone);
 
-        if (War.war.getWarHub() != null) { // warhub has to change
-            War.war.getWarHub().getVolume().resetBlocks();
-            War.war.getWarHub().initialize();
-        }
-
         String msg = "Warzone " + zone.getName() + " removed by " + sender.getName() + ".";
         War.war.log(msg, Level.INFO);
         War.war.msg(sender, msg);

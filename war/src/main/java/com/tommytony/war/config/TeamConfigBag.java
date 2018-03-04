@@ -40,11 +40,6 @@ public class TeamConfigBag {
         }
 
         War.war.log(sender.getName() + " updated team " + team.getName() + " configuration in warzone " + zone.getName() + "." + namedParamReturn, Level.INFO);
-
-        if (War.war.getWarHub() != null) { // maybe the zone was disabled/enabled
-            War.war.getWarHub().getVolume().resetBlocks();
-            War.war.getWarHub().initialize();
-        }
     }
 
     public boolean contains(TeamConfig config) {

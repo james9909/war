@@ -248,33 +248,29 @@ public class WarEntityListener implements Listener {
             if (block.getType() == Material.TNT) {
                 continue; // don't restore TNT (failed to track down regression cause)
             }
-            if (War.war.getWarHub() != null && War.war.getWarHub().getVolume().contains(block)) {
-                dontExplode.add(block);
-            } else {
-                boolean inOneZone = false;
-                for (Warzone zone : War.war.getWarzones()) {
-                    if (zone.isImportantBlock(block)) {
-                        dontExplode.add(block);
-                        if (zone.isBombBlock(block)) {
-                            // tnt doesn't get reset like normal blocks, gotta schedule a later reset just for the Bomb
-                            // structure's tnt block
-                            DeferredBlockResetsJob job = new DeferredBlockResetsJob();
-                            BlockState tnt = block.getState();
-                            tnt.setType(Material.TNT);
-                            job.add(tnt);
-                            War.war.getServer().getScheduler().scheduleSyncDelayedTask(War.war, job, 10);
-                        }
-                        inOneZone = true;
-                        break;
-                    } else if (zone.getVolume().contains(block)) {
-                        inOneZone = true;
-                    }
-                }
-
-                if (!inOneZone && explosionInAWarzone) {
-                    // if the explosion originated in warzone, always rollback
+            boolean inOneZone = false;
+            for (Warzone zone : War.war.getWarzones()) {
+                if (zone.isImportantBlock(block)) {
                     dontExplode.add(block);
+                    if (zone.isBombBlock(block)) {
+                        // tnt doesn't get reset like normal blocks, gotta schedule a later reset just for the Bomb
+                        // structure's tnt block
+                        DeferredBlockResetsJob job = new DeferredBlockResetsJob();
+                        BlockState tnt = block.getState();
+                        tnt.setType(Material.TNT);
+                        job.add(tnt);
+                        War.war.getServer().getScheduler().scheduleSyncDelayedTask(War.war, job, 10);
+                    }
+                    inOneZone = true;
+                    break;
+                } else if (zone.getVolume().contains(block)) {
+                    inOneZone = true;
                 }
+            }
+
+            if (!inOneZone && explosionInAWarzone) {
+                // if the explosion originated in warzone, always rollback
+                dontExplode.add(block);
             }
         }
 

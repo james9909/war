@@ -40,11 +40,6 @@ public class WarzoneConfigBag {
         }
 
         War.war.log(sender.getName() + " updated warzone " + zone.getName() + " configuration." + namedParamReturn, Level.INFO);
-
-        if (War.war.getWarHub() != null) { // maybe the zone was disabled/enabled
-            War.war.getWarHub().getVolume().resetBlocks();
-            War.war.getWarHub().initialize();
-        }
     }
 
     public void put(WarzoneConfig config, Object value) {

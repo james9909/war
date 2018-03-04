@@ -1909,9 +1909,6 @@ public class Warzone {
         if (reason.useRallyPoint() && this.getRallyPoint() != null) {
             return this.getRallyPoint();
         }
-        if (this.getWarzoneConfig().getBoolean(WarzoneConfig.AUTOJOIN) && War.war.getWarHub() != null) {
-            return War.war.getWarHub().getLocation();
-        }
         return this.getTeleport();
     }
 

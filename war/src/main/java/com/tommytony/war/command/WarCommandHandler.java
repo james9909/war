@@ -1,10 +1,8 @@
 package com.tommytony.war.command;
 
 import com.tommytony.war.War;
-import com.tommytony.war.command.admin.DeleteWarhubCommand;
 import com.tommytony.war.command.admin.LoadWarCommand;
 import com.tommytony.war.command.admin.NotWarAdminException;
-import com.tommytony.war.command.admin.SetWarHubCommand;
 import com.tommytony.war.command.admin.UnloadWarCommand;
 import com.tommytony.war.command.regular.AbstractWarCommand;
 import com.tommytony.war.command.regular.ChooseClassCommand;
@@ -12,7 +10,6 @@ import com.tommytony.war.command.regular.JoinCommand;
 import com.tommytony.war.command.regular.LeaveCommand;
 import com.tommytony.war.command.regular.TeamCommand;
 import com.tommytony.war.command.regular.TeamsCommand;
-import com.tommytony.war.command.regular.WarhubCommand;
 import com.tommytony.war.command.regular.WarzoneCommand;
 import com.tommytony.war.command.regular.WarzonesCommand;
 import com.tommytony.war.command.zonemaker.DeleteBombCommand;
@@ -95,9 +92,6 @@ public class WarCommandHandler {
         AbstractWarCommand commandObj = null;
         try {
             switch (command) {
-                case "warhub":
-                    commandObj = new WarhubCommand(this, sender, arguments);
-                    break;
                 case "zones":
                 case "warzones":
                     commandObj = new WarzonesCommand(this, sender, arguments);
@@ -182,12 +176,6 @@ public class WarCommandHandler {
                 case "setzoneconfig":
                 case "zonecfg":
                     commandObj = new SetZoneConfigCommand(this, sender, arguments);
-                    break;
-                case "setwarhub":
-                    commandObj = new SetWarHubCommand(this, sender, arguments);
-                    break;
-                case "deletewarhub":
-                    commandObj = new DeleteWarhubCommand(this, sender, arguments);
                     break;
                 case "loadwar":
                     commandObj = new LoadWarCommand(this, sender, arguments);

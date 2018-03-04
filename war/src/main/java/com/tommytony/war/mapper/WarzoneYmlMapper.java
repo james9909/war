@@ -711,6 +711,7 @@ public class WarzoneYmlMapper {
         // Kill old warzone, but use it to create the renamed copy
         zone.unload();
         zone.getVolume().resetBlocks();    // We're need a clean land
+        zone.resetPortals();
 
         String name = zone.getName();
 

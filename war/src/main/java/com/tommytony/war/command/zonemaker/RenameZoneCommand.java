@@ -89,10 +89,7 @@ public class RenameZoneCommand extends AbstractZoneMakerCommand {
         // Update war config
         WarYmlMapper.save();
 
-        if (War.war.getWarHub() != null) { // warhub has to change
-            War.war.getWarHub().getVolume().resetBlocks();
-            War.war.getWarHub().initialize();
-        }
+        zone.resetPortals();
 
         War.war.log(this.getSender().getName() + " renamed warzone " + oldName + " to " + newName, Level.INFO);
         this.msg("Warzone " + oldName + " renamed to " + newName + ".");

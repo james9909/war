@@ -23,8 +23,6 @@ import com.tommytony.war.listeners.WarEntityListener;
 import com.tommytony.war.listeners.WarPlayerListener;
 import com.tommytony.war.mapper.WarYmlMapper;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
-import com.tommytony.war.structure.HubLobbyMaterials;
-import com.tommytony.war.structure.WarHub;
 import com.tommytony.war.structure.ZonePortal;
 import com.tommytony.war.ui.UIManager;
 import com.tommytony.war.utility.PlayerState;
@@ -35,10 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -96,12 +91,10 @@ public class War extends JavaPlugin {
     private boolean loaded = false;
     // Zones and hub
     private List<Warzone> warzones = new ArrayList<>();
-    private WarHub warHub;
     private HashMap<String, PlayerState> disconnected = new HashMap<>();
     private KillstreakReward killstreakReward;
     private MySQLConfig mysqlConfig;
     private Economy econ = null;
-    private HubLobbyMaterials warhubMaterials = new HubLobbyMaterials(new ItemStack(Material.GLASS), new ItemStack(Material.WOOD), new ItemStack(Material.OBSIDIAN), new ItemStack(Material.GLOWSTONE));
     private UIManager UIManager;
     private HashMap<String, ZonePortal> portals = new HashMap<>();
 
@@ -311,10 +304,6 @@ public class War extends JavaPlugin {
             warzone.unload();
         }
         this.warzones.clear();
-
-        if (this.warHub != null) {
-            this.warHub.getVolume().resetBlocks();
-        }
 
         this.getServer().getScheduler().cancelTasks(this);
         this.playerListener.purgeLatestPositions();
@@ -901,14 +890,6 @@ public class War extends JavaPlugin {
         return this.incompleteZones;
     }
 
-    public WarHub getWarHub() {
-        return this.warHub;
-    }
-
-    public void setWarHub(WarHub warHub) {
-        this.warHub = warHub;
-    }
-
     public boolean isLoaded() {
         return this.loaded;
     }
@@ -947,14 +928,6 @@ public class War extends JavaPlugin {
 
     public WarConfigBag getWarConfig() {
         return this.warConfig;
-    }
-
-    public HubLobbyMaterials getWarhubMaterials() {
-        return this.warhubMaterials;
-    }
-
-    public void setWarhubMaterials(HubLobbyMaterials warhubMaterials) {
-        this.warhubMaterials = warhubMaterials;
     }
 
     public KillstreakReward getKillstreakReward() {

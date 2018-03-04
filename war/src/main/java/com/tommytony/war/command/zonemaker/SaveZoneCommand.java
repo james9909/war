@@ -133,11 +133,6 @@ public class SaveZoneCommand extends AbstractZoneMakerCommand {
         }
         zone.initializeZone(); // bring back team spawns etc
 
-        if (War.war.getWarHub() != null) { // maybe the zone was disabled/enabled
-            War.war.getWarHub().getVolume().resetBlocks();
-            War.war.getWarHub().initialize();
-        }
-
         this.msg("Saved " + savedBlocks + " blocks in warzone " + zone.getName() + "." + namedParamResult);
         if (namedParamResult != null && namedParamResult.length() > 0) {
             War.war.log(this.getSender().getName() + " also updated warzone " + zone.getName() + " configuration." + namedParamResult, Level.INFO);

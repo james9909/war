@@ -58,6 +58,7 @@ public class InventoryManager {
 
             items = itemsList.toArray(new ItemStack[itemsList.size()]);
             armor = armorList.toArray(new ItemStack[armorList.size()]);
+            file.delete();
         }
 
         player.getInventory().setContents(items);

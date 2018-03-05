@@ -17,6 +17,7 @@ import com.tommytony.war.config.WarzoneConfigBag;
 import com.tommytony.war.job.CapturePointTimer;
 import com.tommytony.war.job.HelmetProtectionTask;
 import com.tommytony.war.job.ScoreboardSwitchTimer;
+import com.tommytony.war.job.UpdateScoreboardJob;
 import com.tommytony.war.listeners.MagicSpellsListener;
 import com.tommytony.war.listeners.WarBlockListener;
 import com.tommytony.war.listeners.WarEntityListener;
@@ -253,6 +254,8 @@ public class War extends JavaPlugin {
         cpt.runTaskTimer(this, 100, 20);
         ScoreboardSwitchTimer sst = new ScoreboardSwitchTimer();
         sst.runTaskTimer(this, 500, 20 * 60);
+        UpdateScoreboardJob usj = new UpdateScoreboardJob();
+        usj.runTaskTimerAsynchronously(this, 0, 20);
 
         if (this.mysqlConfig.isEnabled()) {
             try {

@@ -41,7 +41,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -112,9 +111,9 @@ public class Warzone {
     private Location rallyPoint;
     private List<ZoneWallGuard> zoneWallGuards = new ArrayList<>();
     private HashMap<String, PlayerState> playerStates = new HashMap<>();
-    private HashMap<UUID, Team> flagThieves = new HashMap<>();
-    private HashMap<UUID, Bomb> bombThieves = new HashMap<>();
-    private HashMap<UUID, Cake> cakeThieves = new HashMap<>();
+    private HashMap<String, Team> flagThieves = new HashMap<>();
+    private HashMap<String, Bomb> bombThieves = new HashMap<>();
+    private HashMap<String, Cake> cakeThieves = new HashMap<>();
     private HashMap<String, LoadoutSelection> loadoutSelections = new HashMap<>();
     private HashMap<String, PlayerState> deadMenInventories = new HashMap<>();
     private HashMap<String, Integer> killCount = new HashMap<>();
@@ -324,9 +323,9 @@ public class Warzone {
                     obj.unregister();
                 }
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (player.getScoreboard() == this.scoreboard) {
-                        player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-                    }
+                    // if (player.getScoreboard() == this.scoreboard) {
+                    //     player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+                    // }
                 }
                 this.scoreboard = null;
             }
@@ -401,15 +400,16 @@ public class Warzone {
         this.flagThieves.clear();
         this.bombThieves.clear();
         this.cakeThieves.clear();
-        if (this.getScoreboardType() != ScoreboardType.NONE) {
-            this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-            this.updateScoreboard();
-            for (Team team : this.getTeams()) {
-                for (Player player : team.getPlayers()) {
-                    player.setScoreboard(scoreboard);
-                }
-            }
-        }
+        // if (this.getScoreboardType() != ScoreboardType.NONE) {
+        //     this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        //     // this.updateScoreboard();
+        //     for (Team team : this.getTeams()) {
+        //         for (Player player : team.getPlayers()) {
+        //             // player.setScoreboard(scoreboard);
+        //             updateScoreboard(player, team);
+        //         }
+        //     }
+        // }
         this.reallyDeadFighters.clear();
 
         //get them config (here be crazy grinning's!)
@@ -1035,7 +1035,7 @@ public class Warzone {
         if (attackerTeam.getTeamConfig().resolveBoolean(TeamConfig.KILLSTREAK)) {
             War.war.getKillstreakReward().rewardPlayer(attacker, this.getKillCount(attacker.getName()));
         }
-        this.updateScoreboard();
+        // this.updateScoreboard();
         if (defenderTeam.getTeamConfig().resolveBoolean(TeamConfig.INVENTORYDROP)) {
             dropItems(defender.getLocation(), defender.getInventory().getContents());
             dropItems(defender.getLocation(), defender.getInventory().getArmorContents());
@@ -1086,6 +1086,9 @@ public class Warzone {
                     String teamName = team.getKind().getColor() + team.getName() + ChatColor.RESET;
                     this.getScoreboard().getObjective(DisplaySlot.SIDEBAR).getScore(teamName).setScore(team.getPlayers().size());
                 }
+                break;
+            case ALL:
+                Objective objective = this.getScoreboard().getObjective(DisplaySlot.SIDEBAR);
                 break;
             default:
                 break;
@@ -1356,60 +1359,60 @@ public class Warzone {
 
     // Flags
     public void addFlagThief(Team lostFlagTeam, Player flagThief) {
-        this.flagThieves.put(flagThief.getUniqueId(), lostFlagTeam);
+        this.flagThieves.put(flagThief.getName(), lostFlagTeam);
         WarPlayerThiefEvent event1 = new WarPlayerThiefEvent(flagThief, WarPlayerThiefEvent.StolenObject.FLAG);
         War.war.getServer().getPluginManager().callEvent(event1);
     }
 
     public boolean isFlagThief(Player suspect) {
-        return this.flagThieves.containsKey(suspect.getUniqueId());
+        return this.flagThieves.containsKey(suspect.getName());
     }
 
     public Team getVictimTeamForFlagThief(Player thief) {
-        return this.flagThieves.get(thief.getUniqueId());
+        return this.flagThieves.get(thief.getName());
     }
 
     public void removeFlagThief(Player thief) {
-        this.flagThieves.remove(thief.getUniqueId());
+        this.flagThieves.remove(thief.getName());
     }
 
     // Bomb
     public void addBombThief(Bomb bomb, Player bombThief) {
-        this.bombThieves.put(bombThief.getUniqueId(), bomb);
+        this.bombThieves.put(bombThief.getName(), bomb);
         WarPlayerThiefEvent event1 = new WarPlayerThiefEvent(bombThief, WarPlayerThiefEvent.StolenObject.BOMB);
         War.war.getServer().getPluginManager().callEvent(event1);
     }
 
     public boolean isBombThief(Player suspect) {
-        return this.bombThieves.containsKey(suspect.getUniqueId());
+        return this.bombThieves.containsKey(suspect.getName());
     }
 
     public Bomb getBombForThief(Player thief) {
-        return this.bombThieves.get(thief.getUniqueId());
+        return this.bombThieves.get(thief.getName());
     }
 
     // Cake
 
     public void removeBombThief(Player thief) {
-        this.bombThieves.remove(thief.getUniqueId());
+        this.bombThieves.remove(thief.getName());
     }
 
     public void addCakeThief(Cake cake, Player cakeThief) {
-        this.cakeThieves.put(cakeThief.getUniqueId(), cake);
+        this.cakeThieves.put(cakeThief.getName(), cake);
         WarPlayerThiefEvent event1 = new WarPlayerThiefEvent(cakeThief, WarPlayerThiefEvent.StolenObject.CAKE);
         War.war.getServer().getPluginManager().callEvent(event1);
     }
 
     public boolean isCakeThief(Player suspect) {
-        return this.cakeThieves.containsKey(suspect.getUniqueId());
+        return this.cakeThieves.containsKey(suspect.getName());
     }
 
     public Cake getCakeForThief(Player thief) {
-        return this.cakeThieves.get(thief.getUniqueId());
+        return this.cakeThieves.get(thief.getName());
     }
 
     public void removeCakeThief(Player thief) {
-        this.cakeThieves.remove(thief.getUniqueId());
+        this.cakeThieves.remove(thief.getName());
     }
 
     public void clearThieves() {
@@ -1419,12 +1422,7 @@ public class Warzone {
     }
 
     public boolean isTeamFlagStolen(Team team) {
-        for (UUID playerKey : this.flagThieves.keySet()) {
-            if (this.flagThieves.get(playerKey).getName().equals(team.getName())) {
-                return true;
-            }
-        }
-        return false;
+        return flagThieves.values().contains(team);
     }
 
     public void handleScoreCapReached(String winnersStr) {
@@ -1978,6 +1976,18 @@ public class Warzone {
         for (ZonePortal portal : portals) {
             portal.reset();
         }
+    }
+
+    public HashMap<String, Team> getFlagThieves() {
+        return flagThieves;
+    }
+
+    public HashMap<String, Bomb> getBombThieves() {
+        return bombThieves;
+    }
+
+    public HashMap<String, Cake> getCakeThieves() {
+        return cakeThieves;
     }
 
     /**

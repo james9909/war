@@ -7,7 +7,7 @@ import com.tommytony.war.config.TeamConfigBag;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.TeamSpawnStyle;
 import com.tommytony.war.utility.Direction;
-import com.tommytony.war.utility.Loadout;
+import com.tommytony.war.utility.WarScoreboard;
 import com.tommytony.war.volume.Volume;
 import java.io.File;
 import java.text.MessageFormat;
@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.logging.Level;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -356,10 +357,9 @@ public class Team {
 
     public void addPlayer(Player player) {
         this.players.add(player);
-        if (this.warzone.getScoreboard() != null && this.warzone.getScoreboardType() != ScoreboardType.NONE) {
-            player.setScoreboard(this.warzone.getScoreboard());
+        if (this.warzone.getScoreboardType() != ScoreboardType.NONE) {
+            new WarScoreboard(player, this);
         }
-        warzone.updateScoreboard();
     }
 
     public List<Player> getPlayers() {
@@ -418,8 +418,9 @@ public class Team {
         if (!this.warzone.getReallyDeadFighters().contains(thePlayer.getName())) {
             this.warzone.restorePlayerState(thePlayer);
         }
-        this.warzone.getLoadoutSelections().remove(thePlayer);
-        warzone.updateScoreboard();
+        this.warzone.getLoadoutSelections().remove(thePlayer.getName());
+        thePlayer.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+        WarScoreboard.removeScoreboard(thePlayer);
     }
 
     public int getRemainingLives() {

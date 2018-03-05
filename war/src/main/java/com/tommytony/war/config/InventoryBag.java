@@ -78,9 +78,9 @@ public class InventoryBag {
         if (this.hasLoadouts()) {
             return this.getLoadouts();
         } else if (warzone != null && warzone.getDefaultInventories().hasLoadouts()) {
-            return warzone.getDefaultInventories().resolveLoadouts();
+            return warzone.getDefaultInventories().getLoadouts();
         } else if (War.war.getDefaultInventories().hasLoadouts()) {
-            return War.war.getDefaultInventories().resolveLoadouts();
+            return War.war.getDefaultInventories().getLoadouts();
         } else {
             return new ArrayList<>();
         }
@@ -90,16 +90,16 @@ public class InventoryBag {
         if (this.hasLoadouts()) {
             return this.getNewLoadouts();
         } else if (warzone != null && warzone.getDefaultInventories().hasLoadouts()) {
-            return warzone.getDefaultInventories().resolveNewLoadouts();
+            return warzone.getDefaultInventories().getNewLoadouts();
         } else if (War.war.getDefaultInventories().hasLoadouts()) {
-            return War.war.getDefaultInventories().resolveNewLoadouts();
+            return War.war.getDefaultInventories().getNewLoadouts();
         } else {
             return Collections.emptyList();
         }
     }
 
     public boolean hasWinReward() {
-        return winReward != null && !winReward.getRewards().isEmpty();
+        return winReward != null && winReward.hasRewards();
     }
 
     public Reward getWinReward() {
@@ -114,14 +114,16 @@ public class InventoryBag {
         if (this.hasWinReward()) {
             return winReward;
         } else if (warzone != null && warzone.getDefaultInventories().hasWinReward()) {
-            return warzone.getDefaultInventories().resolveWinReward();
+            return warzone.getDefaultInventories().getWinReward();
+        } else if (War.war.getDefaultInventories().hasWinReward()) {
+            return War.war.getDefaultInventories().getWinReward();
         } else {
-            return War.war.getDefaultInventories().resolveWinReward();
+            return new Reward();
         }
     }
 
     public boolean hasLossReward() {
-        return lossReward != null && !lossReward.hasRewards();
+        return lossReward != null && lossReward.hasRewards();
     }
 
     public Reward getLossReward() {
@@ -136,9 +138,11 @@ public class InventoryBag {
         if (this.hasLossReward()) {
             return lossReward;
         } else if (warzone != null && warzone.getDefaultInventories().hasLossReward()) {
-            return warzone.getDefaultInventories().resolveLossReward();
+            return warzone.getDefaultInventories().getLossReward();
+        } else if (War.war.getDefaultInventories().hasLossReward()) {
+            return War.war.getDefaultInventories().getLossReward();
         } else {
-            return War.war.getDefaultInventories().resolveLossReward();
+            return new Reward();
         }
     }
 

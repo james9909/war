@@ -2,8 +2,7 @@ package com.tommytony.war.config;
 
 public enum ScoreboardType {
 
-    NONE(null), POINTS("Points"), LIFEPOOL("Lifepool"), TOPKILLS("Top kills"), PLAYERCOUNT("Player count"), SWITCHING("Switching"),
-    ALL("all");
+    NONE(null), POINTS("Points"), LIFEPOOL("Lifepool"), TOPKILLS("Top kills"), PLAYERCOUNT("Player count"), SWITCHING("Switching");
     private final String displayName;
 
     ScoreboardType(String displayName) {

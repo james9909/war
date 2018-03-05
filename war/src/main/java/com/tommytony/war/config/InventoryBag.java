@@ -70,10 +70,6 @@ public class InventoryBag {
         this.loadouts = loadouts;
     }
 
-    public List<Loadout> getNewLoadouts() {
-        return loadouts;
-    }
-
     public List<Loadout> resolveLoadouts() {
         if (this.hasLoadouts()) {
             return this.getLoadouts();
@@ -83,18 +79,6 @@ public class InventoryBag {
             return War.war.getDefaultInventories().getLoadouts();
         } else {
             return new ArrayList<>();
-        }
-    }
-
-    public List<Loadout> resolveNewLoadouts() {
-        if (this.hasLoadouts()) {
-            return this.getNewLoadouts();
-        } else if (warzone != null && warzone.getDefaultInventories().hasLoadouts()) {
-            return warzone.getDefaultInventories().getNewLoadouts();
-        } else if (War.war.getDefaultInventories().hasLoadouts()) {
-            return War.war.getDefaultInventories().getNewLoadouts();
-        } else {
-            return Collections.emptyList();
         }
     }
 
@@ -159,16 +143,7 @@ public class InventoryBag {
         return null;
     }
 
-    public Loadout getNewLoadout(String loadoutName) {
-        for (Loadout ldt : loadouts) {
-            if (ldt.getName().equals(loadoutName)) {
-                return ldt;
-            }
-        }
-        return null;
-    }
-
     public boolean containsLoadout(String name) {
-        return this.getNewLoadout(name) != null;
+        return this.getLoadout(name) != null;
     }
 }

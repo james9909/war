@@ -15,16 +15,8 @@ public class DeferredBlockResetsJob implements Runnable {
     public DeferredBlockResetsJob() {
     }
 
-    @Deprecated
-    public DeferredBlockResetsJob(World humor) {
-    }
-
     public void add(BlockState pleaseResetLater) {
         this.deferred.add(pleaseResetLater);
-    }
-
-    @Deprecated
-    public void add(DeferredBlockReset humor) {
     }
 
     public boolean isEmpty() {

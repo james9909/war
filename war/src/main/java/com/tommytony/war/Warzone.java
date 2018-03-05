@@ -1087,9 +1087,6 @@ public class Warzone {
                     this.getScoreboard().getObjective(DisplaySlot.SIDEBAR).getScore(teamName).setScore(team.getPlayers().size());
                 }
                 break;
-            case ALL:
-                Objective objective = this.getScoreboard().getObjective(DisplaySlot.SIDEBAR);
-                break;
             default:
                 break;
         }
@@ -1602,7 +1599,7 @@ public class Warzone {
         if (selection != null && !this.isRespawning(player) && playerTeam.getPlayers().contains(player)) {
             // Make sure that inventory resets dont occur if player has already tp'ed out (due to game end, or somesuch)
             // - repawn timer + this method is why inventories were getting wiped as players exited the warzone.
-            List<Loadout> loadouts = playerTeam.getInventories().resolveNewLoadouts();
+            List<Loadout> loadouts = playerTeam.getInventories().resolveLoadouts();
             if (loadouts.isEmpty()) {
                 // Fix for zones that mistakenly only specify a `first' loadout, but do not add any others.
                 this.resetInventory(playerTeam, player, null);

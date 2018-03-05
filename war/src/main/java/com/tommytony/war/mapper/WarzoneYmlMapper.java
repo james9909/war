@@ -550,7 +550,7 @@ public class WarzoneYmlMapper {
         // defaultLoadouts
         if (warzone.getDefaultInventories().hasLoadouts()) {
             ConfigurationSection loadoutsSection = teamsSection.createSection("default.loadout");
-            LoadoutYmlMapper.fromLoadoutsToConfig(warzone.getDefaultInventories().getNewLoadouts(), loadoutsSection);
+            LoadoutYmlMapper.fromLoadoutsToConfig(warzone.getDefaultInventories().getLoadouts(), loadoutsSection);
         }
 
         // defaultReward
@@ -579,7 +579,7 @@ public class WarzoneYmlMapper {
             if (team.getInventories().hasLoadouts()) {
                 // team specific loadouts
                 ConfigurationSection loadoutsSection = teamsSection.createSection(team.getName() + ".loadout");
-                LoadoutYmlMapper.fromLoadoutsToConfig(warzone.getDefaultInventories().getNewLoadouts(), loadoutsSection);
+                LoadoutYmlMapper.fromLoadoutsToConfig(warzone.getDefaultInventories().getLoadouts(), loadoutsSection);
             }
 
             if (team.getInventories().hasWinReward()) {

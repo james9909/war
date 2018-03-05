@@ -92,7 +92,6 @@ public class War extends JavaPlugin {
     private boolean loaded = false;
     // Zones and hub
     private List<Warzone> warzones = new ArrayList<>();
-    private HashMap<String, PlayerState> disconnected = new HashMap<>();
     private KillstreakReward killstreakReward;
     private MySQLConfig mysqlConfig;
     private Economy econ = null;
@@ -323,35 +322,6 @@ public class War extends JavaPlugin {
         return this.commandHandler.handle(sender, cmd, args);
     }
 
-    /**
-     * Converts the player-inventory to a loadout hashmap
-     *
-     * @param inv inventory to get the items from
-     * @param loadout the hashmap to save to
-     */
-    private void inventoryToLoadout(PlayerInventory inv, HashMap<Integer, ItemStack> loadout) {
-        loadout.clear();
-        int i = 0;
-        for (ItemStack stack : inv.getStorageContents()) {
-            if (stack != null && stack.getType() != Material.AIR) {
-                loadout.put(i, stack.clone());
-                i++;
-            }
-        }
-        if (inv.getBoots() != null && inv.getBoots().getType() != Material.AIR) {
-            loadout.put(100, inv.getBoots().clone());
-        }
-        if (inv.getLeggings() != null && inv.getLeggings().getType() != Material.AIR) {
-            loadout.put(101, inv.getLeggings().clone());
-        }
-        if (inv.getChestplate() != null && inv.getChestplate().getType() != Material.AIR) {
-            loadout.put(102, inv.getChestplate().clone());
-        }
-        if (inv.getHelmet() != null && inv.getHelmet().getType() != Material.AIR) {
-            loadout.put(103, inv.getHelmet().clone());
-        }
-    }
-
     public void safelyEnchant(ItemStack target, Enchantment enchantment, int level) {
         if (level > enchantment.getMaxLevel()) {
             target.addUnsafeEnchantment(enchantment, level);
@@ -468,32 +438,6 @@ public class War extends JavaPlugin {
 
         return " ::" + teamColor + "Team " + team.getName() + teamColor + " config" + normalColor + "::" + ifEmptyInheritedForTeam(teamConfigStr);
     }
-
-    /*
-    private String getLoadoutsString(InventoryBag invs) {
-        StringBuilder loadoutsString = new StringBuilder();
-        ChatColor loadoutColor = ChatColor.GREEN;
-        ChatColor normalColor = ChatColor.WHITE;
-
-        if (invs.hasLoadouts()) {
-            StringBuilder loadouts = new StringBuilder();
-            for (Loadout ldt : invs.getNewLoadouts()) {
-                if (ldt.requiresPermission()) {
-                    loadouts.append(ldt.getName()).append(":").append(ldt.getPermission()).append(",");
-                } else {
-                    loadouts.append(ldt.getName()).append(",");
-                }
-            }
-            loadoutsString.append(" loadout:").append(loadoutColor).append(loadouts.toString()).append(normalColor);
-        }
-
-        if (invs.hasReward()) {
-            loadoutsString.append(" reward:").append(loadoutColor).append("default").append(normalColor);
-        }
-
-        return loadoutsString.toString();
-    }
-    */
 
     public String printConfig(Warzone zone) {
         ChatColor teamColor = ChatColor.AQUA;
@@ -899,14 +843,6 @@ public class War extends JavaPlugin {
 
     public void setLoaded(boolean loaded) {
         this.loaded = loaded;
-    }
-
-    public HashMap<String, PlayerState> getDisconnected() {
-        return this.disconnected;
-    }
-
-    public void setDisconnected(HashMap<String, PlayerState> disconnected) {
-        this.disconnected = disconnected;
     }
 
     public InventoryBag getDefaultInventories() {

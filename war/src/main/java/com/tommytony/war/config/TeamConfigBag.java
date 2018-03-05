@@ -68,13 +68,13 @@ public class TeamConfigBag {
 
     public Object resolveValue(TeamConfig config) {
         if (this.contains(config)) {
-            return this.bag.get(config);
+            return this.getValue(config);
         } else if (this.warzone != null && this.warzone.getTeamDefaultConfig().contains(config)) {
             // use Warzone default config
-            return this.warzone.getTeamDefaultConfig().resolveValue(config);
+            return this.warzone.getTeamDefaultConfig().getValue(config);
         } else {
             // use War default config
-            return War.war.getTeamDefaultConfig().resolveValue(config);
+            return War.war.getTeamDefaultConfig().getValue(config);
         }
     }
 
@@ -87,13 +87,13 @@ public class TeamConfigBag {
 
     public Double resolveDouble(TeamConfig config) {
         if (this.contains(config)) {
-            return (Double) this.bag.get(config);
+            return this.getDouble(config);
         } else if (this.warzone != null && this.warzone.getTeamDefaultConfig().contains(config)) {
             // use Warzone default config
-            return this.warzone.getTeamDefaultConfig().resolveDouble(config);
+            return this.warzone.getTeamDefaultConfig().getDouble(config);
         } else {
             // use War default config
-            return War.war.getTeamDefaultConfig().resolveDouble(config);
+            return War.war.getTeamDefaultConfig().getDouble(config);
         }
     }
 
@@ -106,13 +106,13 @@ public class TeamConfigBag {
 
     public Integer resolveInt(TeamConfig config) {
         if (this.contains(config)) {
-            return (Integer) this.bag.get(config);
+            return this.getInt(config);
         } else if (this.warzone != null && this.warzone.getTeamDefaultConfig().contains(config)) {
             // use Warzone default config
-            return this.warzone.getTeamDefaultConfig().resolveInt(config);
+            return this.warzone.getTeamDefaultConfig().getInt(config);
         } else {
             // use War default config
-            return War.war.getTeamDefaultConfig().resolveInt(config);
+            return War.war.getTeamDefaultConfig().getInt(config);
         }
     }
 
@@ -125,13 +125,13 @@ public class TeamConfigBag {
 
     public Boolean resolveBoolean(TeamConfig config) {
         if (this.contains(config)) {
-            return (Boolean) this.bag.get(config);
+            return this.getBoolean(config);
         } else if (this.warzone != null && this.warzone.getTeamDefaultConfig().contains(config)) {
             // use Warzone default config
-            return this.warzone.getTeamDefaultConfig().resolveBoolean(config);
+            return this.warzone.getTeamDefaultConfig().getBoolean(config);
         } else {
             // use War default config
-            return War.war.getTeamDefaultConfig().resolveBoolean(config);
+            return War.war.getTeamDefaultConfig().getBoolean(config);
         }
     }
 
@@ -144,25 +144,25 @@ public class TeamConfigBag {
 
     public String resolveString(TeamConfig config) {
         if (this.contains(config)) {
-            return (String) this.bag.get(config);
+            return this.getString(config);
         } else if (this.warzone != null && this.warzone.getTeamDefaultConfig().contains(config)) {
             // use Warzone default config
-            return this.warzone.getTeamDefaultConfig().resolveString(config);
+            return this.warzone.getTeamDefaultConfig().getString(config);
         } else {
             // use War default config
-            return War.war.getTeamDefaultConfig().resolveString(config);
+            return War.war.getTeamDefaultConfig().getString(config);
         }
     }
 
     public FlagReturn resolveFlagReturn() {
         if (this.contains(TeamConfig.FLAGRETURN)) {
-            return (FlagReturn) this.bag.get(TeamConfig.FLAGRETURN);
+            return this.getFlagReturn();
         } else if (this.warzone != null && this.warzone.getTeamDefaultConfig().contains(TeamConfig.FLAGRETURN)) {
             // use Warzone default config
-            return this.warzone.getTeamDefaultConfig().resolveFlagReturn();
+            return this.warzone.getTeamDefaultConfig().getFlagReturn();
         } else {
             // use War default config
-            return War.war.getTeamDefaultConfig().resolveFlagReturn();
+            return War.war.getTeamDefaultConfig().getFlagReturn();
         }
     }
 
@@ -175,12 +175,12 @@ public class TeamConfigBag {
 
     public TeamSpawnStyle resolveSpawnStyle() {
         if (this.contains(TeamConfig.SPAWNSTYLE)) {
-            return (TeamSpawnStyle) this.bag.get(TeamConfig.SPAWNSTYLE);
+            return getSpawnStyle();
         } else if (this.warzone != null && this.warzone.getTeamDefaultConfig().contains(TeamConfig.SPAWNSTYLE)) {
             // use War default config
-            return this.warzone.getTeamDefaultConfig().resolveSpawnStyle();
+            return this.warzone.getTeamDefaultConfig().getSpawnStyle();
         } else {
-            return War.war.getTeamDefaultConfig().resolveSpawnStyle();
+            return War.war.getTeamDefaultConfig().getSpawnStyle();
         }
     }
 
@@ -232,7 +232,7 @@ public class TeamConfigBag {
     }
 
     public String updateFromNamedParams(Map<String, String> namedParams) {
-        String returnMessage = "";
+        StringBuilder returnMessage = new StringBuilder();
         for (String namedParam : namedParams.keySet()) {
             TeamConfig teamConfig = TeamConfig.teamConfigFromString(namedParam);
             if (teamConfig != null) {
@@ -255,7 +255,7 @@ public class TeamConfigBag {
                     TeamSpawnStyle spawnValue = TeamSpawnStyle.getStyleFromString(namedParams.get(namedParam));
                     this.bag.put(teamConfig, spawnValue);
                 }
-                returnMessage += " " + teamConfig.toString() + " set to " + namedParams.get(namedParam);
+                returnMessage.append(String.format(" %s set to %s", teamConfig.toString(), namedParams.get(namedParam)));
             } else if (namedParam.equals("delete")) {
                 String toDelete = namedParams.get(namedParam);
                 teamConfig = TeamConfig.teamConfigFromString(toDelete);
@@ -263,10 +263,10 @@ public class TeamConfigBag {
                 // param delete (to restore inheritance)
                 if (teamConfig != null) {
                     this.bag.remove(teamConfig);
-                    returnMessage += " " + teamConfig.toString() + " removed";
+                    returnMessage.append(String.format(" %s removed", teamConfig.toString()));
                 }
             }
         }
-        return returnMessage;
+        return returnMessage.toString();
     }
 }

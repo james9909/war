@@ -59,8 +59,8 @@ public class WarzoneYmlMapper {
             Warzone warzone = new Warzone(world, name);
 
             // defaultLoadouts
-            if (warzoneRootSection.contains("team.default.loadout")) {
-                ConfigurationSection loadoutsSection = warzoneRootSection.getConfigurationSection("team.default.loadout");
+            if (warzoneRootSection.contains("classes")) {
+                ConfigurationSection loadoutsSection = warzoneRootSection.getConfigurationSection("classes");
                 warzone.getDefaultInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection));
             }
 
@@ -549,7 +549,7 @@ public class WarzoneYmlMapper {
 
         // defaultLoadouts
         if (warzone.getDefaultInventories().hasLoadouts()) {
-            ConfigurationSection loadoutsSection = teamsSection.createSection("default.loadout");
+            ConfigurationSection loadoutsSection = teamsSection.createSection("classes");
             LoadoutYmlMapper.fromLoadoutsToConfig(warzone.getDefaultInventories().getLoadouts(), loadoutsSection);
         }
 

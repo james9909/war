@@ -29,6 +29,8 @@ public class LoadoutYmlMapper {
             if (loadout != null) {
                 loadouts.add(loadout);
                 War.war.getLogger().info("Loaded class " + loadout.getName());
+            } else {
+                War.war.getLogger().warning("Failed to load class" + loadout.getName());
             }
         }
         Collections.sort(loadouts);
@@ -47,6 +49,9 @@ public class LoadoutYmlMapper {
             return null;
         }
         ConfigurationSection section = config.getConfigurationSection(loadoutName);
+        if (section == null) {
+            return null;
+        }
         ConfigurationSection itemsSection = section.getConfigurationSection("items");
         if (itemsSection == null) {
             return null;

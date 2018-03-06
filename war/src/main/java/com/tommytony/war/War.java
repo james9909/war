@@ -16,7 +16,6 @@ import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.config.WarzoneConfigBag;
 import com.tommytony.war.job.CapturePointTimer;
 import com.tommytony.war.job.HelmetProtectionTask;
-import com.tommytony.war.job.ScoreboardSwitchTimer;
 import com.tommytony.war.job.UpdateScoreboardJob;
 import com.tommytony.war.listeners.MagicSpellsListener;
 import com.tommytony.war.listeners.WarBlockListener;
@@ -26,7 +25,6 @@ import com.tommytony.war.mapper.WarYmlMapper;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
 import com.tommytony.war.structure.ZonePortal;
 import com.tommytony.war.ui.UIManager;
-import com.tommytony.war.utility.PlayerState;
 import com.tommytony.war.utility.Reward;
 import com.tommytony.war.utility.SizeCounter;
 import com.tommytony.war.utility.WarLogFormatter;
@@ -52,7 +50,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -251,8 +248,6 @@ public class War extends JavaPlugin {
 
         CapturePointTimer cpt = new CapturePointTimer();
         cpt.runTaskTimer(this, 100, 20);
-        ScoreboardSwitchTimer sst = new ScoreboardSwitchTimer();
-        sst.runTaskTimer(this, 500, 20 * 60);
         UpdateScoreboardJob usj = new UpdateScoreboardJob();
         usj.runTaskTimerAsynchronously(this, 0, 20);
 

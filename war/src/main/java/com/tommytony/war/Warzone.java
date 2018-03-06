@@ -124,8 +124,6 @@ public class Warzone {
     private InventoryManager inventoryManager;
     private List<ZonePortal> portals = new ArrayList<>();
 
-    private Scoreboard scoreboard;
-
     private WarzoneMaterials warzoneMaterials = new WarzoneMaterials(new ItemStack(Material.OBSIDIAN), new ItemStack(Material.FENCE), new ItemStack(Material.GLOWSTONE));
 
     private boolean isEndOfGame = false;
@@ -146,9 +144,6 @@ public class Warzone {
         this.volume = new ZoneVolume(name, this.getWorld(), this);
         this.pvpReady = true;
         this.scoreboardType = this.getWarzoneConfig().getScoreboardType(WarzoneConfig.SCOREBOARD);
-        if (scoreboardType == ScoreboardType.SWITCHING) {
-            scoreboardType = ScoreboardType.LIFEPOOL;
-        }
         this.inventoryManager = new InventoryManager();
     }
 
@@ -314,21 +309,6 @@ public class Warzone {
 
     public void initializeZone(Player respawnExempted) {
         if (this.ready() && this.volume.isSaved()) {
-            if (this.scoreboard != null) {
-                for (String entry : this.scoreboard.getEntries()) {
-                    this.scoreboard.resetScores(entry);
-                }
-                this.scoreboard.clearSlot(DisplaySlot.SIDEBAR);
-                for (Objective obj : this.scoreboard.getObjectives()) {
-                    obj.unregister();
-                }
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    // if (player.getScoreboard() == this.scoreboard) {
-                    //     player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-                    // }
-                }
-                this.scoreboard = null;
-            }
             // everyone back to team spawn with full health
             for (Team team : this.teams) {
                 for (Player player : team.getPlayers()) {
@@ -400,16 +380,6 @@ public class Warzone {
         this.flagThieves.clear();
         this.bombThieves.clear();
         this.cakeThieves.clear();
-        // if (this.getScoreboardType() != ScoreboardType.NONE) {
-        //     this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        //     // this.updateScoreboard();
-        //     for (Team team : this.getTeams()) {
-        //         for (Player player : team.getPlayers()) {
-        //             // player.setScoreboard(scoreboard);
-        //             updateScoreboard(player, team);
-        //         }
-        //     }
-        // }
         this.reallyDeadFighters.clear();
 
         //get them config (here be crazy grinning's!)
@@ -651,7 +621,6 @@ public class Warzone {
         } else {
             player.performCommand("/warhub");
         }
-        player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
     }
 
     private void preventItemHackingThroughOpenedInventory(Player player) {
@@ -1035,61 +1004,11 @@ public class Warzone {
         if (attackerTeam.getTeamConfig().resolveBoolean(TeamConfig.KILLSTREAK)) {
             War.war.getKillstreakReward().rewardPlayer(attacker, this.getKillCount(attacker.getName()));
         }
-        // this.updateScoreboard();
         if (defenderTeam.getTeamConfig().resolveBoolean(TeamConfig.INVENTORYDROP)) {
             dropItems(defender.getLocation(), defender.getInventory().getContents());
             dropItems(defender.getLocation(), defender.getInventory().getArmorContents());
         }
         this.handleDeath(defender);
-    }
-
-    public void updateScoreboard() {
-        if (this.getScoreboardType() == ScoreboardType.NONE) {
-            return;
-        }
-        if (this.getScoreboard() == null) {
-            return;
-        }
-        if (this.scoreboard.getObjective(this.getScoreboardType().getDisplayName()) == null) {
-            for (String entry : this.scoreboard.getEntries()) {
-                this.scoreboard.resetScores(entry);
-            }
-            this.scoreboard.clearSlot(DisplaySlot.SIDEBAR);
-            for (Objective obj : this.scoreboard.getObjectives()) {
-                obj.unregister();
-            }
-            scoreboard.registerNewObjective(this.getScoreboardType().getDisplayName(), "dummy");
-            Objective obj = scoreboard.getObjective(this.getScoreboardType().getDisplayName());
-            Validate.isTrue(obj.isModifiable(), "Cannot modify players' scores on the " + this.name + " scoreboard.");
-            obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-        }
-        switch (this.getScoreboardType()) {
-            case POINTS:
-                for (Team team : this.getTeams()) {
-                    String teamName = team.getKind().getColor() + team.getName() + ChatColor.RESET;
-                    this.getScoreboard().getObjective(DisplaySlot.SIDEBAR).getScore(teamName).setScore(team.getPoints());
-                }
-                break;
-            case LIFEPOOL:
-                for (Team team : this.getTeams()) {
-                    String teamName = team.getKind().getColor() + team.getName() + ChatColor.RESET;
-                    this.getScoreboard().getObjective(DisplaySlot.SIDEBAR).getScore(teamName).setScore(team.getRemainingLives());
-                }
-                break;
-            case TOPKILLS:
-                for (Player player : this.getPlayers()) {
-                    this.getScoreboard().getObjective(DisplaySlot.SIDEBAR).getScore(player.getName()).setScore(this.getKillCount(player.getName()));
-                }
-                break;
-            case PLAYERCOUNT:
-                for (Team team : this.getTeams()) {
-                    String teamName = team.getKind().getColor() + team.getName() + ChatColor.RESET;
-                    this.getScoreboard().getObjective(DisplaySlot.SIDEBAR).getScore(teamName).setScore(team.getPlayers().size());
-                }
-                break;
-            default:
-                break;
-        }
     }
 
     /**
@@ -1676,10 +1595,6 @@ public class Warzone {
 
     public void setWarzoneMaterials(WarzoneMaterials warzoneMaterials) {
         this.warzoneMaterials = warzoneMaterials;
-    }
-
-    public Scoreboard getScoreboard() {
-        return scoreboard;
     }
 
     public ScoreboardType getScoreboardType() {

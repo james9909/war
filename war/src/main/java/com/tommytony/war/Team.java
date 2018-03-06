@@ -357,9 +357,7 @@ public class Team {
 
     public void addPlayer(Player player) {
         this.players.add(player);
-        if (this.warzone.getScoreboardType() != ScoreboardType.NONE) {
-            new WarScoreboard(player, this);
-        }
+        new WarScoreboard(player, this);
     }
 
     public List<Player> getPlayers() {
@@ -429,7 +427,6 @@ public class Team {
 
     public void setRemainingLives(int remainingLives) {
         this.remainingLives = remainingLives;
-        warzone.updateScoreboard();
     }
 
     public void addPoint() {
@@ -445,7 +442,6 @@ public class Team {
         } else if (!atLeastOnePlayerOnOtherTeam) {
             this.teamcast("zone.score.empty");
         }
-        this.warzone.updateScoreboard();
     }
 
     public int getPoints() {
@@ -471,7 +467,6 @@ public class Team {
 
     public void resetPoints() {
         this.points = 0;
-        warzone.updateScoreboard();
     }
 
     public Volume getFlagVolume() {

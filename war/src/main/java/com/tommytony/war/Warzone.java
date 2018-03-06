@@ -944,6 +944,7 @@ public class Warzone {
         attachment.setPermission("war.playing." + this.getName().toLowerCase(), true);
         team.addPlayer(player);
         team.resetSign();
+        this.setKillCount(player.getName(), 0);
 
         this.getReallyDeadFighters().remove(player.getName());
         this.keepPlayerState(player);
@@ -1103,6 +1104,11 @@ public class Warzone {
             LogKillsDeathsJob logKillsDeathsJob = new LogKillsDeathsJob(ImmutableList.copyOf(this.getKillsDeathsTracker()));
             logKillsDeathsJob.runTaskAsynchronously(War.war);
         }
+
+        for (String playerName : killCount.keySet()) {
+            killCount.put(playerName, 0);
+        }
+
         this.getKillsDeathsTracker().clear();
         if (!detectScoreCap()) {
             this.broadcast("zone.battle.reset");

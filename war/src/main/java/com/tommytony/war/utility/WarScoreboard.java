@@ -80,7 +80,10 @@ public class WarScoreboard {
                         break;
                     }
                 }
-                flagStatus = String.format("Flag: &l%sStolen by %s", format, thief);
+                if (thief.length() > 8) {
+                    thief = thief.substring(0, 8) + "...";
+                }
+                flagStatus = String.format("Flag: &l%s%s", format, thief);
             } else {
                 flagStatus = "Flag: &aBase";
                 flashed = false;

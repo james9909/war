@@ -42,25 +42,33 @@ public class WarScoreboard {
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         Warzone zone = team.getZone();
-        String displayFormat = String.format("&4> &c&l%s &4<", zone.getName());
+        String displayFormat = String.format("&8>> &6&l%s &8<<", zone.getName());
         String displayName = ChatColor.translateAlternateColorCodes('&', displayFormat);
         objective.setDisplayName(displayName);
 
-        String currentTeam = team.getKind().getColor() + team.getName();
+        String currentTeam = team.getName();
 
         objective.getScore("").setScore(10);
         // Team name
-        String teamName = String.format("Team: %s", ChatColor.BOLD + currentTeam);
+        String teamName = String.format("&6Team&7: &f%s", currentTeam);
+        teamName = ChatColor.translateAlternateColorCodes('&', teamName);
         objective.getScore(teamName).setScore(9);
 
         // Kill count
         String kills = String.valueOf(zone.getKillCount(player.getName()));
-        String killScore = String.format("Kills: %s", ChatColor.GREEN + kills);
+        String killScore = String.format("&6Kills&7: &e%s", kills);
+        killScore = ChatColor.translateAlternateColorCodes('&', killScore);
         objective.getScore(killScore).setScore(8);
 
         // Team points
-        String teamPoints = String.format("Points: %s/%s", team.getPoints(), team.getTeamConfig().resolveInt(TeamConfig.MAXSCORE));
+        String teamPoints = String.format("&6Points&7: &e%s&7/&e%s", team.getPoints(), team.getTeamConfig().resolveInt(TeamConfig.MAXSCORE));
+        teamPoints = ChatColor.translateAlternateColorCodes('&', teamPoints);
         objective.getScore(teamPoints).setScore(7);
+
+        // Lifepool
+        String teamLives = String.format("&6Lives&7: &e%s&7/&e%s", team.getRemainingLives(), team.getTeamConfig().resolveInt(TeamConfig.LIFEPOOL));
+        teamLives = ChatColor.translateAlternateColorCodes('&', teamLives);
+        objective.getScore(teamLives).setScore(6);
 
         // objective.getScore(" ").setScore(7);
         if (team.getTeamFlag() != null) {
@@ -88,13 +96,13 @@ public class WarScoreboard {
                 if (thief.length() > 8) {
                     thief = thief.substring(0, 8) + "...";
                 }
-                flagStatus = String.format("Flag: &l%s%s", format, thief);
+                flagStatus = String.format("&6Flag&7: &l%s%s", format, thief);
             } else {
-                flagStatus = "Flag: &aBase";
+                flagStatus = "&6Flag&7: &fBase";
                 flashed = false;
             }
             flagStatus = ChatColor.translateAlternateColorCodes('&', flagStatus);
-            objective.getScore(flagStatus).setScore(6);
+            objective.getScore(flagStatus).setScore(5);
         }
 
         player.setScoreboard(scoreboard);

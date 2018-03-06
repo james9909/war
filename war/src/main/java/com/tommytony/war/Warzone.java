@@ -621,9 +621,10 @@ public class Warzone {
             player.setLevel(originalState.getLevel());
             player.setExp(originalState.getExp());
             player.setAllowFlight(originalState.canFly());
-            player.teleport(originalState.getLocation());
+            // player.teleport(originalState.getLocation());
+            player.performCommand("spawn");
         } else {
-            player.performCommand("/warhub");
+            player.performCommand("spawn");
         }
     }
 

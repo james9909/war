@@ -683,7 +683,7 @@ public class WarPlayerListener implements Listener {
 
         } else if (locZone != null && !isMaker) {
             // player is not in any team, but inside warzone boundaries, get him out
-            player.performCommand("/warhub");
+            player.performCommand("spawn");
             War.war.badMsg(player, "zone.noteamnotice");
         } else {
             // player is not in a warzone

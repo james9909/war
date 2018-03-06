@@ -2,6 +2,7 @@ package com.tommytony.war.utility;
 
 import com.tommytony.war.Team;
 import com.tommytony.war.Warzone;
+import com.tommytony.war.config.TeamConfig;
 import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -49,13 +50,17 @@ public class WarScoreboard {
 
         objective.getScore("").setScore(10);
         // Team name
-        String teamScore = String.format("Team: %s", ChatColor.BOLD + currentTeam);
-        objective.getScore(teamScore).setScore(9);
+        String teamName = String.format("Team: %s", ChatColor.BOLD + currentTeam);
+        objective.getScore(teamName).setScore(9);
 
         // Kill count
         String kills = String.valueOf(zone.getKillCount(player.getName()));
         String killScore = String.format("Kills: %s", ChatColor.GREEN + kills);
         objective.getScore(killScore).setScore(8);
+
+        // Team points
+        String teamPoints = String.format("Points: %s/%s", team.getPoints(), team.getTeamConfig().resolveInt(TeamConfig.MAXSCORE));
+        objective.getScore(teamPoints).setScore(7);
 
         // objective.getScore(" ").setScore(7);
         if (team.getTeamFlag() != null) {
@@ -89,7 +94,7 @@ public class WarScoreboard {
                 flashed = false;
             }
             flagStatus = ChatColor.translateAlternateColorCodes('&', flagStatus);
-            objective.getScore(flagStatus).setScore(7);
+            objective.getScore(flagStatus).setScore(6);
         }
 
         player.setScoreboard(scoreboard);

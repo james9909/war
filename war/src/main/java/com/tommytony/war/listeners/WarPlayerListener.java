@@ -46,6 +46,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -747,6 +748,10 @@ public class WarPlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
+        if (event.getCause() == TeleportCause.ENDER_PEARL) {
+            event.setCancelled(true);
+            return;
+        }
         if (War.war.isLoaded()) {
             Warzone playerWarzone = Warzone.getZoneByPlayerName(event.getPlayer().getName());
             Team playerTeam = Team.getTeamByPlayerName(event.getPlayer().getName());

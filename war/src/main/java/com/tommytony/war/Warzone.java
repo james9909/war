@@ -1,6 +1,8 @@
 package com.tommytony.war;
 
 import com.google.common.collect.ImmutableList;
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.mana.ManaChangeReason;
 import com.tommytony.war.config.InventoryBag;
 import com.tommytony.war.config.ScoreboardType;
 import com.tommytony.war.config.TeamConfig;
@@ -465,7 +467,9 @@ public class Warzone {
         player.setAllowFlight(false);
         player.setFlying(false);
 
-        this.setKillCount(player.getName(), 0);
+        // Restore the player to maximum mana
+        int maxMana = MagicSpells.getManaHandler().getMaxMana(player);
+        MagicSpells.getManaHandler().setMana(player, maxMana, ManaChangeReason.POTION);
 
         if (player.getGameMode() != GameMode.SURVIVAL) {
             // Players are always in survival mode in warzones

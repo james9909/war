@@ -746,7 +746,7 @@ public class WarPlayerListener implements Listener {
         playingZone.respawnPlayer(team, event.getPlayer());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
         if (event.getCause() == TeleportCause.ENDER_PEARL) {
             event.setCancelled(true);

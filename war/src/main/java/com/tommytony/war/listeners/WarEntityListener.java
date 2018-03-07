@@ -117,7 +117,7 @@ public class WarEntityListener implements Listener {
                 }
 
                 // Detect death, prevent it and respawn the player
-                if (event.getDamage() >= d.getHealth()) {
+                if (event.getFinalDamage() >= d.getHealth()) {
                     if (defenderWarzone.getReallyDeadFighters().contains(d.getName())) {
                         // don't re-kill a dead person
                         return;
@@ -200,7 +200,7 @@ public class WarEntityListener implements Listener {
             // Detect death, prevent it and respawn the player
             Player d = (Player) defender;
             Warzone defenderWarzone = Warzone.getZoneByPlayerName(d.getName());
-            if (d != null && defenderWarzone != null && event.getDamage() >= d.getHealth()) {
+            if (d != null && defenderWarzone != null && event.getFinalDamage() >= d.getHealth()) {
                 LoadoutSelection defenderLoadoutState = defenderWarzone.getLoadoutSelections().get(d.getName());
                 if (defenderLoadoutState != null && defenderLoadoutState.isStillInSpawn()) {
                     event.setCancelled(true);
@@ -329,7 +329,7 @@ public class WarEntityListener implements Listener {
                 if (team.isSpawnLocation(player.getLocation()) && playerLoadoutState != null && playerLoadoutState.isStillInSpawn()) {
                     // don't let a player still in spawn get damaged
                     event.setCancelled(true);
-                } else if (event.getDamage() >= player.getHealth()) {
+                } else if (event.getFinalDamage() >= player.getHealth()) {
                     if (zone.getReallyDeadFighters().contains(player.getName())) {
                         // don't re-count the death points of an already dead person
                         return;

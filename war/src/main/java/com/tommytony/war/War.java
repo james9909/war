@@ -249,7 +249,7 @@ public class War extends JavaPlugin {
         CapturePointTimer cpt = new CapturePointTimer();
         cpt.runTaskTimer(this, 100, 20);
         UpdateScoreboardJob usj = new UpdateScoreboardJob();
-        usj.runTaskTimerAsynchronously(this, 0, 20);
+        usj.runTaskTimerAsynchronously(this, 0, 10);
 
         if (this.mysqlConfig.isEnabled()) {
             try {

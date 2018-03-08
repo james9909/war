@@ -1,9 +1,11 @@
 package com.tommytony.war.utility;
 
+import com.google.common.base.Splitter;
 import com.tommytony.war.Team;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamConfig;
 import java.util.HashMap;
+import java.util.Iterator;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -23,54 +25,44 @@ public class WarScoreboard {
     private boolean flashed;
 
     public WarScoreboard(Player player, Team team) {
-        if (scoreboards.containsKey(player.getName())) {
-            this.team = team;
-        } else {
-            this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-            this.player = player;
-            this.team = team;
-            this.objective = scoreboard.registerNewObjective(player.getName(), "dummy");
-
-            WarScoreboard.scoreboards.put(player.getName(), this);
-        }
-    }
-
-    public void update() {
-        objective.unregister();
-        objective = scoreboard.registerNewObjective(player.getName(), "dummy");
+        this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        this.player = player;
+        this.team = team;
+        this.objective = scoreboard.registerNewObjective(player.getName(), "dummy");
         scoreboard.clearSlot(DisplaySlot.SIDEBAR);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
+        setTitle(String.format("&8>> &6&l%s &8<<", team.getZone().getName()));
+        WarScoreboard.scoreboards.put(player.getName(), this);
+        player.setScoreboard(scoreboard);
+    }
+
+    public void update() {
         Warzone zone = team.getZone();
-        String displayFormat = String.format("&8>> &6&l%s &8<<", zone.getName());
-        String displayName = ChatColor.translateAlternateColorCodes('&', displayFormat);
-        objective.setDisplayName(displayName);
+        addText("", 10);
 
-        String currentTeam = team.getName();
-
-        objective.getScore("").setScore(10);
         // Team name
+        String currentTeam = team.getName();
         String teamName = String.format("&6Team&7: &f%s", currentTeam);
-        teamName = ChatColor.translateAlternateColorCodes('&', teamName);
-        objective.getScore(teamName).setScore(9);
+        addText(teamName, 9);
+        player.setScoreboard(scoreboard);
 
         // Kill count
-        String kills = String.valueOf(zone.getKillCount(player.getName()));
-        String killScore = String.format("&6Kills&7: &e%s", kills);
-        killScore = ChatColor.translateAlternateColorCodes('&', killScore);
-        objective.getScore(killScore).setScore(8);
+        int kills = zone.getKillCount(player.getName());
+        String killScore = String.format("&6Kills&7: &e%d", kills);
+        addText(killScore, 8);
 
         // Team points
-        String teamPoints = String.format("&6Points&7: &e%s&7/&e%s", team.getPoints(), team.getTeamConfig().resolveInt(TeamConfig.MAXSCORE));
-        teamPoints = ChatColor.translateAlternateColorCodes('&', teamPoints);
-        objective.getScore(teamPoints).setScore(7);
+        String teamPoints = String.format("&6Points&7: &e%d&7/&e%d", team.getPoints(), team.getTeamConfig().resolveInt(TeamConfig.MAXSCORE));
+        addText(teamPoints, 7);
 
         // Lifepool
-        String teamLives = String.format("&6Lives&7: &e%s&7/&e%s", team.getRemainingLives(), team.getTeamConfig().resolveInt(TeamConfig.LIFEPOOL));
-        teamLives = ChatColor.translateAlternateColorCodes('&', teamLives);
-        objective.getScore(teamLives).setScore(6);
+        String teamLives = String.format("&6Lives&7: &e%d&7/&e%d", team.getRemainingLives(), team.getTeamConfig().resolveInt(TeamConfig.LIFEPOOL));
+        addText(teamLives, 6);
 
-        // objective.getScore(" ").setScore(7);
+        addText("", 5);
+
+        // Flag status
         if (team.getTeamFlag() != null) {
             // flag status
             String flagStatus;
@@ -101,11 +93,8 @@ public class WarScoreboard {
                 flagStatus = "&6Flag&7: &fBase";
                 flashed = false;
             }
-            flagStatus = ChatColor.translateAlternateColorCodes('&', flagStatus);
-            objective.getScore(flagStatus).setScore(5);
+            addText(flagStatus, 4);
         }
-
-        player.setScoreboard(scoreboard);
     }
 
     public void setTeam(Team team) {
@@ -122,5 +111,50 @@ public class WarScoreboard {
 
     public static HashMap<String, WarScoreboard> getScoreboards() {
         return scoreboards;
+    }
+
+    private void addText(String text, int number) {
+        org.bukkit.scoreboard.Team team;
+        team = scoreboard.getTeam(String.valueOf(number));
+        if (team == null) {
+            team = scoreboard.registerNewTeam(String.valueOf(number));
+            team.addEntry(String.valueOf(org.bukkit.ChatColor.values()[number]));
+            objective.getScore(String.valueOf(org.bukkit.ChatColor.values()[number])).setScore(number);
+        }
+
+        text = ChatColor.translateAlternateColorCodes('&', text);
+
+        // Set prefix
+        Iterator<String> iterator = Splitter.fixedLength(16).split(text).iterator();
+        String prefix = iterator.next();
+        team.setPrefix(prefix);
+
+        // Color behavior adapted from SimpleScoreboard
+        if (iterator.hasNext()) {
+            String prefixColor = ChatColor.getLastColors(prefix);
+            String suffix = iterator.next();
+
+            if (prefix.endsWith(String.valueOf(ChatColor.COLOR_CHAR))) {
+                prefix = prefix.substring(0, prefix.length() - 1);
+                team.setPrefix(prefix);
+                prefixColor = ChatColor.getByChar(suffix.charAt(0)).toString();
+                suffix = suffix.substring(1);
+            }
+
+            if (prefixColor == null) {
+                prefixColor = ChatColor.RESET.toString();
+            }
+
+            if (suffix.length() > 16) {
+                suffix = suffix.substring(0, (13 - prefixColor.length()));
+            }
+
+            team.setSuffix(prefixColor + suffix);
+        }
+    }
+
+    public void setTitle(String text) {
+        text = ChatColor.translateAlternateColorCodes('&', text);
+        objective.setDisplayName(text);
     }
 }

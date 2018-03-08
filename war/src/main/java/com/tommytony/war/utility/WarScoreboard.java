@@ -6,6 +6,7 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamConfig;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -15,7 +16,7 @@ import org.bukkit.scoreboard.Scoreboard;
 
 public class WarScoreboard {
 
-    private static HashMap<String, WarScoreboard> scoreboards = new HashMap<>();
+    private static ConcurrentHashMap<String, WarScoreboard> scoreboards = new ConcurrentHashMap<>();
 
     private Scoreboard scoreboard;
     private Player player;
@@ -109,7 +110,7 @@ public class WarScoreboard {
         scoreboards.remove(player.getName());
     }
 
-    public static HashMap<String, WarScoreboard> getScoreboards() {
+    public static ConcurrentHashMap<String, WarScoreboard> getScoreboards() {
         return scoreboards;
     }
 
@@ -148,12 +149,14 @@ public class WarScoreboard {
             if (suffix.length() > 16) {
                 suffix = suffix.substring(0, (13 - prefixColor.length()));
             }
-
-            team.setSuffix(prefixColor + suffix);
+            suffix = prefixColor + suffix;
+            team.setSuffix(suffix);
+        } else {
+            team.setSuffix("");
         }
     }
 
-    public void setTitle(String text) {
+    private void setTitle(String text) {
         text = ChatColor.translateAlternateColorCodes('&', text);
         objective.setDisplayName(text);
     }

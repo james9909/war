@@ -30,6 +30,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Sign;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * @author tommytony
@@ -417,8 +418,16 @@ public class Team {
             this.warzone.restorePlayerState(thePlayer);
         }
         this.warzone.getLoadoutSelections().remove(thePlayer.getName());
-        thePlayer.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
         WarScoreboard.removeScoreboard(thePlayer);
+        Runnable resetScoreboard = () -> {
+            thePlayer.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+        };
+        // Make sure that the scoreboard is reset
+        War.war.getServer().getScheduler().runTaskLater(War.war, resetScoreboard, 1L);
+        War.war.getServer().getScheduler().runTaskLater(War.war, resetScoreboard, 2L);
+        War.war.getServer().getScheduler().runTaskLater(War.war, resetScoreboard, 3L);
+        War.war.getServer().getScheduler().runTaskLater(War.war, resetScoreboard, 4L);
+        War.war.getServer().getScheduler().runTaskLater(War.war, resetScoreboard, 5L);
     }
 
     public int getRemainingLives() {

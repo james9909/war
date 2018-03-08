@@ -39,6 +39,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -827,5 +828,15 @@ public class WarPlayerListener implements Listener {
             event.setCancelled(true);
             player.playSound(player.getLocation(), Sound.BLOCK_LAVA_EXTINGUISH, 10, 10);
         }
+    }
+
+    @EventHandler
+    public void onPlayerDamageItem(PlayerItemDamageEvent event) {
+        Player player = (Player) event.getPlayer();
+        Warzone zone = Warzone.getZoneByPlayerName(player.getName());
+        if (zone == null) {
+            return;
+        }
+        event.setCancelled(true);
     }
 }

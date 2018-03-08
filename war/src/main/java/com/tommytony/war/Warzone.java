@@ -621,8 +621,10 @@ public class Warzone {
             player.setLevel(originalState.getLevel());
             player.setExp(originalState.getExp());
             player.setAllowFlight(originalState.canFly());
-            // player.teleport(originalState.getLocation());
-            player.performCommand("spawn");
+            if (!player.performCommand("spawn")) {
+                // Last resort
+                player.teleport(originalState.getLocation());
+            }
         } else {
             player.performCommand("spawn");
         }

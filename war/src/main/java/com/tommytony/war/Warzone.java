@@ -87,6 +87,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.util.Vector;
 
 /**
  * @author tommytony
@@ -450,6 +451,7 @@ public class Warzone {
         player.setExhaustion(0);
         player.setFallDistance(0);
         player.setFireTicks(0);
+        player.setVelocity(new Vector());
         player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 5, 255));
         Runnable antiFireAction = () -> {
             // Stop fire here, since doing it in the same tick as death doesn't extinguish it

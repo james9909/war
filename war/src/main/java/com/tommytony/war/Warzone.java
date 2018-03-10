@@ -18,6 +18,7 @@ import com.tommytony.war.job.InitZoneJob;
 import com.tommytony.war.job.LoadoutResetJob;
 import com.tommytony.war.job.LogKillsDeathsJob;
 import com.tommytony.war.job.LogKillsDeathsJob.KillsDeathsRecord;
+import com.tommytony.war.job.TeleportToSpawnTimer;
 import com.tommytony.war.job.ZoneTimeJob;
 import com.tommytony.war.mapper.VolumeMapper;
 import com.tommytony.war.mapper.ZoneVolumeMapper;
@@ -84,6 +85,7 @@ import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -415,22 +417,27 @@ public class Warzone {
     }
 
     public void respawnPlayer(Team team, Player player) {
-        this.handleRespawn(team, player);
         // Teleport the player back to spawn
-        player.teleport(team.getRandomSpawn());
+        player.setVelocity(new Vector());
+        this.handleRespawn(team, team.getRandomSpawn(), player);
     }
 
     public void respawnPlayer(PlayerMoveEvent event, Team team, Player player) {
-        this.handleRespawn(team, player);
         // Teleport the player back to spawn
+        player.setVelocity(new Vector());
         event.setTo(team.getRandomSpawn());
+        this.handleRespawn(team, event.getTo(), player);
     }
 
     public boolean isRespawning(Player p) {
         return respawn.contains(p);
     }
 
-    private void handleRespawn(final Team team, final Player player) {
+    private void handleRespawn(final Team team, final Location location, final Player player) {
+        TeleportToSpawnTimer timer = new TeleportToSpawnTimer(player, location);
+        BukkitTask teleportTask = timer.runTaskTimer(War.war, 0, 1);
+        War.war.getServer().getScheduler().runTaskLater(War.war, teleportTask::cancel, 10);
+
         // first, wipe inventory to disable attribute modifications
         this.preventItemHackingThroughOpenedInventory(player);
         player.getInventory().clear();
@@ -451,7 +458,6 @@ public class Warzone {
         player.setExhaustion(0);
         player.setFallDistance(0);
         player.setFireTicks(0);
-        player.setVelocity(new Vector());
         player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 5, 255));
         Runnable antiFireAction = () -> {
             // Stop fire here, since doing it in the same tick as death doesn't extinguish it

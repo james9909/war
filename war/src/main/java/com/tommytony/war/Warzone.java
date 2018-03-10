@@ -920,6 +920,12 @@ public class Warzone {
     }
 
     public Team autoAssign(Player player) {
+        Team existing = Team.getTeamByPlayerName(player.getName());
+        if (existing != null) {
+            War.war.badMsg(player, "You are already in a warzone");
+            return null;
+        }
+
         teams.sort(LEAST_PLAYER_COUNT_ORDER);
         Team lowestNoOfPlayers = null;
         for (Team team : this.teams) {

@@ -16,6 +16,22 @@ import org.bukkit.event.Listener;
 
 public class MagicSpellsListener implements Listener {
 
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onSpellCast(SpellCastEvent event) {
+        Player caster = event.getCaster();
+
+        Team team = Team.getTeamByPlayerName(caster.getName());
+        if (team == null) {
+            return;
+        }
+
+        Warzone zone = team.getZone();
+        LoadoutSelection casterLoadoutState = zone.getLoadoutSelections().get(caster.getName());
+        if (team.isSpawnLocation(caster.getLocation()) && casterLoadoutState.isStillInSpawn()) {
+            event.setCancelled(true);
+        }
+    }
+
     @EventHandler(priority = EventPriority.NORMAL)
     public void onSpellTarget(SpellTargetEvent event) {
         Player caster = event.getCaster();
@@ -23,10 +39,19 @@ public class MagicSpellsListener implements Listener {
 
         if (livingEntity instanceof Player) {
 
+            Spell spell = event.getSpell();
             Player target = (Player) livingEntity;
 
             Team targetTeam = Team.getTeamByPlayerName(target.getName());
             Team casterTeam = Team.getTeamByPlayerName(caster.getName());
+            if (targetTeam == null && casterTeam == null) {
+                // Neither player is in a warzone, so only allow beneficial spells to target
+                if (!spell.isBeneficial()) {
+                    event.setCancelled(true);
+                }
+                return;
+            }
+
             if (targetTeam == null) {
                 War.war.badMsg(caster, "pvp.target.notplaying");
                 event.setCancelled(true);
@@ -54,7 +79,6 @@ public class MagicSpellsListener implements Listener {
                 return;
             }
 
-            Spell spell = event.getSpell();
             boolean friendlyFire = casterZone.getWarzoneConfig().getBoolean(WarzoneConfig.FRIENDLYFIRE);
             if (casterTeam.getName().equals(targetTeam.getName())) {
                 if (!friendlyFire && !spell.isBeneficial()) {

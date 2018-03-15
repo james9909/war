@@ -1554,9 +1554,12 @@ public class Warzone {
             }
 
             int loadoutIndex = selection.getSelectedLoadout();
-            Loadout loadout = loadouts.get(0);
+            Loadout loadout = Loadout.getLoadout(loadouts, "Sorcerer");
             if (loadoutIndex < loadouts.size()) {
                 loadout = loadouts.get(loadoutIndex);
+            }
+            if (loadout == null) {
+                loadout = loadouts.get(0);
             }
             this.resetInventory(playerTeam, player, loadout);
         }

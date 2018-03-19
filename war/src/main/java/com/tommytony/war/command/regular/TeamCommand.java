@@ -1,6 +1,7 @@
 package com.tommytony.war.command.regular;
 
 import com.tommytony.war.Team;
+import com.tommytony.war.WarPlayer;
 import com.tommytony.war.command.WarCommandHandler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,17 +25,18 @@ public class TeamCommand extends AbstractWarCommand {
         }
 
         Player player = (Player) this.getSender();
-        Team playerTeam = Team.getTeamByPlayerName(player.getName());
-        if (playerTeam == null) {
+        WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        Team team = warPlayer.getTeam();
+        if (team == null) {
             return false;
         }
 
         if (this.args.length < 1) {
-            if (playerTeam.isInTeamChat(player)) {
-                playerTeam.removeTeamChatPlayer(player);
+            if (team.isInTeamChat(warPlayer)) {
+                team.removeTeamChatPlayer(warPlayer);
                 this.msg("team.chat.disable");
             } else {
-                playerTeam.addTeamChatPlayer(player);
+                team.addTeamChatPlayer(warPlayer);
                 this.msg("team.chat.enable");
             }
             return true;
@@ -44,7 +46,7 @@ public class TeamCommand extends AbstractWarCommand {
         for (String part : this.args) {
             teamMessage.append(part).append(' ');
         }
-        playerTeam.sendTeamChatMessage(player, teamMessage.toString());
+        team.sendTeamChatMessage(player, teamMessage.toString());
         return true;
     }
 }

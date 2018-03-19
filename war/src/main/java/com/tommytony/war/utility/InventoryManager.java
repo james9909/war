@@ -1,7 +1,6 @@
 package com.tommytony.war.utility;
 
 import com.tommytony.war.War;
-import com.tommytony.war.Warzone;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;

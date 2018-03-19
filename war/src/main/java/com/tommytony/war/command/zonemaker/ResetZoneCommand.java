@@ -2,14 +2,13 @@ package com.tommytony.war.command.zonemaker;
 
 import com.tommytony.war.Team;
 import com.tommytony.war.War;
+import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
-import com.tommytony.war.Warzone.LeaveCause;
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.job.PartialZoneResetJob;
 import java.util.Iterator;
 import java.util.logging.Level;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 
 public class ResetZoneCommand extends AbstractZoneMakerCommand {
@@ -22,10 +21,10 @@ public class ResetZoneCommand extends AbstractZoneMakerCommand {
         zone.clearThieves();
         for (Team team : zone.getTeams()) {
             team.teamcast("The war has ended. " + zone.getTeamInformation() + " Resetting warzone " + zone.getName() + " and teams...");
-            for (Iterator<Player> it = team.getPlayers().iterator(); it.hasNext(); ) {
-                Player p = it.next();
+            for (Iterator<WarPlayer> it = team.getPlayers().iterator(); it.hasNext(); ) {
+                WarPlayer warPlayer = it.next();
                 it.remove();
-                team.removePlayer(p);
+                team.removePlayer(warPlayer);
             }
             team.resetPoints();
             team.getPlayers().clear();

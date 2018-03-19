@@ -10,8 +10,8 @@ import com.tommytony.war.command.regular.JoinCommand;
 import com.tommytony.war.command.regular.LeaveCommand;
 import com.tommytony.war.command.regular.TeamCommand;
 import com.tommytony.war.command.regular.TeamsCommand;
-import com.tommytony.war.command.regular.WarzoneCommand;
 import com.tommytony.war.command.regular.WarzonesCommand;
+import com.tommytony.war.command.zonemaker.ClassChestCommand;
 import com.tommytony.war.command.zonemaker.DeleteBombCommand;
 import com.tommytony.war.command.zonemaker.DeleteCakeCommand;
 import com.tommytony.war.command.zonemaker.DeleteCapturePointCommand;
@@ -20,7 +20,6 @@ import com.tommytony.war.command.zonemaker.DeletePortalCommand;
 import com.tommytony.war.command.zonemaker.DeleteTeamCommand;
 import com.tommytony.war.command.zonemaker.DeleteTeamFlagCommand;
 import com.tommytony.war.command.zonemaker.DeleteZoneCommand;
-import com.tommytony.war.command.zonemaker.ClassChestCommand;
 import com.tommytony.war.command.zonemaker.NextBattleCommand;
 import com.tommytony.war.command.zonemaker.NotZoneMakerException;
 import com.tommytony.war.command.zonemaker.RenameZoneCommand;
@@ -95,10 +94,6 @@ public class WarCommandHandler {
                 case "zones":
                 case "warzones":
                     commandObj = new WarzonesCommand(this, sender, arguments);
-                    break;
-                case "zone":
-                case "warzone":
-                    commandObj = new WarzoneCommand(this, sender, arguments);
                     break;
                 case "teams":
                     commandObj = new TeamsCommand(this, sender, arguments);

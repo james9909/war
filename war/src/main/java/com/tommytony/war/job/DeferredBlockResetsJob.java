@@ -1,9 +1,7 @@
 package com.tommytony.war.job;
 
-import com.tommytony.war.utility.DeferredBlockReset;
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;

@@ -30,7 +30,6 @@ import com.tommytony.war.structure.WarzoneMaterials;
 import com.tommytony.war.structure.ZonePortal;
 import com.tommytony.war.structure.ZoneWallGuard;
 import com.tommytony.war.utility.Direction;
-import com.tommytony.war.utility.InventoryManager;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.LoadoutSelection;
 import com.tommytony.war.utility.PlayerState;
@@ -44,18 +43,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -76,9 +75,7 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.Permissible;
@@ -86,9 +83,6 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 
 /**
@@ -97,16 +91,16 @@ import org.bukkit.util.Vector;
  */
 public class Warzone {
 
-    static final Comparator<Team> LEAST_PLAYER_COUNT_ORDER = Comparator.comparingInt(arg0 -> arg0.getPlayers().size());
-    private final List<Team> teams = new ArrayList<>();
-    private final List<Monument> monuments = new ArrayList<>();
-    private final List<CapturePoint> capturePoints = new ArrayList<>();
-    private final List<Bomb> bombs = new ArrayList<>();
-    private final List<Cake> cakes = new ArrayList<>();
-    private final List<String> authors = new ArrayList<>();
+    private final Set<Team> teams = new HashSet<>();
+    private final Set<Monument> monuments = new HashSet<>();
+    private final Set<CapturePoint> capturePoints = new HashSet<>();
+    private final Set<Bomb> bombs = new HashSet<>();
+    private final Set<Cake> cakes = new HashSet<>();
+    private final Set<String> authors = new HashSet<>();
+
     private final int minSafeDistanceFromWall = 6;
-    private final List<Player> respawn = new ArrayList<>();
-    private final List<String> reallyDeadFighters = new ArrayList<>();
+    private final Set<WarPlayer> respawn = new HashSet<>();
+    private final Set<UUID> reallyDeadFighters = new HashSet<>();
     private final WarzoneConfigBag warzoneConfig;
     private final TeamConfigBag teamDefaultConfig;
     private String name;
@@ -115,18 +109,13 @@ public class Warzone {
     private Location teleport;
     private Location rallyPoint;
     private List<ZoneWallGuard> zoneWallGuards = new ArrayList<>();
-    private HashMap<String, PlayerState> playerStates = new HashMap<>();
-    private HashMap<String, Team> flagThieves = new HashMap<>();
-    private HashMap<String, Bomb> bombThieves = new HashMap<>();
-    private HashMap<String, Cake> cakeThieves = new HashMap<>();
-    private HashMap<String, LoadoutSelection> loadoutSelections = new HashMap<>();
-    private HashMap<String, PlayerState> deadMenInventories = new HashMap<>();
-    private HashMap<String, Integer> killCount = new HashMap<>();
-    private HashMap<Player, PermissionAttachment> attachments = new HashMap<>();
-    private HashMap<Player, Team> delayedJoinPlayers = new HashMap<>();
+    private Map<String, PlayerState> playerStates = new HashMap<>();
+    private Map<UUID, Team> flagThieves = new HashMap<>();
+    private Map<UUID, Bomb> bombThieves = new HashMap<>();
+    private Map<UUID, Cake> cakeThieves = new HashMap<>();
+    private Map<Player, PermissionAttachment> attachments = new HashMap<>();
     private List<LogKillsDeathsJob.KillsDeathsRecord> killsDeathsTracker = new ArrayList<>();
     private InventoryBag defaultInventories = new InventoryBag();
-    private InventoryManager inventoryManager;
     private List<ZonePortal> portals = new ArrayList<>();
 
     private WarzoneMaterials warzoneMaterials = new WarzoneMaterials(new ItemStack(Material.OBSIDIAN), new ItemStack(Material.FENCE), new ItemStack(Material.GLOWSTONE));
@@ -137,8 +126,6 @@ public class Warzone {
 
     private boolean pvpReady = true;
     private Random killSeed = new Random();
-    // prevent tryCallDelayedPlayers from being recursively called by Warzone#assign
-    private boolean activeDelayedCall = false;
     private ScoreboardType scoreboardType;
 
     public Warzone(World world, String name) {
@@ -149,7 +136,6 @@ public class Warzone {
         this.volume = new ZoneVolume(name, this.getWorld(), this);
         this.pvpReady = true;
         this.scoreboardType = this.getWarzoneConfig().getScoreboardType(WarzoneConfig.SCOREBOARD);
-        this.inventoryManager = new InventoryManager();
     }
 
     public static Warzone getZoneByName(String name) {
@@ -188,19 +174,13 @@ public class Warzone {
         return Warzone.getZoneByLocation(player.getLocation());
     }
 
-    public static Warzone getZoneByPlayerName(String playerName) {
-        for (Warzone warzone : War.war.getWarzones()) {
-            Team team = warzone.getPlayerTeam(playerName);
-            if (team != null) {
-                return warzone;
-            }
-        }
-        return null;
+    public static Warzone getZoneByPlayerUUID(UUID uuid) {
+        return WarPlayer.getPlayer(uuid).getZone();
     }
 
     public static Warzone getZoneForDeadPlayer(Player player) {
         for (Warzone warzone : War.war.getWarzones()) {
-            if (warzone.getReallyDeadFighters().contains(player.getName())) {
+            if (warzone.getReallyDeadFighters().contains(player.getUniqueId())) {
                 return warzone;
             }
         }
@@ -211,18 +191,18 @@ public class Warzone {
         return this.volume.hasTwoCorners() && !this.volume.tooSmall() && !this.volume.tooBig();
     }
 
-    public List<Team> getTeams() {
+    public Set<Team> getTeams() {
         return this.teams;
     }
 
-    public Team getPlayerTeam(String playerName) {
-        for (Team team : this.teams) {
-            for (Player player : team.getPlayers()) {
-                if (player.getName().equals(playerName)) {
-                    return team;
-                }
-            }
-        }
+    public Team getPlayerTeam(UUID uuid) {
+        // for (Team team : this.teams) {
+        //     for (Player player : team.getPlayers()) {
+        //         if (player.getName().equals(playerName)) {
+        //             return team;
+        //         }
+        //     }
+        // }
         return null;
     }
 
@@ -316,14 +296,14 @@ public class Warzone {
         if (this.ready() && this.volume.isSaved()) {
             // everyone back to team spawn with full health
             for (Team team : this.teams) {
-                for (Player player : team.getPlayers()) {
-                    if (player.equals(respawnExempted)) {
+                for (WarPlayer warPlayer : team.getPlayers()) {
+                    if (warPlayer.getUniqueId().equals(respawnExempted.getUniqueId())) {
                         continue;
                     }
-                    if (this.getReallyDeadFighters().contains(player.getName())) {
+                    if (this.getReallyDeadFighters().contains(warPlayer.getUniqueId())) {
                         continue;
                     }
-                    this.respawnPlayer(team, player);
+                    this.respawnPlayer(warPlayer.getPlayer());
                 }
                 team.setRemainingLives(team.getTeamConfig().resolveInt(TeamConfig.LIFEPOOL));
                 team.initializeTeamSpawns();
@@ -416,30 +396,37 @@ public class Warzone {
 
     }
 
-    public void respawnPlayer(Team team, Player player) {
+    public void respawnPlayer(Player player) {
         // Teleport the player back to spawn
         player.setVelocity(new Vector());
-        this.handleRespawn(team, team.getRandomSpawn(), player);
+
+        WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        this.handleRespawn(player, warPlayer.getTeam().getRandomSpawn());
     }
 
-    public void respawnPlayer(PlayerMoveEvent event, Team team, Player player) {
+    public void respawnPlayer(PlayerMoveEvent event, Player player) {
         // Teleport the player back to spawn
         player.setVelocity(new Vector());
-        event.setTo(team.getRandomSpawn());
-        this.handleRespawn(team, event.getTo(), player);
+
+        WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        event.setTo(warPlayer.getTeam().getRandomSpawn());
+        this.handleRespawn(player, event.getTo());
     }
 
-    public boolean isRespawning(Player p) {
+    public boolean isRespawning(WarPlayer p) {
         return respawn.contains(p);
     }
 
-    private void handleRespawn(final Team team, final Location location, final Player player) {
+    private void handleRespawn(Player player, Location location) {
         TeleportToSpawnTimer timer = new TeleportToSpawnTimer(player, location);
         BukkitTask teleportTask = timer.runTaskTimer(War.war, 0, 1);
         War.war.getServer().getScheduler().runTaskLater(War.war, teleportTask::cancel, 10);
 
+        WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        Team team = warPlayer.getTeam();
+
         // first, wipe inventory to disable attribute modifications
-        this.preventItemHackingThroughOpenedInventory(player);
+        warPlayer.preventItemHacking();
         player.getInventory().clear();
 
         // clear potion effects
@@ -503,28 +490,23 @@ public class Warzone {
             player.sendTitle("", ChatColor.RED + MessageFormat.format(War.war.getString("zone.spawn.timer.title"), respawnTime), 1, respawnTimeTicks, 10);
         }
 
-        boolean isFirstRespawn = false;
-        if (!this.getLoadoutSelections().keySet().contains(player.getName())) {
-            isFirstRespawn = true;
-            this.getLoadoutSelections().put(player.getName(), new LoadoutSelection(true, 0));
-        } else if (this.isReinitializing) {
-            isFirstRespawn = true;
-            this.getLoadoutSelections().get(player.getName()).setStillInSpawn(true);
+        if (warPlayer.getLoadoutSelection() == null) {
+            warPlayer.setLoadoutSelection(new LoadoutSelection(true, 0));
         } else {
-            this.getLoadoutSelections().get(player.getName()).setStillInSpawn(true);
+            warPlayer.getLoadoutSelection().setStillInSpawn(true);
         }
 
         War.war.getKillstreakReward().getAirstrikePlayers().remove(player.getName());
 
-        final LoadoutResetJob job = new LoadoutResetJob(this, team, player, isFirstRespawn, false);
-        if (team.getTeamConfig().resolveInt(TeamConfig.RESPAWNTIMER) == 0 || isFirstRespawn) {
+        final LoadoutResetJob job = new LoadoutResetJob(warPlayer);
+        if (team.getTeamConfig().resolveInt(TeamConfig.RESPAWNTIMER) == 0) {
             job.run();
         } else {
             // "Respawn" Timer - player will not be able to leave spawn for a few seconds
-            respawn.add(player);
+            respawn.add(warPlayer);
 
             War.war.getServer().getScheduler().scheduleSyncDelayedTask(War.war, () -> {
-                respawn.remove(player);
+                respawn.remove(warPlayer);
                 War.war.getServer().getScheduler().scheduleSyncDelayedTask(War.war, job);
             }, team.getTeamConfig().resolveInt(TeamConfig.RESPAWNTIMER) * 20L); // 20 ticks = 1 second
         }
@@ -580,74 +562,8 @@ public class Warzone {
         return false;
     }
 
-    public List<Monument> getMonuments() {
+    public Set<Monument> getMonuments() {
         return this.monuments;
-    }
-
-    public boolean hasPlayerState(String playerName) {
-        return this.playerStates.containsKey(playerName);
-    }
-
-    public void keepPlayerState(Player player) {
-        PlayerState ps = playerStates.get(player.getName());
-        if (ps == null) {
-            ps = new PlayerState(player);
-            playerStates.put(player.getName(), ps);
-        }
-
-        ps.update();
-        // Store inventory
-        try {
-            inventoryManager.saveInventory(player);
-        } catch (Exception e) {
-            e.printStackTrace();
-            War.war.getLogger().severe("Failed to store inventory for " + player.getName());
-        }
-    }
-
-    public void restorePlayerState(Player player) {
-        try {
-            inventoryManager.restoreInventory(player);
-        } catch (Exception e) {
-            e.printStackTrace();
-            War.war.getLogger().severe("Failed to restore inventory for " + player.getName());
-        }
-
-        PlayerState originalState = this.playerStates.get(player.getName());
-        if (originalState != null) {
-            // prevent item hacking thru CRAFTING personal inventory slots
-            this.preventItemHackingThroughOpenedInventory(player);
-
-            // this.playerInvFromInventoryStash(playerInv, originalState);
-            player.setGameMode(originalState.getGamemode());
-            double maxH = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-            player.setHealth(Math.max(Math.min(originalState.getHealth(), maxH), 0.0D));
-            player.setExhaustion(originalState.getExhaustion());
-            player.setSaturation(originalState.getSaturation());
-            player.setFoodLevel(originalState.getFoodLevel());
-            PotionEffectHelper.restorePotionEffects(player, originalState.getPotionEffects());
-            player.setLevel(originalState.getLevel());
-            player.setExp(originalState.getExp());
-            player.setAllowFlight(originalState.canFly());
-            if (!player.performCommand("spawn")) {
-                // Last resort
-                player.teleport(originalState.getLocation());
-            }
-        } else {
-            player.performCommand("spawn");
-        }
-    }
-
-    private void preventItemHackingThroughOpenedInventory(Player player) {
-        InventoryView openedInv = player.getOpenInventory();
-        if (openedInv.getType() == InventoryType.CRAFTING) {
-            // prevent abuse of personal crafting slots (this behavior doesn't seem to happen
-            // for containers like workbench and furnace - those get closed properly)
-            openedInv.getTopInventory().clear();
-        }
-
-        // Prevent player from keeping items he was transferring in his inventory
-        openedInv.setCursor(null);
     }
 
     public boolean hasMonument(String monumentName) {
@@ -920,24 +836,27 @@ public class Warzone {
     }
 
     public Team autoAssign(Player player) {
-        Team existing = Team.getTeamByPlayerName(player.getName());
-        if (existing != null) {
+        WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        if (warPlayer.getTeam() != null) {
             War.war.badMsg(player, "You are already in a warzone");
             return null;
         }
 
-        teams.sort(LEAST_PLAYER_COUNT_ORDER);
-        Team lowestNoOfPlayers = null;
+        int lowest = Integer.MAX_VALUE;
+        Team toAssign = null;
         for (Team team : this.teams) {
             if (War.war.canPlayWar(player, team)) {
-                lowestNoOfPlayers = team;
-                break;
+                int numPlayers = team.getPlayers().size();
+                if (numPlayers < lowest) {
+                    toAssign = team;
+                    lowest = numPlayers;
+                }
             }
         }
-        if (lowestNoOfPlayers != null) {
-            this.assign(player, lowestNoOfPlayers);
+        if (toAssign != null) {
+            this.assign(player, toAssign);
         }
-        return lowestNoOfPlayers;
+        return toAssign;
     }
 
     /**
@@ -959,16 +878,17 @@ public class Warzone {
         this.attachments.put(player, attachment);
         attachment.setPermission("war.playing", true);
         attachment.setPermission("war.playing." + this.getName().toLowerCase(), true);
-        team.addPlayer(player);
+        WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        warPlayer.setTeam(team);
+        warPlayer.setZone(this);
+        team.addPlayer(warPlayer);
         team.resetSign();
-        this.setKillCount(player.getName(), 0);
 
-        this.getReallyDeadFighters().remove(player.getName());
-        this.keepPlayerState(player);
+        this.getReallyDeadFighters().remove(player.getUniqueId());
+        warPlayer.savePlayerState();
         War.war.msg(player, "join.inventorystored");
-        this.respawnPlayer(team, player);
+        this.respawnPlayer(player);
         this.broadcast("join.broadcast", player.getName(), team.getKind().getFormattedName());
-        this.tryCallDelayedPlayers();
         this.resetPortals();
         return true;
     }
@@ -983,15 +903,18 @@ public class Warzone {
     }
 
     /**
-     * Send death messages and process other records before passing off the death to the {@link #handleDeath(Player)} method.
+     * Send death messages and process other records before passing off the death to the {@link #handleDeath(Player)}  method.
      *
      * @param attacker Player who killed the defender
      * @param defender Player who was killed
      * @param damager Entity who caused the damage. Usually an arrow. Used for specific death messages. Can be null.
      */
     public void handleKill(Player attacker, Player defender, Entity damager) {
-        Team attackerTeam = this.getPlayerTeam(attacker.getName());
-        Team defenderTeam = this.getPlayerTeam(defender.getName());
+        WarPlayer warAttacker = WarPlayer.getPlayer(attacker.getUniqueId());
+        WarPlayer warDefender = WarPlayer.getPlayer(defender.getUniqueId());
+        Team attackerTeam = warAttacker.getTeam();
+        Team defenderTeam = warDefender.getTeam();
+
         if (this.getWarzoneConfig().getBoolean(WarzoneConfig.DEATHMESSAGES)) {
             String attackerString = attackerTeam.getKind().getColor() + attacker.getName();
             String defenderString = defenderTeam.getKind().getColor() + defender.getName();
@@ -1017,14 +940,14 @@ public class Warzone {
             String verbString = War.war.getKillerVerbs().isEmpty() ? "" : War.war.getKillerVerbs().get(this.killSeed.nextInt(War.war.getKillerVerbs().size()));
             this.broadcast("pvp.kill.format", attackerString + ChatColor.WHITE, adjectiveString, weaponString.toLowerCase().replace('_', ' '), verbString, defenderString);
         }
-        this.addKillCount(attacker.getName(), 1);
+        warAttacker.addKill();
         this.addKillDeathRecord(attacker, 1, 0);
         this.addKillDeathRecord(defender, 0, 1);
         if (attackerTeam.getTeamConfig().resolveBoolean(TeamConfig.XPKILLMETER)) {
-            attacker.setLevel(this.getKillCount(attacker.getName()));
+            attacker.setLevel(warAttacker.getKills());
         }
         if (attackerTeam.getTeamConfig().resolveBoolean(TeamConfig.KILLSTREAK)) {
-            War.war.getKillstreakReward().rewardPlayer(attacker, this.getKillCount(attacker.getName()));
+            War.war.getKillstreakReward().rewardPlayer(attacker, warAttacker.getKills());
         }
         if (defenderTeam.getTeamConfig().resolveBoolean(TeamConfig.INVENTORYDROP)) {
             dropItems(defender.getLocation(), defender.getInventory().getContents());
@@ -1036,11 +959,12 @@ public class Warzone {
     /**
      * Handle death messages before passing to {@link #handleDeath(Player)} for post-processing. It's like {@link #handleKill(Player, Player, Entity)}, but only for suicides.
      *
-     * @param player Player who killed himself
+     * @param player WarPlayer who killed himself
      */
     public void handleSuicide(Player player) {
+        WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
         if (this.getWarzoneConfig().getBoolean(WarzoneConfig.DEATHMESSAGES)) {
-            String defenderString = this.getPlayerTeam(player.getName()).getKind().getColor() + player.getName() + ChatColor.WHITE;
+            String defenderString = warPlayer.getTeam().getKind().getColor() + player.getName() + ChatColor.WHITE;
             this.broadcast("pvp.kill.self", defenderString);
         }
         this.handleDeath(player);
@@ -1054,7 +978,8 @@ public class Warzone {
      */
     public void handleNaturalKill(Player player, EntityDamageEvent event) {
         if (this.getWarzoneConfig().getBoolean(WarzoneConfig.DEATHMESSAGES)) {
-            String defenderString = this.getPlayerTeam(player.getName()).getKind().getColor() + player.getName() + ChatColor.WHITE;
+            WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+            String defenderString = warPlayer.getTeam().getKind().getColor() + player.getName() + ChatColor.WHITE;
             if (event instanceof EntityDamageByEntityEvent && ((EntityDamageByEntityEvent) event).getDamager() instanceof TNTPrimed) {
                 this.broadcast("pvp.death.explosion", defenderString + ChatColor.WHITE);
             } else if (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK || event.getCause() == DamageCause.LAVA || event.getCause() == DamageCause.LIGHTNING) {
@@ -1076,17 +1001,19 @@ public class Warzone {
      * @param player Player who died
      */
     public synchronized void handleDeath(Player player) {
-        Team playerTeam = this.getPlayerTeam(player.getName());
+        WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        Team playerTeam = warPlayer.getTeam();
+
         Validate.notNull(playerTeam, "Can't find team for dead player " + player.getName());
         if (this.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
-            this.getReallyDeadFighters().add(player.getName());
+            this.getReallyDeadFighters().add(player.getUniqueId());
         } else {
-            this.respawnPlayer(playerTeam, player);
+            this.respawnPlayer(player);
         }
         if (playerTeam.getRemainingLives() <= 0) {
-            handleTeamLoss(playerTeam, player);
+            handleTeamLoss(playerTeam, warPlayer);
         } else {
-            this.dropAllStolenObjects(player, false);
+            this.dropAllStolenObjects(warPlayer, false);
             playerTeam.setRemainingLives(playerTeam.getRemainingLives() - 1);
             // Lifepool empty warning
             if (playerTeam.getRemainingLives() == 0) {
@@ -1096,12 +1023,17 @@ public class Warzone {
         playerTeam.resetSign();
     }
 
-    private void handleTeamLoss(Team losingTeam, Player player) {
+    private void handleTeamLoss(Team losingTeam, WarPlayer warPlayer) {
+        Player player = warPlayer.getPlayer();
+
         StringBuilder teamScores = new StringBuilder();
         List<Team> winningTeams = new ArrayList<>(teams.size());
         for (Team team : this.teams) {
             if (team.getPlayers().isEmpty()) {
                 continue;
+            }
+            for (WarPlayer wp : team.getPlayers()) {
+                wp.resetKills();
             }
             if (team != losingTeam) {
                 team.addPoint();
@@ -1120,10 +1052,6 @@ public class Warzone {
         if (War.war.getMysqlConfig().isEnabled() && War.war.getMysqlConfig().isLoggingEnabled()) {
             LogKillsDeathsJob logKillsDeathsJob = new LogKillsDeathsJob(ImmutableList.copyOf(this.getKillsDeathsTracker()));
             logKillsDeathsJob.runTaskAsynchronously(War.war);
-        }
-
-        for (String playerName : killCount.keySet()) {
-            killCount.put(playerName, 0);
         }
 
         this.getKillsDeathsTracker().clear();
@@ -1160,24 +1088,15 @@ public class Warzone {
         this.getVolume().resetBlocksAsJob();
     }
 
-    public void handlePlayerLeave(Player player, Location destination, PlayerMoveEvent event, boolean removeFromTeam) {
-        this.handlePlayerLeave(player);
-        event.setTo(destination);
-    }
-
-    public void handlePlayerLeave(Player player, Location destination, boolean removeFromTeam) {
-        this.handlePlayerLeave(player);
-        player.teleport(destination);
-    }
-
     public void handlePlayerLeave(Player player, boolean removeFromTeam) {
         this.handlePlayerLeave(player);
     }
 
     private void handlePlayerLeave(Player player) {
-        Team playerTeam = Team.getTeamByPlayerName(player.getName());
+        WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        Team playerTeam = warPlayer.getTeam();
         if (playerTeam != null) {
-            playerTeam.removePlayer(player);
+            playerTeam.removePlayer(warPlayer);
             this.broadcast("leave.broadcast", playerTeam.getKind().getColor() + player.getName() + ChatColor.WHITE);
             playerTeam.resetSign();
             player.removeAttachment(this.attachments.remove(player));
@@ -1216,17 +1135,17 @@ public class Warzone {
                 int t1p = team1.getPlayers().size();
                 int t2p = team2.getPlayers().size();
                 if (t1p - t2p >= 2) {
-                    Player eject = team1.getPlayers().get(killSeed.nextInt(t1p));
+                    WarPlayer eject = team1.getPlayers().get(killSeed.nextInt(t1p));
                     team1.removePlayer(eject);
                     team1.resetSign();
-                    this.assign(eject, team2);
+                    this.assign(eject.getPlayer(), team2);
                     rerun = true;
                     break;
                 } else if (t2p - t1p >= 2) {
-                    Player eject = team2.getPlayers().get(killSeed.nextInt(t2p));
+                    WarPlayer eject = team2.getPlayers().get(killSeed.nextInt(t2p));
                     team2.removePlayer(eject);
                     team2.resetSign();
-                    this.assign(eject, team1);
+                    this.assign(eject.getPlayer(), team1);
                     rerun = true;
                     break;
                 }
@@ -1301,61 +1220,61 @@ public class Warzone {
     }
 
     // Flags
-    public void addFlagThief(Team lostFlagTeam, Player flagThief) {
-        this.flagThieves.put(flagThief.getName(), lostFlagTeam);
-        WarPlayerThiefEvent event1 = new WarPlayerThiefEvent(flagThief, WarPlayerThiefEvent.StolenObject.FLAG);
+    public void addFlagThief(Team lostFlagTeam, WarPlayer flagThief) {
+        this.flagThieves.put(flagThief.getUniqueId(), lostFlagTeam);
+        WarPlayerThiefEvent event1 = new WarPlayerThiefEvent(flagThief.getPlayer(), WarPlayerThiefEvent.StolenObject.FLAG);
         War.war.getServer().getPluginManager().callEvent(event1);
     }
 
-    public boolean isFlagThief(Player suspect) {
-        return this.flagThieves.containsKey(suspect.getName());
+    public boolean isFlagThief(WarPlayer suspect) {
+        return this.flagThieves.containsKey(suspect.getUniqueId());
     }
 
-    public Team getVictimTeamForFlagThief(Player thief) {
-        return this.flagThieves.get(thief.getName());
+    public Team getVictimTeamForFlagThief(WarPlayer thief) {
+        return this.flagThieves.get(thief.getUniqueId());
     }
 
-    public void removeFlagThief(Player thief) {
-        this.flagThieves.remove(thief.getName());
+    public void removeFlagThief(WarPlayer thief) {
+        this.flagThieves.remove(thief.getUniqueId());
     }
 
     // Bomb
-    public void addBombThief(Bomb bomb, Player bombThief) {
-        this.bombThieves.put(bombThief.getName(), bomb);
-        WarPlayerThiefEvent event1 = new WarPlayerThiefEvent(bombThief, WarPlayerThiefEvent.StolenObject.BOMB);
+    public void addBombThief(Bomb bomb, WarPlayer bombThief) {
+        this.bombThieves.put(bombThief.getUniqueId(), bomb);
+        WarPlayerThiefEvent event1 = new WarPlayerThiefEvent(bombThief.getPlayer(), WarPlayerThiefEvent.StolenObject.BOMB);
         War.war.getServer().getPluginManager().callEvent(event1);
     }
 
-    public boolean isBombThief(Player suspect) {
-        return this.bombThieves.containsKey(suspect.getName());
+    public boolean isBombThief(WarPlayer suspect) {
+        return this.bombThieves.containsKey(suspect.getUniqueId());
     }
 
-    public Bomb getBombForThief(Player thief) {
-        return this.bombThieves.get(thief.getName());
+    public Bomb getBombForThief(WarPlayer thief) {
+        return this.bombThieves.get(thief.getUniqueId());
     }
 
     // Cake
 
-    public void removeBombThief(Player thief) {
-        this.bombThieves.remove(thief.getName());
+    public void removeBombThief(WarPlayer thief) {
+        this.bombThieves.remove(thief.getUniqueId());
     }
 
-    public void addCakeThief(Cake cake, Player cakeThief) {
-        this.cakeThieves.put(cakeThief.getName(), cake);
-        WarPlayerThiefEvent event1 = new WarPlayerThiefEvent(cakeThief, WarPlayerThiefEvent.StolenObject.CAKE);
+    public void addCakeThief(Cake cake, WarPlayer cakeThief) {
+        this.cakeThieves.put(cakeThief.getUniqueId(), cake);
+        WarPlayerThiefEvent event1 = new WarPlayerThiefEvent(cakeThief.getPlayer(), WarPlayerThiefEvent.StolenObject.CAKE);
         War.war.getServer().getPluginManager().callEvent(event1);
     }
 
-    public boolean isCakeThief(Player suspect) {
-        return this.cakeThieves.containsKey(suspect.getName());
+    public boolean isCakeThief(WarPlayer suspect) {
+        return this.cakeThieves.containsKey(suspect.getUniqueId());
     }
 
-    public Cake getCakeForThief(Player thief) {
-        return this.cakeThieves.get(thief.getName());
+    public Cake getCakeForThief(WarPlayer thief) {
+        return this.cakeThieves.get(thief.getUniqueId());
     }
 
-    public void removeCakeThief(Player thief) {
-        this.cakeThieves.remove(thief.getName());
+    public void removeCakeThief(WarPlayer thief) {
+        this.cakeThieves.remove(thief.getUniqueId());
     }
 
     public void clearThieves() {
@@ -1384,31 +1303,33 @@ public class Warzone {
             t.teamcast(winnersStrAndExtra);
             double ecoReward = t.getTeamConfig().resolveDouble(TeamConfig.ECOREWARD);
             boolean doEcoReward = ecoReward != 0 && War.war.getEconomy() != null;
-            for (Iterator<Player> it = t.getPlayers().iterator(); it.hasNext(); ) {
-                Player tp = it.next();
+            for (Iterator<WarPlayer> it = t.getPlayers().iterator(); it.hasNext(); ) {
+                WarPlayer warPlayer = it.next();
+                Player player = warPlayer.getPlayer();
+
                 it.remove(); // Remove player from team first to prevent anti-tp
-                t.removePlayer(tp);
+                t.removePlayer(warPlayer);
                 if (winnersStr.contains(t.getName())) {
                     // give reward
                     Reward winReward = t.getInventories().resolveWinReward();
                     if (winReward != null) {
-                        winReward.rewardPlayer(tp);
+                        winReward.rewardPlayer(player);
                     }
                     if (doEcoReward) {
                         EconomyResponse r;
                         if (ecoReward > 0) {
-                            r = War.war.getEconomy().depositPlayer(tp.getName(), ecoReward);
+                            r = War.war.getEconomy().depositPlayer(player.getName(), ecoReward);
                         } else {
-                            r = War.war.getEconomy().withdrawPlayer(tp.getName(), ecoReward);
+                            r = War.war.getEconomy().withdrawPlayer(player.getName(), ecoReward);
                         }
                         if (!r.transactionSuccess()) {
-                            War.war.getLogger().log(Level.WARNING, "Failed to reward player {0} ${1}. Error: {2}", new Object[]{tp.getName(), ecoReward, r.errorMessage});
+                            War.war.getLogger().log(Level.WARNING, "Failed to reward player {0} ${1}. Error: {2}", new Object[]{player.getName(), ecoReward, r.errorMessage});
                         }
                     }
                 } else {
                     Reward lossReward = t.getInventories().resolveLossReward();
                     if (lossReward != null) {
-                        lossReward.rewardPlayer(tp);
+                        lossReward.rewardPlayer(player);
                     }
                 }
             }
@@ -1423,10 +1344,6 @@ public class Warzone {
         }
     }
 
-    public boolean isDeadMan(String playerName) {
-        return this.deadMenInventories.containsKey(playerName);
-    }
-
     public Location getRallyPoint() {
         return this.rallyPoint;
     }
@@ -1438,10 +1355,10 @@ public class Warzone {
     public void unload() {
         War.war.log("Unloading zone " + this.getName() + "...", Level.INFO);
         for (Team team : this.getTeams()) {
-            for (Iterator<Player> it = team.getPlayers().iterator(); it.hasNext(); ) {
-                final Player player = it.next();
+            for (Iterator<WarPlayer> it = team.getPlayers().iterator(); it.hasNext(); ) {
+                WarPlayer warPlayer = it.next();
                 it.remove();
-                team.removePlayer(player);
+                team.removePlayer(warPlayer);
             }
         }
         if (this.getWarzoneConfig().getBoolean(WarzoneConfig.RESETONUNLOAD)) {
@@ -1459,66 +1376,6 @@ public class Warzone {
         return teamsWithEnough >= this.getWarzoneConfig().getInt(WarzoneConfig.MINTEAMS);
     }
 
-    /**
-     * Test whether there would be enough players with the addition of one more player
-     *
-     * @param plusOne Team to test
-     * @return true if there would be enough players
-     */
-    public boolean testEnoughPlayers(TeamKind plusOne, boolean testDelayedJoin) {
-        int teamsWithEnough = 0;
-        for (Team team : teams) {
-            int addl = 0;
-            if (team.getKind() == plusOne) {
-                addl = 1;
-            }
-            if (testDelayedJoin) {
-                for (Iterator<Map.Entry<Player, Team>> iterator = this.delayedJoinPlayers.entrySet().iterator(); iterator.hasNext(); ) {
-                    Map.Entry<Player, Team> e = iterator.next();
-                    if (!isDelayedPlayerStillValid(e.getKey())) {
-                        iterator.remove();
-                        continue;
-                    }
-                    if (e.getValue() == team) {
-                        addl += 1;
-                    }
-                }
-            }
-            if (team.getPlayers().size() + addl >= this.getWarzoneConfig().getInt(WarzoneConfig.MINPLAYERS)) {
-                teamsWithEnough++;
-            }
-        }
-        return teamsWithEnough >= this.getWarzoneConfig().getInt(WarzoneConfig.MINTEAMS);
-    }
-
-    public void signup(Player player, Team team) {
-        War.war.msg(player, "You will be automatically sent to warzone when minplayers is reached.");
-        this.delayedJoinPlayers.put(player, team);
-        tryCallDelayedPlayers();
-    }
-
-    private void tryCallDelayedPlayers() {
-        if (activeDelayedCall || (!isEnoughPlayers() && !testEnoughPlayers(null, true))) {
-            return;
-        }
-        activeDelayedCall = true;
-        for (Map.Entry<Player, Team> e : delayedJoinPlayers.entrySet()) {
-            this.assign(e.getKey(), e.getValue());
-        }
-        delayedJoinPlayers.clear();
-        activeDelayedCall = false;
-    }
-
-    private boolean isDelayedPlayerStillValid(Player player) {
-        // Make sure they're online, they can play in this team, and they're not in another game
-        return player.isOnline() && War.war.canPlayWar(player, delayedJoinPlayers.get(player)) && Warzone.getZoneByPlayerName(player.getName()) == null;
-    }
-
-
-    public HashMap<String, LoadoutSelection> getLoadoutSelections() {
-        return loadoutSelections;
-    }
-
     public boolean isAuthor(Player player) {
         // if no authors, all zonemakers can edit the zone
         return authors.size() == 0 || authors.contains(player.getName());
@@ -1528,7 +1385,7 @@ public class Warzone {
         authors.add(playerName);
     }
 
-    public List<String> getAuthors() {
+    public Set<String> getAuthors() {
         return this.authors;
     }
 
@@ -1540,28 +1397,30 @@ public class Warzone {
         return authors;
     }
 
-    public void equipPlayerLoadoutSelection(Player player, Team playerTeam, boolean isFirstRespawn, boolean isToggle) {
-        LoadoutSelection selection = this.getLoadoutSelections().get(player.getName());
-        if (selection != null && !this.isRespawning(player) && playerTeam.getPlayers().contains(player)) {
+    public void equipPlayerLoadoutSelection(WarPlayer warPlayer) {
+        LoadoutSelection selection = warPlayer.getLoadoutSelection();
+        Player player = warPlayer.getPlayer();
+        Team team = warPlayer.getTeam();
+        if (selection != null && !this.isRespawning(warPlayer)) {
             // Make sure that inventory resets dont occur if player has already tp'ed out (due to game end, or somesuch)
             // - repawn timer + this method is why inventories were getting wiped as players exited the warzone.
-            List<Loadout> loadouts = playerTeam.getInventories().resolveLoadouts();
+            List<Loadout> loadouts = team.getInventories().resolveLoadouts();
             if (loadouts.isEmpty()) {
                 // Fix for zones that mistakenly only specify a `first' loadout, but do not add any others.
-                this.resetInventory(playerTeam, player, null);
+                warPlayer.resetInventory(null);
                 War.war.msg(player, "404 No loadouts found");
                 return;
             }
 
             int loadoutIndex = selection.getSelectedLoadout();
             Loadout loadout = Loadout.getLoadout(loadouts, "Sorcerer");
-            if (loadoutIndex < loadouts.size()) {
+            if (loadoutIndex < loadouts.size() && loadoutIndex >= 0) {
                 loadout = loadouts.get(loadoutIndex);
             }
             if (loadout == null) {
                 loadout = loadouts.get(0);
             }
-            this.resetInventory(playerTeam, player, loadout);
+            warPlayer.resetInventory(loadout);
         }
     }
 
@@ -1577,19 +1436,19 @@ public class Warzone {
         return this.defaultInventories;
     }
 
-    public List<Bomb> getBombs() {
+    public Set<Bomb> getBombs() {
         return bombs;
     }
 
-    public List<Cake> getCakes() {
+    public Set<Cake> getCakes() {
         return cakes;
     }
 
-    public List<CapturePoint> getCapturePoints() {
+    public Set<CapturePoint> getCapturePoints() {
         return capturePoints;
     }
 
-    public List<String> getReallyDeadFighters() {
+    public Set<UUID> getReallyDeadFighters() {
         return this.reallyDeadFighters;
     }
 
@@ -1640,28 +1499,6 @@ public class Warzone {
         this.scoreboardType = scoreboardType;
     }
 
-    public boolean hasKillCount(String player) {
-        return killCount.containsKey(player);
-    }
-
-    public int getKillCount(String player) {
-        return killCount.get(player);
-    }
-
-    public void setKillCount(String player, int totalKills) {
-        if (totalKills < 0) {
-            throw new IllegalArgumentException("Amount of kills to set cannot be a negative number.");
-        }
-        killCount.put(player, totalKills);
-    }
-
-    public void addKillCount(String player, int amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("Amount of kills to add cannot be a negative number.");
-        }
-        killCount.put(player, killCount.get(player) + amount);
-    }
-
     public void addKillDeathRecord(OfflinePlayer player, int kills, int deaths) {
         for (Iterator<KillsDeathsRecord> it = this.killsDeathsTracker.iterator(); it.hasNext(); ) {
             LogKillsDeathsJob.KillsDeathsRecord kdr = it.next();
@@ -1707,8 +1544,8 @@ public class Warzone {
      *
      * @return list containing all team players.
      */
-    public List<Player> getPlayers() {
-        List<Player> players = new ArrayList<>();
+    public Set<WarPlayer> getPlayers() {
+        Set<WarPlayer> players = new HashSet<>();
         for (Team team : this.teams) {
             players.addAll(team.getPlayers());
         }
@@ -1800,23 +1637,24 @@ public class Warzone {
         return this.getPlayerCount(target) == this.getTotalCapacity(target);
     }
 
-    public void dropAllStolenObjects(Player player, boolean quiet) {
-        if (this.isFlagThief(player)) {
-            Team victimTeam = this.getVictimTeamForFlagThief(player);
+    public void dropAllStolenObjects(WarPlayer warPlayer, boolean quiet) {
+        Player player = warPlayer.getPlayer();
+        if (this.isFlagThief(warPlayer)) {
+            Team victimTeam = this.getVictimTeamForFlagThief(warPlayer);
 
-            this.removeFlagThief(player);
+            this.removeFlagThief(warPlayer);
 
             // Bring back flag of victim team
             victimTeam.getFlagVolume().resetBlocks();
             victimTeam.initializeTeamFlag();
 
             if (!quiet) {
-                this.broadcast("drop.flag.broadcast", player.getName(), victimTeam.getKind().getColor() + victimTeam.getName() + ChatColor.WHITE);
+                this.broadcast("drop.flag.broadcast", warPlayer.getPlayer().getName(), victimTeam.getKind().getColor() + victimTeam.getName() + ChatColor.WHITE);
             }
-        } else if (this.isCakeThief(player)) {
-            Cake cake = this.getCakeForThief(player);
+        } else if (this.isCakeThief(warPlayer)) {
+            Cake cake = this.getCakeForThief(warPlayer);
 
-            this.removeCakeThief(player);
+            this.removeCakeThief(warPlayer);
 
             // Bring back cake
             cake.getVolume().resetBlocks();
@@ -1825,10 +1663,10 @@ public class Warzone {
             if (!quiet) {
                 this.broadcast("drop.cake.broadcast", player.getName(), ChatColor.GREEN + cake.getName() + ChatColor.WHITE);
             }
-        } else if (this.isBombThief(player)) {
-            Bomb bomb = this.getBombForThief(player);
+        } else if (this.isBombThief(warPlayer)) {
+            Bomb bomb = this.getBombForThief(warPlayer);
 
-            this.removeBombThief(player);
+            this.removeBombThief(warPlayer);
 
             // Bring back bomb
             bomb.getVolume().resetBlocks();
@@ -1920,15 +1758,15 @@ public class Warzone {
         }
     }
 
-    public HashMap<String, Team> getFlagThieves() {
+    public Map<UUID, Team> getFlagThieves() {
         return flagThieves;
     }
 
-    public HashMap<String, Bomb> getBombThieves() {
+    public Map<UUID, Bomb> getBombThieves() {
         return bombThieves;
     }
 
-    public HashMap<String, Cake> getCakeThieves() {
+    public Map<UUID, Cake> getCakeThieves() {
         return cakeThieves;
     }
 
@@ -1938,7 +1776,7 @@ public class Warzone {
      * @param suspect Player to check.
      * @return true if suspect has stolen a structure.
      */
-    public boolean isThief(Player suspect) {
+    public boolean isThief(WarPlayer suspect) {
         return this.isFlagThief(suspect) || this.isBombThief(suspect) || this.isCakeThief(suspect);
     }
 

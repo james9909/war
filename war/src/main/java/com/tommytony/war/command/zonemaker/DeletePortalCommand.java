@@ -1,6 +1,5 @@
 package com.tommytony.war.command.zonemaker;
 
-import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
 import org.bukkit.command.CommandSender;

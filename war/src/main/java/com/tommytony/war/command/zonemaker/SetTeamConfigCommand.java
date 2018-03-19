@@ -2,6 +2,7 @@ package com.tommytony.war.command.zonemaker;
 
 import com.tommytony.war.Team;
 import com.tommytony.war.War;
+import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.config.TeamConfigBag;
@@ -41,13 +42,15 @@ public class SetTeamConfigCommand extends AbstractOptionalZoneMakerCommand {
 
         if (this.getSender() instanceof Player) {
             player = (Player) commandSender;
+            WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
 
+            zone = warPlayer.getZone();
             if (zone == null) {
                 // zone not found, is he standing in it?
                 zone = getWarzoneByLocation();
             }
 
-            team = Team.getTeamByPlayerName(player.getName());
+            team = warPlayer.getTeam();
         }
 
         if (zone == null) {

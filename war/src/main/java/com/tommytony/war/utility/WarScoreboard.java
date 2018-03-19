@@ -2,10 +2,12 @@ package com.tommytony.war.utility;
 
 import com.google.common.base.Splitter;
 import com.tommytony.war.Team;
+import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamConfig;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,36 +22,37 @@ public class WarScoreboard {
 
     private Scoreboard scoreboard;
     private Player player;
-    private Team team;
+    private WarPlayer warPlayer;
     private Objective objective;
 
     private boolean flashed;
 
-    public WarScoreboard(Player player, Team team) {
+    public WarScoreboard(WarPlayer warPlayer) {
         this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        this.player = player;
-        this.team = team;
+        this.player = warPlayer.getPlayer();
+        this.warPlayer = warPlayer;
         this.objective = scoreboard.registerNewObjective(player.getName(), "dummy");
         scoreboard.clearSlot(DisplaySlot.SIDEBAR);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        setTitle(String.format("&8>> &6&l%s &8<<", team.getZone().getName()));
+        setTitle(String.format("&8>> &6&l%s &8<<", warPlayer.getZone().getName()));
         WarScoreboard.scoreboards.put(player.getName(), this);
         player.setScoreboard(scoreboard);
     }
 
     public void update() {
-        Warzone zone = team.getZone();
+        Warzone zone = warPlayer.getZone();
         addText("", 10);
 
         // Team name
-        String currentTeam = team.getName();
+        Team team = warPlayer.getTeam();
+        String currentTeam = warPlayer.getTeam().getName();
         String teamName = String.format("&6Team&7: &f%s", currentTeam);
         addText(teamName, 9);
         player.setScoreboard(scoreboard);
 
         // Kill count
-        int kills = zone.getKillCount(player.getName());
+        int kills = warPlayer.getKills();
         String killScore = String.format("&6Kills&7: &e%d", kills);
         addText(killScore, 8);
 
@@ -66,7 +69,7 @@ public class WarScoreboard {
         // Flag status
         if (team.getTeamFlag() != null) {
             // flag status
-            String flagStatus;
+            String flagStatus = "";
             if (zone.isTeamFlagStolen(team)) {
 
                 // Implement alternating colors
@@ -78,28 +81,27 @@ public class WarScoreboard {
                 }
                 flashed = !flashed;
 
-                HashMap<String, Team> thieves = zone.getFlagThieves();
-                String thief = "nobody";
-                for (String playerName : thieves.keySet()) {
-                    if (thieves.get(playerName).getName().equals(team.getName())) {
-                        thief = playerName;
+                Map<UUID, Team> thieves = zone.getFlagThieves();
+                UUID thiefId = null;
+                for (UUID playerId : thieves.keySet()) {
+                    if (thieves.get(playerId).getName().equals(team.getName())) {
+                        thiefId = playerId;
                         break;
                     }
                 }
-                if (thief.length() > 8) {
-                    thief = thief.substring(0, 8) + "...";
+                if (thiefId != null) {
+                    String thiefName = Bukkit.getPlayer(thiefId).getName();
+                    if (thiefName.length() > 8) {
+                        thiefName = thiefName.substring(0, 8) + "...";
+                    }
+                    flagStatus = String.format("&6Flag&7: &l%s%s", format, thiefName);
                 }
-                flagStatus = String.format("&6Flag&7: &l%s%s", format, thief);
             } else {
                 flagStatus = "&6Flag&7: &fBase";
                 flashed = false;
             }
             addText(flagStatus, 4);
         }
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
     }
 
     public static WarScoreboard getScoreboard(Player player) {

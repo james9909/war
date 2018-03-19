@@ -1,9 +1,7 @@
 package com.tommytony.war.command.zonemaker;
 
-import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
-import com.tommytony.war.mapper.WarYmlMapper;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
 import com.tommytony.war.structure.ZonePortal;
 import org.bukkit.Location;

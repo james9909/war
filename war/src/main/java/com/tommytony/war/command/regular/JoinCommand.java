@@ -1,10 +1,7 @@
 package com.tommytony.war.command.regular;
 
-import com.tommytony.war.Team;
-import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
-import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.WarzoneConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

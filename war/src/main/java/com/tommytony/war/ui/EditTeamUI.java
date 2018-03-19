@@ -3,7 +3,6 @@ package com.tommytony.war.ui;
 import com.tommytony.war.Team;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
-import com.tommytony.war.config.TeamConfigBag;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
 import com.tommytony.war.volume.Volume;
 import org.bukkit.ChatColor;

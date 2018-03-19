@@ -2,6 +2,7 @@ package com.tommytony.war.job;
 
 import com.tommytony.war.Team;
 import com.tommytony.war.War;
+import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.WarzoneConfig;
 import java.util.HashMap;
@@ -24,7 +25,8 @@ public class HelmetProtectionTask implements Runnable {
         }
         for (Warzone zone : War.war.getWarzones()) {
             for (Team team : zone.getTeams()) {
-                for (Player player : team.getPlayers()) {
+                for (WarPlayer warPlayer : team.getPlayers()) {
+                    Player player = warPlayer.getPlayer();
                     PlayerInventory playerInv = player.getInventory();
                     Material teamBlockMaterial;
 
@@ -61,18 +63,18 @@ public class HelmetProtectionTask implements Runnable {
                     }
 
                     // check for thieves without their treasure in their hands
-                    if (zone.isFlagThief(player)) {
-                        Team victim = zone.getVictimTeamForFlagThief(player);
+                    if (zone.isFlagThief(warPlayer)) {
+                        Team victim = zone.getVictimTeamForFlagThief(warPlayer);
                         player.getInventory().setItemInMainHand(null);
                         player.getInventory().setItemInOffHand(null);
                         player.getInventory().setHeldItemSlot(0);
                         player.getInventory().addItem(victim.getKind().getBlockData().toItemStack(2240));
-                    } else if (zone.isBombThief(player)) {
+                    } else if (zone.isBombThief(warPlayer)) {
                         player.getInventory().setItemInMainHand(null);
                         player.getInventory().setItemInOffHand(null);
                         player.getInventory().setHeldItemSlot(0);
                         player.getInventory().addItem(new ItemStack(Material.TNT, 2240));
-                    } else if (zone.isCakeThief(player)) {
+                    } else if (zone.isCakeThief(warPlayer)) {
                         player.getInventory().setItemInMainHand(null);
                         player.getInventory().setItemInOffHand(null);
                         player.getInventory().setHeldItemSlot(0);

@@ -5,6 +5,7 @@ import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
 import com.tommytony.war.Team;
 import com.tommytony.war.War;
+import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.utility.LoadoutSelection;
@@ -20,13 +21,14 @@ public class MagicSpellsListener implements Listener {
     public void onSpellCast(SpellCastEvent event) {
         Player caster = event.getCaster();
 
-        Team team = Team.getTeamByPlayerName(caster.getName());
+        WarPlayer casterWarPlayer = WarPlayer.getPlayer(caster.getUniqueId());
+        Team team = casterWarPlayer.getTeam();
         if (team == null) {
             return;
         }
 
         Warzone zone = team.getZone();
-        LoadoutSelection casterLoadoutState = zone.getLoadoutSelections().get(caster.getName());
+        LoadoutSelection casterLoadoutState = casterWarPlayer.getLoadoutSelection();
         if (team.isSpawnLocation(caster.getLocation()) && casterLoadoutState.isStillInSpawn()) {
             event.setCancelled(true);
         }
@@ -42,11 +44,15 @@ public class MagicSpellsListener implements Listener {
             Spell spell = event.getSpell();
             Player target = (Player) livingEntity;
 
-            Team targetTeam = Team.getTeamByPlayerName(target.getName());
-            Team casterTeam = Team.getTeamByPlayerName(caster.getName());
+            WarPlayer targetWarPlayer = WarPlayer.getPlayer(target.getUniqueId());
+            WarPlayer casterWarPlayer = WarPlayer.getPlayer(caster.getUniqueId());
+
+            Team targetTeam = targetWarPlayer.getTeam();
+            Team casterTeam = casterWarPlayer.getTeam();
             if (targetTeam == null && casterTeam == null) {
                 // Neither player is in a warzone, so only allow beneficial spells to target
                 if (!spell.isBeneficial()) {
+                    System.out.printf("Prevented %s from being cast (outside + harmful)\n", spell.getName());
                     event.setCancelled(true);
                 }
                 return;
@@ -83,18 +89,20 @@ public class MagicSpellsListener implements Listener {
             if (casterTeam.getName().equals(targetTeam.getName())) {
                 if (!friendlyFire && !spell.isBeneficial()) {
                     // Team kill is disabled, and the spell is harmful
+                    System.out.printf("Prevented %s from being cast (team + harmful)\n", spell.getName());
                     event.setCancelled(true);
                     return;
                 }
             } else {
                 // Target is not on our team, and our spell is beneficial
                 if (spell.isBeneficial()) {
+                    System.out.printf("Prevented %s from being cast (enemy + beneficial)\n", spell.getName());
                     event.setCancelled(true);
                     return;
                 }
             }
 
-            LoadoutSelection targetLoadoutState = targetZone.getLoadoutSelections().get(target.getName());
+            LoadoutSelection targetLoadoutState = targetWarPlayer.getLoadoutSelection();
             if (targetTeam.isSpawnLocation(target.getLocation()) && targetLoadoutState.isStillInSpawn()) {
                 // Target is in spawn
                 War.war.badMsg(caster, "pvp.target.spawn");
@@ -102,7 +110,7 @@ public class MagicSpellsListener implements Listener {
                 return;
             }
 
-            LoadoutSelection casterLoadoutState = casterZone.getLoadoutSelections().get(caster.getName());
+            LoadoutSelection casterLoadoutState = casterWarPlayer.getLoadoutSelection();
             if (casterTeam.isSpawnLocation(caster.getLocation()) && casterLoadoutState.isStillInSpawn()) {
                 // Caster is in spawn
                 War.war.badMsg(caster, "pvp.self.spawn");

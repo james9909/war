@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -531,7 +532,7 @@ public class WarzoneYmlMapper {
         ConfigurationSection teamsSection = warzoneRootSection.createSection("team");
 
         // teams
-        List<Team> teams = warzone.getTeams();
+        Set<Team> teams = warzone.getTeams();
 
         List<String> teamNames = new ArrayList<>();
         for (Team team : teams) {

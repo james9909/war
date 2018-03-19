@@ -1,7 +1,6 @@
 package com.tommytony.war;
 
 import com.tommytony.war.config.InventoryBag;
-import com.tommytony.war.config.ScoreboardType;
 import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.config.TeamConfigBag;
 import com.tommytony.war.config.TeamKind;
@@ -13,10 +12,12 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Level;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -30,7 +31,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Sign;
-import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * @author tommytony
@@ -39,8 +39,8 @@ public class Team {
 
     private final Warzone warzone;
     Random teamSpawnRandomizer = new Random();
-    private List<Player> players = new ArrayList<>();
-    private List<Player> teamChatPlayers = new ArrayList<>();
+    private Set<WarPlayer> players;
+    private Set<WarPlayer> teamChatPlayers;
     private List<Location> teamSpawns;
     private Location teamFlag = null;
     private String name;
@@ -53,6 +53,8 @@ public class Team {
     private InventoryBag inventories;
 
     public Team(String name, TeamKind kind, List<Location> teamSpawn, Warzone warzone) {
+        this.players = new HashSet<>();
+        this.teamChatPlayers = new HashSet<>();
         this.warzone = warzone;
         this.teamConfig = new TeamConfigBag(warzone);
         this.inventories = new InventoryBag(warzone);    // important constructors for cascading configs
@@ -64,16 +66,6 @@ public class Team {
         }
         this.kind = kind;
         this.setFlagVolume(null); // no flag at the start
-    }
-
-    public static Team getTeamByPlayerName(String playerName) {
-        for (Warzone warzone : War.war.getWarzones()) {
-            Team team = warzone.getPlayerTeam(playerName);
-            if (team != null) {
-                return team;
-            }
-        }
-        return null;
     }
 
     public Warzone getZone() {
@@ -356,13 +348,17 @@ public class Team {
         return this.teamSpawns.get(teamSpawnRandomizer.nextInt(this.teamSpawns.size()));
     }
 
-    public void addPlayer(Player player) {
-        this.players.add(player);
-        new WarScoreboard(player, this);
+    public void addPlayer(WarPlayer warPlayer) {
+        this.players.add(warPlayer);
+        new WarScoreboard(warPlayer);
     }
 
-    public List<Player> getPlayers() {
-        return this.players;
+    public List<WarPlayer> getPlayers() {
+        return new ArrayList<>(this.players);
+    }
+
+    public boolean hasPlayer(WarPlayer warPlayer) {
+        return this.players.contains(warPlayer);
     }
 
     public void teamcast(String message) {
@@ -371,8 +367,8 @@ public class Team {
     }
 
     public void teamcast(String message, boolean isNotification) {
-        for (Player player : this.players) {
-            War.war.msg(player, message);
+        for (WarPlayer player : this.players) {
+            War.war.msg(player.getPlayer(), message);
         }
     }
 
@@ -382,8 +378,8 @@ public class Team {
     }
 
     public void teamcast(String message, boolean isNotification, Object... args) {
-        for (Player player : this.players) {
-            War.war.msg(player, message, args);
+        for (WarPlayer player : this.players) {
+            War.war.msg(player.getPlayer(), message, args);
         }
     }
 
@@ -406,21 +402,22 @@ public class Team {
         this.name = name;
     }
 
-    public void removePlayer(Player thePlayer) {
-        this.players.remove(thePlayer);
-        synchronized (teamChatPlayers) {
-            this.teamChatPlayers.remove(thePlayer);
+    public void removePlayer(WarPlayer warPlayer) {
+        Player player = warPlayer.getPlayer();
+
+        this.players.remove(warPlayer);
+        this.teamChatPlayers.remove(warPlayer);
+
+        this.warzone.dropAllStolenObjects(warPlayer, false);
+        warPlayer.getPlayer().setFireTicks(0);
+        warPlayer.getPlayer().setRemainingAir(300);
+        if (!this.warzone.getReallyDeadFighters().contains(player.getUniqueId())) {
+            warPlayer.reset();
+            warPlayer.restorePlayerState();
         }
-        this.warzone.dropAllStolenObjects(thePlayer, false);
-        thePlayer.setFireTicks(0);
-        thePlayer.setRemainingAir(300);
-        if (!this.warzone.getReallyDeadFighters().contains(thePlayer.getName())) {
-            this.warzone.restorePlayerState(thePlayer);
-        }
-        this.warzone.getLoadoutSelections().remove(thePlayer.getName());
-        WarScoreboard.removeScoreboard(thePlayer);
+        WarScoreboard.removeScoreboard(warPlayer.getPlayer());
         Runnable resetScoreboard = () -> {
-            thePlayer.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+            player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
         };
         // Make sure that the scoreboard is reset
         War.war.getServer().getScheduler().runTaskLater(War.war, resetScoreboard, 1L);
@@ -671,8 +668,8 @@ public class Team {
      */
     public List<String> getPlayerNames() {
         List<String> ret = new ArrayList<>(this.players.size());
-        for (Player player : this.players) {
-            ret.add(player.getName());
+        for (WarPlayer warPlayer : this.players) {
+            ret.add(warPlayer.getPlayer().getName());
         }
         return ret;
     }
@@ -711,36 +708,36 @@ public class Team {
     /**
      * Check if a player on this team has toggled on team chat. Thread safe.
      *
-     * @param player Player to check
+     * @param warPlayer Player to check
      * @return true if the player has toggled on team chat
      */
-    public boolean isInTeamChat(Player player) {
+    public boolean isInTeamChat(WarPlayer warPlayer) {
         synchronized (teamChatPlayers) {
-            return this.teamChatPlayers.contains(player);
+            return this.teamChatPlayers.contains(warPlayer);
         }
     }
 
     /**
      * Add a player to team chat. Thread safe.
      *
-     * @param player Player to add
+     * @param warPlayer Player to add
      * @throws IllegalArgumentException Player is already in team chat
      */
-    public void addTeamChatPlayer(Player player) {
-        Validate.isTrue(!isInTeamChat(player), "Player is already in team chat");
+    public void addTeamChatPlayer(WarPlayer warPlayer) {
+        Validate.isTrue(!isInTeamChat(warPlayer), "Player is already in team chat");
         synchronized (teamChatPlayers) {
-            this.teamChatPlayers.add(player);
+            this.teamChatPlayers.add(warPlayer);
         }
     }
 
     /**
      * Remove a player from team chat. Thread safe.
      *
-     * @param player Player to remove
+     * @param warPlayer Player to remove
      */
-    public void removeTeamChatPlayer(Player player) {
+    public void removeTeamChatPlayer(WarPlayer warPlayer) {
         synchronized (teamChatPlayers) {
-            this.teamChatPlayers.remove(player);
+            this.teamChatPlayers.remove(warPlayer);
         }
     }
 }

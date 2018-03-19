@@ -3,6 +3,7 @@ package com.tommytony.war.ui;
 import com.google.common.collect.ImmutableList;
 import com.tommytony.war.Team;
 import com.tommytony.war.War;
+import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.config.TeamKind;
@@ -56,13 +57,14 @@ public class JoinTeamUI extends ChestUI {
                         } else if (team1.isFull()) {
                             War.war.badMsg(player, "join.full.single", team1.getName());
                         } else {
-                            Team previousTeam = Team.getTeamByPlayerName(player.getName());
+                            WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+                            Team previousTeam = warPlayer.getTeam();
                             if (previousTeam != null) {
                                 if (previousTeam == team1) {
                                     War.war.badMsg(player, "join.selfteam");
                                     return;
                                 }
-                                previousTeam.removePlayer(player);
+                                previousTeam.removePlayer(warPlayer);
                                 previousTeam.resetSign();
                             }
                             warzone.assign(player, team1);

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 
+import java.util.HashSet;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.junit.Test;
@@ -29,8 +30,8 @@ public class ZoneVolumeSpecTest {
 		World worldMock = mock(World.class);
 		when(worldMock.getMaxHeight()).thenReturn(256);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location nw = new Location(worldMock, 0, 64, 0);
 
@@ -49,8 +50,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location nw = new Location(worldMock, -64, 64, -64);
 
@@ -67,8 +68,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location nw = new Location(worldMock, 64, 64, 64);
 
@@ -85,8 +86,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location nw = new Location(worldMock, -5, 64, 5);
 
@@ -103,8 +104,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location nw = new Location(worldMock, -1000, 64, 1000);
 
@@ -122,8 +123,8 @@ public class ZoneVolumeSpecTest {
 		World worldMock = mock(World.class);
 		when(worldMock.getMaxHeight()).thenReturn(256);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location nw = new Location(worldMock, -64, 64, 64);
 
@@ -147,8 +148,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location nw = new Location(worldMock, -64, 64, -64);
 
@@ -165,8 +166,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location nw = new Location(worldMock, 64, 64, 64);
 
@@ -183,8 +184,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location nw = new Location(worldMock, -64, 64, 64);
 
@@ -211,8 +212,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location nw = new Location(worldMock, -64, 64, 64);
 
@@ -239,8 +240,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location nw = new Location(worldMock, -64, 64, 64);
 
@@ -268,8 +269,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location nw = new Location(worldMock, -64, 64, 64);
 
@@ -303,8 +304,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location se = new Location(worldMock, 0, 64, 0);
 
@@ -323,8 +324,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location se = new Location(worldMock, 64, 64, 64);
 
@@ -341,8 +342,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location se = new Location(worldMock, -64, 64, -64);
 
@@ -359,8 +360,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location se = new Location(worldMock, 64, 64, -64);
 
@@ -384,8 +385,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location se = new Location(worldMock, 64, 64, 64);
 
@@ -402,8 +403,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location se = new Location(worldMock, -64, 64, -64);
 
@@ -420,8 +421,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location se = new Location(worldMock, 64, 64, -64);
 
@@ -448,8 +449,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location se = new Location(worldMock, 64, 64, -64);
 
@@ -476,8 +477,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location se = new Location(worldMock, 64, 64, -64);
 
@@ -505,8 +506,8 @@ public class ZoneVolumeSpecTest {
 
 		World worldMock = mock(World.class);
 		Warzone zoneMock = mock(Warzone.class);
-		when(zoneMock.getTeams()).thenReturn(new ArrayList<>());
-		when(zoneMock.getMonuments()).thenReturn(new ArrayList<>());
+		when(zoneMock.getTeams()).thenReturn(new HashSet<>());
+		when(zoneMock.getMonuments()).thenReturn(new HashSet<>());
 		ZoneVolume volume = new ZoneVolume("test", worldMock, zoneMock);
 		Location se = new Location(worldMock, 64, 64, -64);
 

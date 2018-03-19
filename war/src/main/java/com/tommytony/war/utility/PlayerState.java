@@ -3,8 +3,8 @@ package com.tommytony.war.utility;
 import java.util.Collection;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 
@@ -39,6 +39,19 @@ public class PlayerState {
         this.exp =  player.getExp();
         this.level = player.getLevel();
         this.fly = player.getAllowFlight();
+    }
+
+    public void resetPlayer(Player player) {
+        player.setGameMode(getGamemode());
+        double maxH = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+        player.setHealth(Math.max(Math.min(getHealth(), maxH), 0.0D));
+        player.setExhaustion(getExhaustion());
+        player.setSaturation(getSaturation());
+        player.setFoodLevel(getFoodLevel());
+        PotionEffectHelper.restorePotionEffects(player, getPotionEffects());
+        player.setLevel(getLevel());
+        player.setExp(getExp());
+        player.setAllowFlight(canFly());
     }
 
     public Player getPlayer() {

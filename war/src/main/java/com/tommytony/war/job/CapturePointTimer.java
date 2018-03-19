@@ -2,6 +2,7 @@ package com.tommytony.war.job;
 
 import com.tommytony.war.Team;
 import com.tommytony.war.War;
+import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.structure.CapturePoint;
@@ -65,9 +66,10 @@ public class CapturePointTimer extends BukkitRunnable {
             return;
         }
 
-        for (Player player : War.war.getServer().getOnlinePlayers()) {
-            Warzone zone = Warzone.getZoneByPlayerName(player.getName());
-            Team team = Team.getTeamByPlayerName(player.getName());
+        for (WarPlayer warPlayer : WarPlayer.getTotalPlayers()) {
+            Warzone zone = warPlayer.getZone();
+            Team team = warPlayer.getTeam();
+            Player player = warPlayer.getPlayer();
 
             if (zone == null || team == null) {
                 continue;

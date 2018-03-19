@@ -1,7 +1,7 @@
 package com.tommytony.war.command.regular;
 
+import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
-import com.tommytony.war.Warzone.LeaveCause;
 import com.tommytony.war.command.WarCommandHandler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,7 +29,8 @@ public class LeaveCommand extends AbstractWarCommand {
         }
 
         Player player = (Player) this.getSender();
-        Warzone zone = Warzone.getZoneByPlayerName(player.getName());
+        WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        Warzone zone = warPlayer.getZone();
         if (zone == null) {
             return false;
         }

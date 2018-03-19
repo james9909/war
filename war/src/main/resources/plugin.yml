@@ -56,14 +56,6 @@ commands:
     description: War> Shortcut for /warzones.
     usage: Lists the warzones on the server. Each warzone is an independent arena.
         Ex - /zones
-  warzone:
-    description: War> Teleports you to the specified warzone's lobby.
-    usage: Teleports you to the specified warzone's lobby.
-        Ex - /warzone <zone-name>
-  zone:
-    description: War> Shortcut for /warzone.
-    usage: Teleports you to the specified warzone's lobby.
-        Ex - /zone <zone-name>
   warhub:
     description: War> Teleports you to the warhub, if it exists. The warhub offers portals to reach each warzone on the server.
     usage: Teleports you to the warhub, if it exists.

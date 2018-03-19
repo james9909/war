@@ -3,6 +3,7 @@ package com.tommytony.war.config;
 import com.google.common.collect.ImmutableList;
 import com.tommytony.war.Team;
 import com.tommytony.war.War;
+import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import java.text.MessageFormat;
 import java.util.HashSet;
@@ -79,8 +80,9 @@ public class KillstreakReward {
              */
             return;
         }
-        final Warzone zone = Warzone.getZoneByPlayerName(player.getName());
-        final Team playerTeam = Team.getTeamByPlayerName(player.getName());
+        WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        Warzone zone = warPlayer.getZone();
+        Team playerTeam = warPlayer.getTeam();
         Validate.notNull(zone, "Cannot reward player if they are not in a warzone");
         Validate.notNull(playerTeam, "Cannot reward player if they are not in a team");
         if (section.contains(Integer.toString(kills))) {

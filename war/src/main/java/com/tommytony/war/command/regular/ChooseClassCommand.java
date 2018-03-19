@@ -1,7 +1,7 @@
 package com.tommytony.war.command.regular;
 
 import com.tommytony.war.Team;
-import com.tommytony.war.War;
+import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.utility.Loadout;
@@ -33,12 +33,15 @@ public class ChooseClassCommand extends AbstractWarCommand {
             this.badMsg("You are not in a warzone.");
             return true;
         }
-        Team team = zone.getPlayerTeam(player.getName());
+
+        WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        Team team = warPlayer.getTeam();
         if (team == null) {
             this.badMsg("You are not on a team");
             return true;
         }
-        LoadoutSelection loadoutSelection = zone.getLoadoutSelections().get(player.getName());
+
+        LoadoutSelection loadoutSelection = warPlayer.getLoadoutSelection();
         if (loadoutSelection == null) {
             this.badMsg("No loadout selection");
             return true;

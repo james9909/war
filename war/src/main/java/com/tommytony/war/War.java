@@ -25,6 +25,7 @@ import com.tommytony.war.mapper.WarYmlMapper;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
 import com.tommytony.war.structure.ZonePortal;
 import com.tommytony.war.ui.UIManager;
+import com.tommytony.war.utility.InventoryManager;
 import com.tommytony.war.utility.Reward;
 import com.tommytony.war.utility.SizeCounter;
 import com.tommytony.war.utility.WarLogFormatter;
@@ -67,6 +68,7 @@ public class War extends JavaPlugin {
 
     static final boolean HIDE_BLANK_MESSAGES = true;
     public static War war;
+    private InventoryManager inventoryManager;
     private static ResourceBundle messages = ResourceBundle.getBundle("messages");
     private final List<String> zoneMakerNames = new ArrayList<>();
     private final List<String> commandWhitelist = new ArrayList<>();
@@ -98,6 +100,7 @@ public class War extends JavaPlugin {
     public War() {
         super();
         War.war = this;
+        this.inventoryManager = new InventoryManager();
     }
 
     public static void reloadLanguage() {
@@ -941,5 +944,9 @@ public class War extends JavaPlugin {
     public ZonePortal getZonePortal(Location other) {
         String coordinates = getCoordinates(other);
         return portals.getOrDefault(coordinates, null);
+    }
+
+    public InventoryManager getInventoryManager() {
+        return inventoryManager;
     }
 }

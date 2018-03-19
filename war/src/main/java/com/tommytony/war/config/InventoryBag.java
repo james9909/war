@@ -5,9 +5,7 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.Reward;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import org.bukkit.block.Chest;
 
 public class InventoryBag {
 

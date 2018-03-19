@@ -4,7 +4,6 @@ import com.tommytony.war.Team;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamConfigBag;
-import com.tommytony.war.config.WarConfigBag;
 import com.tommytony.war.config.WarzoneConfigBag;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

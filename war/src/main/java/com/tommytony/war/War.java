@@ -74,7 +74,7 @@ public class War extends JavaPlugin {
     private InventoryManager inventoryManager;
     private static ResourceBundle messages = ResourceBundle.getBundle("messages");
     private final Set<String> zoneMakerNames = new HashSet<>();
-    private final List<String> commandWhitelist = new ArrayList<>();
+    private final Set<String> commandWhitelist = new HashSet<>();
     private final List<Warzone> incompleteZones = new ArrayList<>();
     private final Set<UUID> zoneMakersImpersonatingPlayers = new HashSet<>();
     private final Map<UUID, String> wandBearers = new HashMap<>(); // player uuid to zonename
@@ -820,7 +820,7 @@ public class War extends JavaPlugin {
         return this.zoneMakerNames;
     }
 
-    public List<String> getCommandWhitelist() {
+    public Set<String> getCommandWhitelist() {
         return this.commandWhitelist;
     }
 

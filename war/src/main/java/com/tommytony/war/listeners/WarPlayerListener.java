@@ -15,8 +15,10 @@ import com.tommytony.war.structure.ZonePortal;
 import com.tommytony.war.utility.Direction;
 import com.tommytony.war.utility.LoadoutSelection;
 import com.tommytony.war.volume.Volume;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
@@ -210,14 +212,9 @@ public class WarPlayerListener implements Listener {
             String[] split = msg.split(" ");
             if (!War.war.isWarAdmin(player) && split.length > 0 && split[0].startsWith("/")) {
                 String command = split[0].substring(1);
-                if (!command.equals("war") && !command.equals("class") && !command.equals("zones") && !command.equals("warzones") && !command.equals("zone") && !command.equals("warzone") && !command.equals("teams")
-                    && !command.equals("join") && !command.equals("leave") && !command.equals("team") && !command.equals("warhub") && !command.equals("zonemaker")) {
-                    // allow white commands
-                    for (String whiteCommand : War.war.getCommandWhitelist()) {
-                        if (whiteCommand.equals(command)) {
-                            return;
-                        }
-                    }
+                Set<String> whitelist = War.war.getCommandWhitelist();
+                whitelist.addAll(Arrays.asList("war", "class", "join", "zones", "warzones", "team", "teams", "leave", "team", "warhub", "zonemaker"));
+                if (!whitelist.contains(command)) {
 
                     War.war.badMsg(player, "command.disabled");
                     event.setCancelled(true);

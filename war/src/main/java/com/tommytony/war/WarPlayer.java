@@ -149,15 +149,7 @@ public class WarPlayer {
             this.preventItemHacking();
 
             playerState.resetPlayer(player);
-            /*
-            if (!player.performCommand("spawn")) {
-                // Last resort
-                player.teleport(playerState.getLocation());
-            }
-            */
             loadoutSelection = null;
-        } else {
-            // player.performCommand("spawn");
         }
         player.teleport(spawn);
     }

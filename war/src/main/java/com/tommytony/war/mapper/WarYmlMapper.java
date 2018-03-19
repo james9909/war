@@ -43,7 +43,7 @@ public class WarYmlMapper {
         List<String> makers = warRootSection.getStringList("war.info.zonemakers");
         War.war.getZoneMakerNames().clear();
         for (String makerName : makers) {
-            if (makerName != null && !makerName.equals("")) {
+            if (makerName != null && !makerName.isEmpty()) {
                 War.war.getZoneMakerNames().add(makerName);
             }
         }

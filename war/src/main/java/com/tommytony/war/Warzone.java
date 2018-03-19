@@ -32,7 +32,6 @@ import com.tommytony.war.structure.ZoneWallGuard;
 import com.tommytony.war.utility.Direction;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.LoadoutSelection;
-import com.tommytony.war.utility.PlayerState;
 import com.tommytony.war.utility.PotionEffectHelper;
 import com.tommytony.war.utility.Reward;
 import com.tommytony.war.volume.Volume;
@@ -109,11 +108,10 @@ public class Warzone {
     private Location teleport;
     private Location rallyPoint;
     private List<ZoneWallGuard> zoneWallGuards = new ArrayList<>();
-    private Map<String, PlayerState> playerStates = new HashMap<>();
     private Map<UUID, Team> flagThieves = new HashMap<>();
     private Map<UUID, Bomb> bombThieves = new HashMap<>();
     private Map<UUID, Cake> cakeThieves = new HashMap<>();
-    private Map<Player, PermissionAttachment> attachments = new HashMap<>();
+    private Map<UUID, PermissionAttachment> attachments = new HashMap<>();
     private List<LogKillsDeathsJob.KillsDeathsRecord> killsDeathsTracker = new ArrayList<>();
     private InventoryBag defaultInventories = new InventoryBag();
     private List<ZonePortal> portals = new ArrayList<>();
@@ -875,7 +873,7 @@ public class Warzone {
             player.teleport(this.getWorld().getSpawnLocation());
         }
         PermissionAttachment attachment = player.addAttachment(War.war);
-        this.attachments.put(player, attachment);
+        this.attachments.put(player.getUniqueId(), attachment);
         attachment.setPermission("war.playing", true);
         attachment.setPermission("war.playing." + this.getName().toLowerCase(), true);
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
@@ -1099,7 +1097,7 @@ public class Warzone {
             playerTeam.removePlayer(warPlayer);
             this.broadcast("leave.broadcast", playerTeam.getKind().getColor() + player.getName() + ChatColor.WHITE);
             playerTeam.resetSign();
-            player.removeAttachment(this.attachments.remove(player));
+            player.removeAttachment(this.attachments.remove(player.getUniqueId()));
             if (this.getPlayerCount() == 0 && this.getWarzoneConfig().getBoolean(WarzoneConfig.RESETONEMPTY)) {
                 // reset the zone for a new game when the last player leaves
                 for (Team team : this.getTeams()) {

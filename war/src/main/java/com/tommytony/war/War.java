@@ -34,10 +34,13 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.UUID;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
@@ -70,11 +73,11 @@ public class War extends JavaPlugin {
     public static War war;
     private InventoryManager inventoryManager;
     private static ResourceBundle messages = ResourceBundle.getBundle("messages");
-    private final List<String> zoneMakerNames = new ArrayList<>();
+    private final Set<String> zoneMakerNames = new HashSet<>();
     private final List<String> commandWhitelist = new ArrayList<>();
     private final List<Warzone> incompleteZones = new ArrayList<>();
-    private final List<String> zoneMakersImpersonatingPlayers = new ArrayList<>();
-    private final HashMap<String, String> wandBearers = new HashMap<>(); // playername to zonename
+    private final Set<UUID> zoneMakersImpersonatingPlayers = new HashSet<>();
+    private final Map<UUID, String> wandBearers = new HashMap<>(); // player uuid to zonename
     private final List<String> deadlyAdjectives = new ArrayList<>();
     private final List<String> killerVerbs = new ArrayList<>();
     private final InventoryBag defaultInventories = new InventoryBag();
@@ -228,7 +231,6 @@ public class War extends JavaPlugin {
         this.getDefaultInventories().setLossReward(lossReward);
 
         this.getCommandWhitelist().add("who");
-        this.getZoneMakerNames().add("tommytony");
         this.setKillstreakReward(new KillstreakReward());
         this.setMysqlConfig(new MySQLConfig());
 
@@ -735,16 +737,11 @@ public class War extends JavaPlugin {
      */
     public boolean isZoneMaker(Player player) {
         // sort out disguised first
-        for (String disguised : this.zoneMakersImpersonatingPlayers) {
-            if (disguised.equals(player.getName())) {
-                return false;
-            }
+        if (zoneMakersImpersonatingPlayers.contains(player.getUniqueId())) {
+            return false;
         }
-
-        for (String zoneMaker : this.zoneMakerNames) {
-            if (zoneMaker.equals(player.getName())) {
-                return true;
-            }
+        if (zoneMakerNames.contains(player.getName())) {
+            return true;
         }
 
         return player.hasPermission("war.zonemaker");
@@ -761,15 +758,15 @@ public class War extends JavaPlugin {
     }
 
     public void addWandBearer(Player player, String zoneName) {
-        if (this.wandBearers.containsKey(player.getName())) {
-            String alreadyHaveWand = this.wandBearers.get(player.getName());
+        if (this.wandBearers.containsKey(player.getUniqueId())) {
+            String alreadyHaveWand = this.wandBearers.get(player.getUniqueId());
             if (player.getInventory().first(Material.WOOD_SWORD) != -1) {
                 if (zoneName.equals(alreadyHaveWand)) {
                     this.badMsg(player, "You already have a wand for zone " + alreadyHaveWand + ". Drop the wooden sword first.");
                 } else {
                     // new zone, already have sword
-                    this.wandBearers.remove(player.getName());
-                    this.wandBearers.put(player.getName(), zoneName);
+                    this.wandBearers.remove(player.getUniqueId());
+                    this.wandBearers.put(player.getUniqueId(), zoneName);
                     this.msg(player, "Switched wand to zone " + zoneName + ".");
                 }
             } else {
@@ -784,7 +781,7 @@ public class War extends JavaPlugin {
             if (player.getInventory().firstEmpty() == -1) {
                 this.badMsg(player, "Your inventory is full. Please drop an item and try again.");
             } else {
-                this.wandBearers.put(player.getName(), zoneName);
+                this.wandBearers.put(player.getUniqueId(), zoneName);
                 player.getInventory().addItem(new ItemStack(Material.WOOD_SWORD, 1, (byte) 8));
                 // player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.WOOD_SWORD));
                 this.msg(player, "You now have a wand for zone " + zoneName + ". Left-click with wooden sword for corner 1. Right-click for corner 2.");
@@ -794,19 +791,19 @@ public class War extends JavaPlugin {
     }
 
     public boolean isWandBearer(Player player) {
-        return this.wandBearers.containsKey(player.getName());
+        return this.wandBearers.containsKey(player.getUniqueId());
     }
 
     public String getWandBearerZone(Player player) {
         if (this.isWandBearer(player)) {
-            return this.wandBearers.get(player.getName());
+            return this.wandBearers.get(player.getUniqueId());
         }
         return "";
     }
 
     public void removeWandBearer(Player player) {
-        if (this.wandBearers.containsKey(player.getName())) {
-            this.wandBearers.remove(player.getName());
+        if (this.wandBearers.containsKey(player.getUniqueId())) {
+            this.wandBearers.remove(player.getUniqueId());
         }
     }
 
@@ -819,7 +816,7 @@ public class War extends JavaPlugin {
         return null;
     }
 
-    public List<String> getZoneMakerNames() {
+    public Set<String> getZoneMakerNames() {
         return this.zoneMakerNames;
     }
 
@@ -827,7 +824,7 @@ public class War extends JavaPlugin {
         return this.commandWhitelist;
     }
 
-    public List<String> getZoneMakersImpersonatingPlayers() {
+    public Set<UUID> getZoneMakersImpersonatingPlayers() {
         return this.zoneMakersImpersonatingPlayers;
     }
 

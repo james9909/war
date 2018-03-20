@@ -3,9 +3,9 @@ package com.tommytony.war.utility;
 public class LoadoutSelection {
 
     private boolean stillInSpawn;
-    private int selectedLoadout;
+    private String selectedLoadout;
 
-    public LoadoutSelection(boolean stillInSpawn, int selectedLoadout) {
+    public LoadoutSelection(boolean stillInSpawn, String selectedLoadout) {
         this.stillInSpawn = stillInSpawn;
         this.selectedLoadout = selectedLoadout;
     }
@@ -18,11 +18,11 @@ public class LoadoutSelection {
         this.stillInSpawn = stillInSpawn;
     }
 
-    public int getSelectedLoadout() {
+    public String getSelectedLoadout() {
         return selectedLoadout;
     }
 
-    public void setSelectedLoadout(int selectedLoadout) {
+    public void setSelectedLoadout(String selectedLoadout) {
         this.selectedLoadout = selectedLoadout;
     }
 }

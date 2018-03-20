@@ -72,7 +72,7 @@ public class WarPlayer {
 
     public LoadoutSelection getLoadoutSelection() {
         if (loadoutSelection == null) {
-            loadoutSelection = new LoadoutSelection(true, 0);
+            loadoutSelection = new LoadoutSelection(true, "Sorcerer");
         }
         return loadoutSelection;
     }

@@ -78,15 +78,6 @@ public class Loadout implements Comparable<Loadout> {
         this.items = items;
     }
 
-    public static Loadout getLoadout(List<Loadout> loadouts, String name) {
-        for (Loadout ldt : loadouts) {
-            if (ldt.getName().equals(name)) {
-                return ldt;
-            }
-        }
-        return null;
-    }
-
     public int compareTo(Loadout other) {
         return getName().compareTo(other.getName());
     }

@@ -7,6 +7,7 @@ import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.LoadoutSelection;
 import java.util.List;
+import java.util.Map;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -49,15 +50,14 @@ public class ChooseClassCommand extends AbstractWarCommand {
 
         if (loadoutSelection.isStillInSpawn()) {
             String loadoutName = args[0];
-            List<Loadout> loadouts = team.getInventories().resolveLoadouts();
+            Map<String, Loadout> loadouts = team.getInventories().resolveLoadouts();
 
-            for (int i = 0; i < loadouts.size(); i++) {
-                Loadout loadout = loadouts.get(i);
+            for (Loadout loadout : loadouts.values()) {
                 if (loadout.getName().equals(loadoutName)) {
                     player.getInventory().clear();
                     loadout.giveItems(player);
                     this.msg("zone.class.equip", loadoutName);
-                    loadoutSelection.setSelectedLoadout(i);
+                    loadoutSelection.setSelectedLoadout(loadout.getName());
                     return true;
                 }
             }

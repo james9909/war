@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -18,22 +19,21 @@ public class LoadoutYmlMapper {
      * @param config A configuration section that contains loadouts
      * @return list of new style loadouts
      */
-    public static List<Loadout> fromConfigToLoadouts(ConfigurationSection config) {
+    public static Map<String, Loadout> fromConfigToLoadouts(ConfigurationSection config) {
         if (config == null) {
-            return new ArrayList<>();
+            return new HashMap<>();
         }
         Set<String> loadoutNames = config.getKeys(false);
-        List<Loadout> loadouts = new ArrayList<>();
+        Map<String, Loadout> loadouts = new HashMap<>();
         for (String name : loadoutNames) {
             Loadout loadout = fromConfigToLoadout(config, name);
             if (loadout != null) {
-                loadouts.add(loadout);
+                loadouts.put(name, loadout);
                 War.war.getLogger().info("Loaded class " + loadout.getName());
             } else {
-                War.war.getLogger().warning("Failed to load class" + loadout.getName());
+                War.war.getLogger().warning("Failed to load class" + name);
             }
         }
-        Collections.sort(loadouts);
         return loadouts;
     }
 
@@ -85,9 +85,8 @@ public class LoadoutYmlMapper {
      * @param loadouts List of new style loadouts
      * @param section Section of the configuration to write to
      */
-    public static void fromLoadoutsToConfig(List<Loadout> loadouts, ConfigurationSection section) {
-        Collections.sort(loadouts);
-        for (Loadout ldt : loadouts) {
+    public static void fromLoadoutsToConfig(Map<String, Loadout> loadouts, ConfigurationSection section) {
+        for (Loadout ldt : loadouts.values()) {
             LoadoutYmlMapper.fromLoadoutToConfig(ldt, section);
         }
     }

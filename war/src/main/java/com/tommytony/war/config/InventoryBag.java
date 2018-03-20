@@ -5,11 +5,13 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.Reward;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InventoryBag {
 
-    private List<Loadout> loadouts = new ArrayList<>();
+    private Map<String, Loadout> loadouts = new HashMap<>();
     private Reward winReward = null;
     private Reward lossReward = null;
 
@@ -24,51 +26,36 @@ public class InventoryBag {
     }
 
     public void addLoadout(Loadout newLoadout) {
-        for (Loadout loadout : loadouts) {
-            if (loadout.getName().equalsIgnoreCase(newLoadout.getName())) {
-                loadout.setItems(newLoadout.getItems());
-                loadout.setHelmet(newLoadout.getHelmet());
-                loadout.setChestplate(newLoadout.getChestplate());
-                loadout.setLeggings(newLoadout.getLeggings());
-                loadout.setBoots(newLoadout.getBoots());
-                loadout.setOffhand(newLoadout.getOffhand());
-                return;
-            }
+        if (containsLoadout(newLoadout.getName())) {
+            Loadout loadout = getLoadout(newLoadout.getName());
+            loadout.setItems(newLoadout.getItems());
+            loadout.setHelmet(newLoadout.getHelmet());
+            loadout.setChestplate(newLoadout.getChestplate());
+            loadout.setLeggings(newLoadout.getLeggings());
+            loadout.setBoots(newLoadout.getBoots());
+            loadout.setOffhand(newLoadout.getOffhand());
+            return;
         }
-        this.loadouts.add(newLoadout);
+        this.loadouts.put(newLoadout.getName(), newLoadout);
     }
 
     public void removeLoadout(String name) {
-        ArrayList<Loadout> loadoutsToRemove = new ArrayList<>();
-        for (Loadout ldt : loadouts) {
-            if (ldt.getName().equals(name)) {
-                loadoutsToRemove.add(ldt);
-            }
-        }
-
-        // avoid concurrent modif exceptions
-        for (Loadout loadoutToRemove : loadoutsToRemove) {
-            this.removeLoadout(loadoutToRemove);
-        }
-    }
-
-    public void removeLoadout(Loadout ldt) {
-        this.loadouts.remove(ldt);
+        loadouts.remove(name);
     }
 
     public boolean hasLoadouts() {
         return loadouts.size() > 0;
     }
 
-    public List<Loadout> getLoadouts() {
+    public Map<String, Loadout> getLoadouts() {
         return loadouts;
     }
 
-    public void setLoadouts(List<Loadout> loadouts) {
+    public void setLoadouts(Map<String, Loadout> loadouts) {
         this.loadouts = loadouts;
     }
 
-    public List<Loadout> resolveLoadouts() {
+    public Map<String, Loadout> resolveLoadouts() {
         if (this.hasLoadouts()) {
             return this.getLoadouts();
         } else if (warzone != null && warzone.getDefaultInventories().hasLoadouts()) {
@@ -76,7 +63,7 @@ public class InventoryBag {
         } else if (War.war.getDefaultInventories().hasLoadouts()) {
             return War.war.getDefaultInventories().getLoadouts();
         } else {
-            return new ArrayList<>();
+            return new HashMap<>();
         }
     }
 
@@ -133,15 +120,10 @@ public class InventoryBag {
     }
 
     public Loadout getLoadout(String loadoutName) {
-        for (Loadout loadout : loadouts) {
-            if (loadout.getName().equals(loadoutName)) {
-                return loadout;
-            }
-        }
-        return null;
+        return loadouts.getOrDefault(loadoutName, null);
     }
 
     public boolean containsLoadout(String name) {
-        return this.getLoadout(name) != null;
+        return loadouts.containsKey(name);
     }
 }

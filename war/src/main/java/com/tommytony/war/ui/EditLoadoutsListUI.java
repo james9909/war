@@ -5,6 +5,7 @@ import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.utility.Loadout;
 import java.util.List;
+import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,9 +32,9 @@ public class EditLoadoutsListUI extends ChestUI {
         item.setItemMeta(meta);
         this.addItem(inv, i++, item, () -> { War.war.getUIManager().assignUI(player, new CreateLoadoutUI(zone, team)); });
 
-        List<Loadout> loadouts = getLoadouts();
+        Map<String, Loadout> loadouts = getLoadouts();
 
-        for (Loadout loadout : loadouts) {
+        for (Loadout loadout : loadouts.values()) {
             item = new ItemStack(Material.CHEST);
             meta = item.getItemMeta();
             meta.setDisplayName(ChatColor.GREEN + String.format("Edit loadout %s", loadout.getName()));
@@ -53,7 +54,7 @@ public class EditLoadoutsListUI extends ChestUI {
         }
     }
 
-    public List<Loadout> getLoadouts() {
+    public Map<String, Loadout> getLoadouts() {
         if (zone != null) {
             return zone.getDefaultInventories().getLoadouts();
         } else if (team != null) {
@@ -65,7 +66,7 @@ public class EditLoadoutsListUI extends ChestUI {
 
     @Override
     public int getSize() {
-        List<Loadout> loadouts = getLoadouts();
+        Map<String, Loadout> loadouts = getLoadouts();
         int size = loadouts.size() + 1;
         if (size % 9 == 0) {
             return size;

@@ -489,7 +489,7 @@ public class Warzone {
         }
 
         if (warPlayer.getLoadoutSelection() == null) {
-            warPlayer.setLoadoutSelection(new LoadoutSelection(true, 0));
+            warPlayer.setLoadoutSelection(new LoadoutSelection(true, "Sorcerer"));
         } else {
             warPlayer.getLoadoutSelection().setStillInSpawn(true);
         }
@@ -1402,21 +1402,20 @@ public class Warzone {
         if (selection != null && !this.isRespawning(warPlayer)) {
             // Make sure that inventory resets dont occur if player has already tp'ed out (due to game end, or somesuch)
             // - repawn timer + this method is why inventories were getting wiped as players exited the warzone.
-            List<Loadout> loadouts = team.getInventories().resolveLoadouts();
+            Map<String, Loadout> loadouts = team.getInventories().resolveLoadouts();
             if (loadouts.isEmpty()) {
                 // Fix for zones that mistakenly only specify a `first' loadout, but do not add any others.
                 warPlayer.resetInventory(null);
-                War.war.msg(player, "404 No loadouts found");
+                War.war.msg(player, "No classes found");
                 return;
             }
 
-            int loadoutIndex = selection.getSelectedLoadout();
-            Loadout loadout = Loadout.getLoadout(loadouts, "Sorcerer");
-            if (loadoutIndex < loadouts.size() && loadoutIndex >= 0) {
-                loadout = loadouts.get(loadoutIndex);
-            }
+            String loadoutName = selection.getSelectedLoadout();
+            Loadout loadout = loadouts.get(loadoutName);
             if (loadout == null) {
-                loadout = loadouts.get(0);
+                warPlayer.resetInventory(null);
+                War.war.msg(player, "Class not found");
+                return;
             }
             warPlayer.resetInventory(loadout);
         }

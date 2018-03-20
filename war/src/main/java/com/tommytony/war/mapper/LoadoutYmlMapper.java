@@ -28,7 +28,7 @@ public class LoadoutYmlMapper {
         for (String name : loadoutNames) {
             Loadout loadout = fromConfigToLoadout(config, name);
             if (loadout != null) {
-                loadouts.put(name, loadout);
+                loadouts.put(name.toLowerCase(), loadout);
                 War.war.getLogger().info("Loaded class " + loadout.getName());
             } else {
                 War.war.getLogger().warning("Failed to load class" + name);

@@ -52,18 +52,16 @@ public class ChooseClassCommand extends AbstractWarCommand {
             String loadoutName = args[0];
             Map<String, Loadout> loadouts = team.getInventories().resolveLoadouts();
 
-            for (Loadout loadout : loadouts.values()) {
-                if (loadout.getName().equals(loadoutName)) {
-                    player.getInventory().clear();
-                    loadout.giveItems(player);
-                    this.msg("zone.class.equip", loadoutName);
-                    loadoutSelection.setSelectedLoadout(loadout.getName());
-                    return true;
-                }
+            Loadout loadout = loadouts.get(loadoutName.toLowerCase());
+            if (loadout == null) {
+                this.badMsg("zone.class.notfound");
+                return true;
             }
 
-            this.badMsg("zone.class.notfound");
-            return true;
+            player.getInventory().clear();
+            loadout.giveItems(player);
+            this.msg("zone.class.equip", loadoutName);
+            loadoutSelection.setSelectedLoadout(loadout.getName());
         } else {
             this.badMsg("zone.class.reenter");
         }

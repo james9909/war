@@ -26,8 +26,9 @@ public class InventoryBag {
     }
 
     public void addLoadout(Loadout newLoadout) {
-        if (containsLoadout(newLoadout.getName())) {
-            Loadout loadout = getLoadout(newLoadout.getName());
+        String name = newLoadout.getName();
+        if (containsLoadout(name)) {
+            Loadout loadout = getLoadout(name);
             loadout.setItems(newLoadout.getItems());
             loadout.setHelmet(newLoadout.getHelmet());
             loadout.setChestplate(newLoadout.getChestplate());
@@ -36,11 +37,11 @@ public class InventoryBag {
             loadout.setOffhand(newLoadout.getOffhand());
             return;
         }
-        this.loadouts.put(newLoadout.getName(), newLoadout);
+        this.loadouts.put(name.toLowerCase(), newLoadout);
     }
 
     public void removeLoadout(String name) {
-        loadouts.remove(name);
+        loadouts.remove(name.toLowerCase());
     }
 
     public boolean hasLoadouts() {
@@ -120,10 +121,10 @@ public class InventoryBag {
     }
 
     public Loadout getLoadout(String loadoutName) {
-        return loadouts.getOrDefault(loadoutName, null);
+        return loadouts.getOrDefault(loadoutName.toLowerCase(), null);
     }
 
     public boolean containsLoadout(String name) {
-        return loadouts.containsKey(name);
+        return loadouts.containsKey(name.toLowerCase());
     }
 }

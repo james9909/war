@@ -172,10 +172,6 @@ public class Warzone {
         return Warzone.getZoneByLocation(player.getLocation());
     }
 
-    public static Warzone getZoneByPlayerUUID(UUID uuid) {
-        return WarPlayer.getPlayer(uuid).getZone();
-    }
-
     public static Warzone getZoneForDeadPlayer(Player player) {
         for (Warzone warzone : War.war.getWarzones()) {
             if (warzone.getReallyDeadFighters().contains(player.getUniqueId())) {
@@ -191,17 +187,6 @@ public class Warzone {
 
     public Set<Team> getTeams() {
         return this.teams;
-    }
-
-    public Team getPlayerTeam(UUID uuid) {
-        // for (Team team : this.teams) {
-        //     for (Player player : team.getPlayers()) {
-        //         if (player.getName().equals(playerName)) {
-        //             return team;
-        //         }
-        //     }
-        // }
-        return null;
     }
 
     public String getTeamInformation() {
@@ -507,23 +492,6 @@ public class Warzone {
                 respawn.remove(warPlayer);
                 War.war.getServer().getScheduler().scheduleSyncDelayedTask(War.war, job);
             }, team.getTeamConfig().resolveInt(TeamConfig.RESPAWNTIMER) * 20L); // 20 ticks = 1 second
-        }
-    }
-
-    private void resetInventory(Team team, Player player, Loadout loadout) {
-        // Reset inventory to loadout
-        PlayerInventory playerInv = player.getInventory();
-        playerInv.clear();
-        playerInv.clear(playerInv.getSize());
-        playerInv.clear(playerInv.getSize() + 1);
-        playerInv.clear(playerInv.getSize() + 2);
-        playerInv.clear(playerInv.getSize() + 3); // helmet/blockHead
-
-        if (loadout != null) {
-            loadout.giveItems(player);
-        }
-        if (this.getWarzoneConfig().getBoolean(WarzoneConfig.BLOCKHEADS)) {
-            playerInv.setHelmet(team.getKind().getHat());
         }
     }
 
@@ -1457,10 +1425,6 @@ public class Warzone {
         return this.isReinitializing;
     }
 
-//	public Object getGameEndLock() {
-//		return gameEndLock;
-//	}
-
     public boolean isOpponentSpawnPeripheryBlock(Team team, Block block) {
         for (Team maybeOpponent : this.getTeams()) {
             if (maybeOpponent != team) {
@@ -1675,22 +1639,6 @@ public class Warzone {
         }
     }
 
-    /**
-     * Get the proper ending teleport location for players leaving the warzone. <p> Specifically, it gets teleports in this order: <ul> <li>Rally point (if scorecap) <li>Warhub (if autojoin)</ul> </p>
-     *
-     * @param reason Reason for leaving zone
-     */
-    public Location getEndTeleport(LeaveCause reason) {
-        if (reason.useRallyPoint() && this.getRallyPoint() != null) {
-            return this.getRallyPoint();
-        }
-        return this.getTeleport();
-    }
-
-    public Volume loadStructure(String volName, World world) throws SQLException {
-        return loadStructure(volName, world, ZoneVolumeMapper.getZoneConnection(volume, name, world));
-    }
-
     public Volume loadStructure(String volName, Connection zoneConnection) throws SQLException {
         return loadStructure(volName, world, zoneConnection);
     }
@@ -1783,13 +1731,5 @@ public class Warzone {
 
     public void setPvpReady(boolean ready) {
         this.pvpReady = ready;
-    }
-
-    public enum LeaveCause {
-        COMMAND, DISCONNECT, SCORECAP, RESET;
-
-        public boolean useRallyPoint() {
-            return this == SCORECAP;
-        }
     }
 }

@@ -4,6 +4,7 @@ import com.tommytony.war.Team;
 import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
+import com.tommytony.war.config.InventoryBag;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.LoadoutSelection;
 import java.util.List;
@@ -50,9 +51,8 @@ public class ChooseClassCommand extends AbstractWarCommand {
 
         if (loadoutSelection.isStillInSpawn()) {
             String loadoutName = args[0];
-            Map<String, Loadout> loadouts = team.getInventories().resolveLoadouts();
 
-            Loadout loadout = loadouts.get(loadoutName.toLowerCase());
+            Loadout loadout = team.getInventories().getLoadout(loadoutName);
             if (loadout == null) {
                 this.badMsg("zone.class.notfound");
                 return true;

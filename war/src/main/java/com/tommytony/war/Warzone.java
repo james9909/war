@@ -1370,16 +1370,16 @@ public class Warzone {
         if (selection != null && !this.isRespawning(warPlayer)) {
             // Make sure that inventory resets dont occur if player has already tp'ed out (due to game end, or somesuch)
             // - repawn timer + this method is why inventories were getting wiped as players exited the warzone.
-            Map<String, Loadout> loadouts = team.getInventories().resolveLoadouts();
-            if (loadouts.isEmpty()) {
-                // Fix for zones that mistakenly only specify a `first' loadout, but do not add any others.
+            InventoryBag inventoryBag = team.getInventories();
+            if (!inventoryBag.hasLoadouts()) {
                 warPlayer.resetInventory(null);
                 War.war.msg(player, "No classes found");
                 return;
             }
 
+
             String loadoutName = selection.getSelectedLoadout();
-            Loadout loadout = loadouts.get(loadoutName);
+            Loadout loadout = inventoryBag.getLoadout(loadoutName);
             if (loadout == null) {
                 warPlayer.resetInventory(null);
                 War.war.msg(player, "Class not found");

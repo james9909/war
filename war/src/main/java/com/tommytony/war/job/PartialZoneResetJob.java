@@ -1,6 +1,7 @@
 package com.tommytony.war.job;
 
 import com.tommytony.war.War;
+import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.mapper.ZoneVolumeMapper;
 import com.tommytony.war.volume.ZoneVolume;
@@ -113,14 +114,9 @@ public class PartialZoneResetJob extends BukkitRunnable implements Cloneable {
     }
 
     private void sendMessageToAllWarzonePlayers(String message) {
-        for (Player player : War.war.getServer().getOnlinePlayers()) {
-            if (player != PartialZoneResetJob.sendersToNotify.get(zone) && zone.getPlayers().contains(player)) {
-                War.war.msg(player, message);
-            }
-        }
-
-        if (PartialZoneResetJob.sendersToNotify.get(zone) != null) {
-            War.war.msg(PartialZoneResetJob.sendersToNotify.get(zone), message);
+        for (WarPlayer warPlayer : zone.getPlayers()) {
+            Player player = warPlayer.getPlayer();
+            War.war.msg(player, message);
         }
     }
 
@@ -130,7 +126,16 @@ public class PartialZoneResetJob extends BukkitRunnable implements Cloneable {
             messageCounter = System.currentTimeMillis();
             int percent = (int) (((double) totalChanges / (double) volume.size()) * 100);
             String message = MessageFormat.format(War.war.getString("zone.battle.resetprogress"), percent, secondsAsText);
-            this.sendMessageToAllWarzonePlayers(message);
+            this.sendMessageToAllWarAdmins(message);
+        }
+    }
+
+    private void sendMessageToAllWarAdmins(String message) {
+        for (WarPlayer warPlayer : zone.getPlayers()) {
+            Player player = warPlayer.getPlayer();
+            if (War.war.isWarAdmin(player)) {
+                War.war.msg(player, message);
+            }
         }
     }
 

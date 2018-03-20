@@ -105,6 +105,10 @@ public class WarPlayer {
         resetKills();
     }
 
+    public static void removePlayer(Player player) {
+        totalPlayers.remove(player.getUniqueId());
+    }
+
     public static Set<WarPlayer> getTotalPlayers() {
         return new HashSet<>(totalPlayers.values());
     }

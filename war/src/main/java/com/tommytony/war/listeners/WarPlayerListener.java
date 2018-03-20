@@ -83,6 +83,7 @@ public class WarPlayerListener implements Listener {
             if (War.war.isWandBearer(player)) {
                 War.war.removeWandBearer(player);
             }
+            WarPlayer.removePlayer(player);
         }
     }
 

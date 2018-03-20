@@ -716,7 +716,7 @@ public class WarPlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
-        if (!War.war.isLoaded() && !event.isSneaking()) {
+        if (!War.war.isLoaded() || !event.isSneaking()) {
             return;
         }
 
@@ -731,12 +731,12 @@ public class WarPlayerListener implements Listener {
             return;
         }
 
-        LoadoutSelection selection = warPlayer.getLoadoutSelection();
         if (team.isSpawnLocation(player.getLocation())) {
-            if (!selection.isStillInSpawn()) {
-                War.war.badMsg(player, "zone.class.reenter");
-            } else {
+            LoadoutSelection selection = warPlayer.getLoadoutSelection();
+            if (selection.isStillInSpawn()) {
                 player.performCommand(War.war.getWarConfig().getString(WarConfig.LOADOUTCMD));
+            } else {
+                War.war.badMsg(player, "zone.class.reenter");
             }
         }
     }
@@ -879,7 +879,7 @@ public class WarPlayerListener implements Listener {
             return;
         }
 
-        Player player = (Player) event.getPlayer();
+        Player player = event.getPlayer();
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
         Warzone zone = warPlayer.getZone();
         if (zone == null) {

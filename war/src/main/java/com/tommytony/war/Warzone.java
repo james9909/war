@@ -295,7 +295,7 @@ public class Warzone {
             // everyone back to team spawn with full health
             for (Team team : this.teams) {
                 for (WarPlayer warPlayer : team.getPlayers()) {
-                    if (warPlayer.getUniqueId().equals(respawnExempted.getUniqueId())) {
+                    if (respawnExempted != null && warPlayer.getUniqueId().equals(respawnExempted.getUniqueId())) {
                         continue;
                     }
                     if (this.getReallyDeadFighters().contains(warPlayer.getUniqueId())) {

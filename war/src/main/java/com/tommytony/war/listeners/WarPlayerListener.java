@@ -330,8 +330,7 @@ public class WarPlayerListener implements Listener {
                     }
                 }
             }
-        } else {
-            // Outside warzone
+
             if (action == Action.RIGHT_CLICK_BLOCK && (clickedBlock.getType() == Material.CHEST || clickedBlock.getType() == Material.TRAPPED_CHEST)
                 && Warzone.getZoneByLocation(clickedBlock.getLocation()) != null && !War.war.isZoneMaker(player)) {
                 // prevent opening chests inside a warzone if a player is not a zone maker
@@ -339,7 +338,6 @@ public class WarPlayerListener implements Listener {
                 player.playSound(player.getLocation(), Sound.BLOCK_CHEST_LOCKED, 1, 0);
             }
         }
-
     }
 
     @EventHandler

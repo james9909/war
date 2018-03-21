@@ -33,7 +33,7 @@ public class WarPlayer {
         this.uuid = uuid;
         killCount = 0;
         deathCount = 0;
-        statTracker = new StatTracker(getPlayer().getName());
+        statTracker = new StatTracker(Bukkit.getOfflinePlayer(uuid).getName());
         totalPlayers.put(uuid, this);
     }
 

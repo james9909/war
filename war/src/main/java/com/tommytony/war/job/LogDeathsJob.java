@@ -26,11 +26,13 @@ public class LogDeathsJob extends LogSqlJob {
 
     @Override
     void saveRecords(Connection conn) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("INSERT INTO deaths (player, deaths) VALUES (?, ?) ON DUPLICATE KEY UPDATE `count` = `count` + ?");
-        statement.setString(0, playerName);
-        statement.setInt(1, deaths);
-        statement.setInt(2, deaths);
-        statement.execute();
-        statement.close();
+        if (deaths > 0) {
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO deaths (player, deaths) VALUES (?, ?) ON DUPLICATE KEY UPDATE `deaths` = `deaths` + ?");
+            statement.setString(1, playerName);
+            statement.setInt(2, deaths);
+            statement.setInt(3, deaths);
+            statement.execute();
+            statement.close();
+        }
     }
 }

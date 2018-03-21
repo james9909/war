@@ -19,7 +19,9 @@ public abstract class LogSqlJob extends BukkitRunnable {
             conn = War.war.getMysqlConfig().getConnection();
             createTable(conn);
             saveRecords(conn);
-            conn.commit();
+            if (!conn.getAutoCommit()) {
+                conn.commit();
+            }
         } catch (SQLException ex) {
             War.war.getLogger().log(Level.SEVERE, "Failed to insert data", ex);
         } finally {

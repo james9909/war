@@ -69,8 +69,7 @@ public class MySQLConfig {
     }
 
     private String getJDBCUrl() {
-        return String.format("jdbc:mysql://%s:%d/%s?user=%s&password=%s", section.getString("host"), section.getInt("port"), section.getString("database"), section.getString("username"),
-            section.getString("password"));
+        return String.format("jdbc:mysql://%s:%d/%s", section.getString("host"), section.getInt("port"), section.getString("database"));
     }
 
     /**
@@ -82,8 +81,7 @@ public class MySQLConfig {
      */
     public Connection getConnection() throws SQLException {
         Validate.isTrue(this.isEnabled(), "MySQL support is not enabled");
-        System.out.println(getJDBCUrl());
-        return DriverManager.getConnection(this.getJDBCUrl());
+        return DriverManager.getConnection(this.getJDBCUrl(), section.getString("username"), section.getString("password"));
     }
 
     /**

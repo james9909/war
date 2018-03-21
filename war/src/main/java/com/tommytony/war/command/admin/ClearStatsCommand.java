@@ -29,6 +29,7 @@ public class ClearStatsCommand extends AbstractWarAdminCommand {
             drop.execute("DROP TABLE IF EXISTS `deaths`");
             drop.close();
             conn.commit();
+            this.msg("Stats cleared!");
         } catch (SQLException e) {
             War.war.getLogger().log(Level.SEVERE, "Failed to drop tables", e);
         } finally {

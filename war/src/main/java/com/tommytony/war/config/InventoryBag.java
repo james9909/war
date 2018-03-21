@@ -121,10 +121,10 @@ public class InventoryBag {
     }
 
     public Loadout getLoadout(String loadoutName) {
-        return loadouts.getOrDefault(loadoutName.toLowerCase(), null);
+        return resolveLoadouts().getOrDefault(loadoutName.toLowerCase(), null);
     }
 
     public boolean containsLoadout(String name) {
-        return loadouts.containsKey(name.toLowerCase());
+        return resolveLoadouts().containsKey(name.toLowerCase());
     }
 }

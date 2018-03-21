@@ -1,6 +1,7 @@
 package com.tommytony.war;
 
 import com.tommytony.war.config.WarzoneConfig;
+import com.tommytony.war.stats.StatTracker;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.LoadoutSelection;
 import com.tommytony.war.utility.PlayerState;
@@ -24,10 +25,15 @@ public class WarPlayer {
     private Warzone zone;
     private PlayerState playerState;
     private LoadoutSelection loadoutSelection;
-    private int killCount = 0;
+    private int killCount;
+    private int deathCount;
+    private StatTracker statTracker;
 
     public WarPlayer(UUID uuid) {
         this.uuid = uuid;
+        killCount = 0;
+        deathCount = 0;
+        statTracker = new StatTracker(getPlayer().getName());
         totalPlayers.put(uuid, this);
     }
 
@@ -102,7 +108,9 @@ public class WarPlayer {
     public void reset() {
         this.team = null;
         this.zone = null;
-        resetKills();
+        this.statTracker.reset();
+        resetKillCount();
+        resetDeaths();
     }
 
     public static void removePlayer(Player player) {
@@ -113,16 +121,38 @@ public class WarPlayer {
         return new HashSet<>(totalPlayers.values());
     }
 
-    public void addKill() {
+    public void addKill(Player defender) {
         this.killCount++;
+        this.statTracker.addKill(defender);
     }
 
-    public void resetKills() {
+    public void resetKillCount() {
         this.killCount = 0;
     }
 
     public int getKills() {
         return killCount;
+    }
+
+    public void addDeath() {
+        this.deathCount++;
+        this.statTracker.addDeath();
+    }
+
+    public void resetDeaths() {
+        this.deathCount = 0;
+    }
+
+    public int getDeathCount() {
+        return deathCount;
+    }
+
+    public void addHeal(Player target, double amount) {
+        this.statTracker.addHeal(target, amount);
+    }
+
+    public StatTracker getStatTracker() {
+        return statTracker;
     }
 
     public void savePlayerState() {

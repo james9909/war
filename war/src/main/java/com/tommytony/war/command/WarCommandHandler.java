@@ -1,6 +1,7 @@
 package com.tommytony.war.command;
 
 import com.tommytony.war.War;
+import com.tommytony.war.command.admin.ClearStatsCommand;
 import com.tommytony.war.command.admin.LoadWarCommand;
 import com.tommytony.war.command.admin.NotWarAdminException;
 import com.tommytony.war.command.admin.UnloadWarCommand;
@@ -194,6 +195,9 @@ public class WarCommandHandler {
                     break;
                 case "deleteportal":
                     commandObj = new DeletePortalCommand(this, sender, args);
+                    break;
+                case "clearstats":
+                    commandObj = new ClearStatsCommand(this, sender, arguments);
                     break;
             }
             // we are not responsible for any other command

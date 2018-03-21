@@ -1,6 +1,5 @@
 package com.tommytony.war;
 
-import com.google.common.collect.ImmutableList;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.mana.ManaChangeReason;
 import com.tommytony.war.config.InventoryBag;
@@ -16,8 +15,6 @@ import com.tommytony.war.event.WarPlayerThiefEvent;
 import com.tommytony.war.event.WarScoreCapEvent;
 import com.tommytony.war.job.InitZoneJob;
 import com.tommytony.war.job.LoadoutResetJob;
-import com.tommytony.war.job.LogKillsDeathsJob;
-import com.tommytony.war.job.LogKillsDeathsJob.KillsDeathsRecord;
 import com.tommytony.war.job.TeleportToSpawnTimer;
 import com.tommytony.war.job.ZoneTimeJob;
 import com.tommytony.war.mapper.VolumeMapper;
@@ -58,7 +55,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -76,7 +72,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.potion.PotionEffect;
@@ -112,7 +107,6 @@ public class Warzone {
     private Map<UUID, Bomb> bombThieves = new HashMap<>();
     private Map<UUID, Cake> cakeThieves = new HashMap<>();
     private Map<UUID, PermissionAttachment> attachments = new HashMap<>();
-    private List<LogKillsDeathsJob.KillsDeathsRecord> killsDeathsTracker = new ArrayList<>();
     private InventoryBag defaultInventories = new InventoryBag();
     private List<ZonePortal> portals = new ArrayList<>();
 
@@ -906,9 +900,7 @@ public class Warzone {
             String verbString = War.war.getKillerVerbs().isEmpty() ? "" : War.war.getKillerVerbs().get(this.killSeed.nextInt(War.war.getKillerVerbs().size()));
             this.broadcast("pvp.kill.format", attackerString + ChatColor.WHITE, adjectiveString, weaponString.toLowerCase().replace('_', ' '), verbString, defenderString);
         }
-        warAttacker.addKill();
-        this.addKillDeathRecord(attacker, 1, 0);
-        this.addKillDeathRecord(defender, 0, 1);
+        warAttacker.addKill(defender);
         if (attackerTeam.getTeamConfig().resolveBoolean(TeamConfig.XPKILLMETER)) {
             attacker.setLevel(warAttacker.getKills());
         }
@@ -969,6 +961,7 @@ public class Warzone {
     public synchronized void handleDeath(Player player) {
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
         Team playerTeam = warPlayer.getTeam();
+        warPlayer.addDeath();
 
         Validate.notNull(playerTeam, "Can't find team for dead player " + player.getName());
         if (this.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
@@ -999,7 +992,9 @@ public class Warzone {
                 continue;
             }
             for (WarPlayer wp : team.getPlayers()) {
-                wp.resetKills();
+                wp.resetKillCount();
+                wp.getStatTracker().save();
+                wp.getStatTracker().reset();
             }
             if (team != losingTeam) {
                 team.addPoint();
@@ -1015,12 +1010,7 @@ public class Warzone {
         if (!teamScores.toString().isEmpty()) {
             this.broadcast("zone.battle.newscores", teamScores.toString());
         }
-        if (War.war.getMysqlConfig().isEnabled() && War.war.getMysqlConfig().isLoggingEnabled()) {
-            LogKillsDeathsJob logKillsDeathsJob = new LogKillsDeathsJob(ImmutableList.copyOf(this.getKillsDeathsTracker()));
-            logKillsDeathsJob.runTaskAsynchronously(War.war);
-        }
 
-        this.getKillsDeathsTracker().clear();
         if (!detectScoreCap()) {
             this.broadcast("zone.battle.reset");
             if (this.getWarzoneConfig().getBoolean(WarzoneConfig.RESETBLOCKS)) {
@@ -1371,12 +1361,6 @@ public class Warzone {
             // Make sure that inventory resets dont occur if player has already tp'ed out (due to game end, or somesuch)
             // - repawn timer + this method is why inventories were getting wiped as players exited the warzone.
             InventoryBag inventoryBag = team.getInventories();
-            if (!inventoryBag.hasLoadouts()) {
-                warPlayer.resetInventory(null);
-                War.war.msg(player, "No classes found");
-                return;
-            }
-
 
             String loadoutName = selection.getSelectedLoadout();
             Loadout loadout = inventoryBag.getLoadout(loadoutName);
@@ -1458,23 +1442,6 @@ public class Warzone {
      */
     public void setScoreboardType(ScoreboardType scoreboardType) {
         this.scoreboardType = scoreboardType;
-    }
-
-    public void addKillDeathRecord(OfflinePlayer player, int kills, int deaths) {
-        for (Iterator<KillsDeathsRecord> it = this.killsDeathsTracker.iterator(); it.hasNext(); ) {
-            LogKillsDeathsJob.KillsDeathsRecord kdr = it.next();
-            if (kdr.getPlayer().equals(player)) {
-                kills += kdr.getKills();
-                deaths += kdr.getDeaths();
-                it.remove();
-            }
-        }
-        LogKillsDeathsJob.KillsDeathsRecord kdr = new LogKillsDeathsJob.KillsDeathsRecord(player, kills, deaths);
-        this.killsDeathsTracker.add(kdr);
-    }
-
-    public List<LogKillsDeathsJob.KillsDeathsRecord> getKillsDeathsTracker() {
-        return killsDeathsTracker;
     }
 
     /**

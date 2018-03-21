@@ -82,6 +82,7 @@ public class MySQLConfig {
      */
     public Connection getConnection() throws SQLException {
         Validate.isTrue(this.isEnabled(), "MySQL support is not enabled");
+        System.out.println(getJDBCUrl());
         return DriverManager.getConnection(this.getJDBCUrl());
     }
 

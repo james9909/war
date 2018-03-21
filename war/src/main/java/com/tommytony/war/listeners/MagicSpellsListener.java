@@ -1,14 +1,18 @@
 package com.tommytony.war.listeners;
 
+import static org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH;
+
 import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.events.SpellCastEvent;
 import com.nisovin.magicspells.events.SpellTargetEvent;
+import com.nisovin.magicspells.spells.targeted.HealSpell;
 import com.tommytony.war.Team;
 import com.tommytony.war.War;
 import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.utility.LoadoutSelection;
+import java.lang.reflect.Field;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,7 +31,6 @@ public class MagicSpellsListener implements Listener {
             return;
         }
 
-        Warzone zone = team.getZone();
         LoadoutSelection casterLoadoutState = casterWarPlayer.getLoadoutSelection();
         if (team.isSpawnLocation(caster.getLocation()) && casterLoadoutState.isStillInSpawn()) {
             event.setCancelled(true);
@@ -116,6 +119,21 @@ public class MagicSpellsListener implements Listener {
                 War.war.badMsg(caster, "pvp.self.spawn");
                 event.setCancelled(true);
                 return;
+            }
+
+            if (spell instanceof HealSpell) {
+                HealSpell healSpell = (HealSpell) spell;
+
+                try {
+                    Field field = healSpell.getClass().getDeclaredField("healAmount");
+                    field.setAccessible(true);
+                    Double healAmount = (Double) field.get(healSpell);
+                    healAmount = Math.min(healAmount, target.getAttribute(GENERIC_MAX_HEALTH).getValue() - target.getHealth());
+
+                    System.out.printf("Healed %s for %f hearts\n", target.getName(), healAmount);
+                    casterWarPlayer.addHeal(target, healAmount);
+                } catch (Exception ignored) {
+                }
             }
         }
     }

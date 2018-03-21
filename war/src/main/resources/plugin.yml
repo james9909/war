@@ -262,6 +262,11 @@ commands:
         Ex -
         /deletewarhub
 # Defaults and server configuration
+  clearstats:
+    description: War> Clear all player stats.
+    usage: Clear all player stats.
+        Ex -
+        /clearstats
   unloadwar:
     description: War> Disables the War plugin.
     usage: Disables the War plugin.

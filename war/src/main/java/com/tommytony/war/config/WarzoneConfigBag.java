@@ -77,15 +77,6 @@ public class WarzoneConfigBag {
         }
     }
 
-    public ScoreboardType getScoreboardType(WarzoneConfig config) {
-        if (bag.containsKey(config)) {
-            return (ScoreboardType) bag.get(config);
-        } else {
-            // use War default config
-            return War.war.getWarzoneDefaultConfig().getScoreboardType(config);
-        }
-    }
-
     public boolean contains(WarzoneConfig config) {
         return this.bag.containsKey(config);
     }
@@ -101,8 +92,6 @@ public class WarzoneConfigBag {
                     this.put(config, warzoneConfigSection.getInt(config.toString()));
                 } else if (config.getConfigType().equals(Boolean.class)) {
                     this.put(config, warzoneConfigSection.getBoolean(config.toString()));
-                } else if (config.getConfigType().equals(ScoreboardType.class)) {
-                    this.put(config, ScoreboardType.getFromString(warzoneConfigSection.getString(config.toString())));
                 }
             }
         }
@@ -133,9 +122,6 @@ public class WarzoneConfigBag {
                 } else if (warzoneConfig.getConfigType().equals(Boolean.class)) {
                     String onOff = namedParams.get(namedParam);
                     this.bag.put(warzoneConfig, onOff.equals("on") || onOff.equals("true"));
-                } else if (warzoneConfig.getConfigType().equals(ScoreboardType.class)) {
-                    String type = namedParams.get(namedParam);
-                    this.bag.put(warzoneConfig, ScoreboardType.getFromString(type));
                 }
                 returnMessage += " " + warzoneConfig.toString() + " set to " + namedParams.get(namedParam);
             } else if (namedParam.equals("delete")) {

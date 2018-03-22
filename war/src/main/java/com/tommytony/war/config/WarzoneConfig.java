@@ -22,7 +22,7 @@ public enum WarzoneConfig {
     UNBREAKABLE(Boolean.class, "Unbreakable Blocks", "If true, prevent block breaking"),
     JOINMIDBATTLE(Boolean.class, "Join Mid-Battle", "If true, players are allowed to join during a battle"),
     AUTOJOIN(Boolean.class, "Auto-Join", "If true, bypass the zone lobby and auto-assign the player a team"),
-    SCOREBOARD(ScoreboardType.class, "Scoreboard Type", "Type of scoreboard for this zone\nOptions: none, points, lifepool, top kills"),
+    SCOREBOARD(Boolean.class, "Scoreboard", "If true, show a scoreboard to players in the warzone"),
     SOUPHEALING(Boolean.class, "Soup Healing", "If true, allow players to heal by consuming soup"),
     ALLOWENDER(Boolean.class, "Allow Ender Chests", "If true, ender chests are allowed\nEnder chests are usually blocked to prevent item duplication"),
     RESETBLOCKS(Boolean.class, "Reset Blocks", "If true, reset warzone blocks each battle"),

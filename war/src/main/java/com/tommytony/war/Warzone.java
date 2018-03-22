@@ -119,7 +119,7 @@ public class Warzone {
 
     private boolean pvpReady = true;
     private Random killSeed = new Random();
-    private ScoreboardType scoreboardType;
+    private boolean scoreboard;
 
     public Warzone(World world, String name) {
         this.world = world;
@@ -128,7 +128,7 @@ public class Warzone {
         this.teamDefaultConfig = new TeamConfigBag();    // don't use ctor with Warzone, as this changes config resolution
         this.volume = new ZoneVolume(name, this.getWorld(), this);
         this.pvpReady = true;
-        this.scoreboardType = this.getWarzoneConfig().getScoreboardType(WarzoneConfig.SCOREBOARD);
+        this.scoreboard = this.getWarzoneConfig().getBoolean(WarzoneConfig.SCOREBOARD);
     }
 
     public static Warzone getZoneByName(String name) {
@@ -1430,19 +1430,6 @@ public class Warzone {
 
     public void setWarzoneMaterials(WarzoneMaterials warzoneMaterials) {
         this.warzoneMaterials = warzoneMaterials;
-    }
-
-    public ScoreboardType getScoreboardType() {
-        return scoreboardType;
-    }
-
-    /**
-     * Sets the TEMPORARY scoreboard type for use in this warzone. This type will NOT be persisted in the Warzone config.
-     *
-     * @param scoreboardType temporary scoreboard type
-     */
-    public void setScoreboardType(ScoreboardType scoreboardType) {
-        this.scoreboardType = scoreboardType;
     }
 
     /**

@@ -191,7 +191,7 @@ public class War extends JavaPlugin {
         warzoneDefaultConfig.put(WarzoneConfig.DEATHMESSAGES, true);
         warzoneDefaultConfig.put(WarzoneConfig.JOINMIDBATTLE, true);
         warzoneDefaultConfig.put(WarzoneConfig.AUTOJOIN, false);
-        warzoneDefaultConfig.put(WarzoneConfig.SCOREBOARD, ScoreboardType.NONE);
+        warzoneDefaultConfig.put(WarzoneConfig.SCOREBOARD, true);
         warzoneDefaultConfig.put(WarzoneConfig.SOUPHEALING, false);
         warzoneDefaultConfig.put(WarzoneConfig.ALLOWENDER, true);
         warzoneDefaultConfig.put(WarzoneConfig.RESETBLOCKS, true);

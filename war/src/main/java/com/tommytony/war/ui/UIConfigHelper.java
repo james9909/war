@@ -205,26 +205,6 @@ public class UIConfigHelper {
                         });
                     }
                 });
-            } else if (option.getConfigType() == ScoreboardType.class) {
-                status += ChatColor.YELLOW + config.getValue(option).toString();
-                item = new Dye(DyeColor.PINK).toItemStack(1);
-                meta = item.getItemMeta();
-                meta.setDisplayName(name);
-                meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).add(inheritance).build());
-                item.setItemMeta(meta);
-                ui.addItem(inv, i++, item, () -> {
-                    ScoreboardType next = ScoreboardType.NONE;
-                    ScoreboardType[] values = ScoreboardType.values();
-                    for (int i1 = 0; i1 < values.length; i1++) {
-                        ScoreboardType st = values[i1];
-                        if (st == config.getScoreboardType(option) && i1 != values.length - 1) {
-                            next = values[i1 + 1];
-                            break;
-                        }
-                    }
-                    config.put(option, next);
-                    onWarzoneConfigUpdate(player, option, config, warzone);
-                });
             } else {
                 status += ChatColor.RED + config.getValue(option).toString();
                 item = new ItemStack(Material.COMPASS, 1);

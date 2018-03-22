@@ -141,14 +141,12 @@ public class UIConfigHelper {
     private static void onTeamConfigUpdate(Player player, TeamConfig option, TeamConfigBag config, Team team, Warzone warzone) {
         if (team != null) {
             TeamConfigBag.afterUpdate(team, player, option.name() + " set to " + config.resolveValue(option).toString(), false);
-            War.war.getUIManager().assignUI(player, new EditTeamConfigUI(warzone, team));
         } else if (warzone != null) {
             WarzoneConfigBag.afterUpdate(warzone, player, option.name() + " set to " + config.resolveValue(option).toString(), false);
-            War.war.getUIManager().assignUI(player, new EditTeamConfigUI(warzone, team));
         } else {
             WarConfigBag.afterUpdate(player, option.name() + " set to " + config.resolveValue(option).toString(), false);
-            War.war.getUIManager().assignUI(player, new EditTeamConfigUI(warzone, team));
         }
+        War.war.getUIManager().assignUI(player, new EditTeamConfigUI(warzone, team));
     }
 
     static int addWarzoneConfigOptions(final ChestUI ui, final Player player, Inventory inv, final WarzoneConfigBag config, final Warzone warzone, int i) {
@@ -222,11 +220,10 @@ public class UIConfigHelper {
     private static void onWarzoneConfigUpdate(Player player, WarzoneConfig option, WarzoneConfigBag config, Warzone warzone) {
         if (warzone != null) {
             WarzoneConfigBag.afterUpdate(warzone, player, option.name() + " set to " + config.getValue(option).toString(), false);
-            War.war.getUIManager().assignUI(player, new EditZoneConfigUI(warzone));
         } else {
             WarConfigBag.afterUpdate(player, option.name() + " set to " + config.getValue(option).toString(), false);
-            War.war.getUIManager().assignUI(player, new EditZoneConfigUI(null));
         }
+        War.war.getUIManager().assignUI(player, new EditZoneConfigUI(warzone));
     }
 
     static int addWarConfigOptions(final ChestUI ui, final Player player, Inventory inv, final WarConfigBag config, int i) {

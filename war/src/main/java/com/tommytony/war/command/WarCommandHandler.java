@@ -192,13 +192,13 @@ public class WarCommandHandler {
                     commandObj = new ZoneMakerCommand(this, sender, arguments);
                     break;
                 case "classchest":
-                    commandObj = new ClassChestCommand(this, sender, args);
+                    commandObj = new ClassChestCommand(this, sender, arguments);
                     break;
                 case "setportal":
-                    commandObj = new SetZonePortalCommand(this, sender, args);
+                    commandObj = new SetZonePortalCommand(this, sender, arguments);
                     break;
                 case "deleteportal":
-                    commandObj = new DeletePortalCommand(this, sender, args);
+                    commandObj = new DeletePortalCommand(this, sender, arguments);
                     break;
                 case "clearstats":
                     commandObj = new ClearStatsCommand(this, sender, arguments);

@@ -1,7 +1,7 @@
 package com.tommytony.war;
 
 import com.tommytony.war.config.WarzoneConfig;
-import com.tommytony.war.stats.StatTracker;
+import com.tommytony.war.stats.StatManager;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.LoadoutSelection;
 import com.tommytony.war.utility.PlayerState;
@@ -27,13 +27,13 @@ public class WarPlayer {
     private LoadoutSelection loadoutSelection;
     private int killCount;
     private int deathCount;
-    private StatTracker statTracker;
+    private int healCount;
 
     public WarPlayer(UUID uuid) {
         this.uuid = uuid;
-        killCount = 0;
-        deathCount = 0;
-        statTracker = new StatTracker(Bukkit.getOfflinePlayer(uuid).getName());
+        this.killCount = 0;
+        this.deathCount = 0;
+        this.healCount = 0;
         totalPlayers.put(uuid, this);
     }
 
@@ -42,6 +42,14 @@ public class WarPlayer {
             totalPlayers.put(uuid, new WarPlayer(uuid));
         }
         return totalPlayers.get(uuid);
+    }
+
+    public static void removePlayer(Player player) {
+        totalPlayers.remove(player.getUniqueId());
+    }
+
+    public static Set<WarPlayer> getTotalPlayers() {
+        return new HashSet<>(totalPlayers.values());
     }
 
     public UUID getUniqueId() {
@@ -108,26 +116,18 @@ public class WarPlayer {
     public void reset() {
         this.team = null;
         this.zone = null;
-        this.statTracker.reset();
-        resetKillCount();
-        resetDeaths();
+        resetStats();
     }
 
-    public static void removePlayer(Player player) {
-        totalPlayers.remove(player.getUniqueId());
-    }
-
-    public static Set<WarPlayer> getTotalPlayers() {
-        return new HashSet<>(totalPlayers.values());
+    public void resetStats() {
+        this.killCount = 0;
+        this.deathCount = 0;
+        this.healCount = 0;
     }
 
     public void addKill(Player defender) {
         this.killCount++;
-        this.statTracker.addKill(defender);
-    }
-
-    public void resetKillCount() {
-        this.killCount = 0;
+        StatManager.addKill(getPlayer(), defender);
     }
 
     public int getKills() {
@@ -136,11 +136,7 @@ public class WarPlayer {
 
     public void addDeath() {
         this.deathCount++;
-        this.statTracker.addDeath();
-    }
-
-    public void resetDeaths() {
-        this.deathCount = 0;
+        StatManager.addDeath(getPlayer());
     }
 
     public int getDeathCount() {
@@ -148,11 +144,12 @@ public class WarPlayer {
     }
 
     public void addHeal(Player target, double amount) {
-        this.statTracker.addHeal(target, amount);
+        this.healCount++;
+        StatManager.addHeal(getPlayer(), target, amount);
     }
 
-    public StatTracker getStatTracker() {
-        return statTracker;
+    public int getHeals() {
+        return healCount;
     }
 
     public void savePlayerState() {

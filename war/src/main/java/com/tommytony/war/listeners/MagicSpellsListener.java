@@ -121,7 +121,9 @@ public class MagicSpellsListener implements Listener {
                 return;
             }
 
+            System.out.println(spell.getName());
             if (spell instanceof HealSpell) {
+                System.out.println("Captured heal spell");
                 HealSpell healSpell = (HealSpell) spell;
 
                 try {
@@ -133,6 +135,7 @@ public class MagicSpellsListener implements Listener {
                     System.out.printf("Healed %s for %f hearts\n", target.getName(), healAmount);
                     casterWarPlayer.addHeal(target, healAmount);
                 } catch (Exception ignored) {
+                    ignored.printStackTrace();
                 }
             }
         }

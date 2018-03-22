@@ -992,9 +992,7 @@ public class Warzone {
                 continue;
             }
             for (WarPlayer wp : team.getPlayers()) {
-                wp.resetKillCount();
-                wp.getStatTracker().save();
-                wp.getStatTracker().reset();
+                wp.resetStats();
             }
             if (team != losingTeam) {
                 team.addPoint();

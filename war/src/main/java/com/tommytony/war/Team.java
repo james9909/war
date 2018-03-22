@@ -412,7 +412,6 @@ public class Team {
         warPlayer.getPlayer().setFireTicks(0);
         warPlayer.getPlayer().setRemainingAir(300);
         if (!this.warzone.getReallyDeadFighters().contains(player.getUniqueId())) {
-            warPlayer.getStatTracker().save();
             warPlayer.reset();
             warPlayer.restorePlayerState();
         }

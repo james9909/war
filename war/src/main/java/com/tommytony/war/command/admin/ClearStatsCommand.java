@@ -2,10 +2,7 @@ package com.tommytony.war.command.admin;
 
 import com.tommytony.war.War;
 import com.tommytony.war.command.WarCommandHandler;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Level;
+import com.tommytony.war.stats.StatManager;
 import org.bukkit.command.CommandSender;
 
 public class ClearStatsCommand extends AbstractWarAdminCommand {
@@ -20,26 +17,10 @@ public class ClearStatsCommand extends AbstractWarAdminCommand {
             this.msg("MySQL is not enabled");
             return true;
         }
-        Connection conn = null;
-        try {
-            conn = War.war.getMysqlConfig().getConnection();
-            Statement drop = conn.createStatement();
-            drop.execute("DROP TABLE IF EXISTS `kills`");
-            drop.execute("DROP TABLE IF EXISTS `heals`");
-            drop.execute("DROP TABLE IF EXISTS `deaths`");
-            drop.close();
-            conn.commit();
-            this.msg("Stats cleared!");
-        } catch (SQLException e) {
-            War.war.getLogger().log(Level.SEVERE, "Failed to drop tables", e);
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException ex) {
-                    War.war.getLogger().warning("Could not close connection");
-                }
-            }
+        if (StatManager.resetStats() && StatManager.initializeTables()) {
+            this.msg("Stats reset!");
+        } else {
+            this.msg("Failed to reset stats");
         }
         return true;
     }

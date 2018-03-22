@@ -23,6 +23,7 @@ import com.tommytony.war.listeners.WarEntityListener;
 import com.tommytony.war.listeners.WarPlayerListener;
 import com.tommytony.war.mapper.WarYmlMapper;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
+import com.tommytony.war.stats.StatManager;
 import com.tommytony.war.structure.ZonePortal;
 import com.tommytony.war.ui.UIManager;
 import com.tommytony.war.utility.InventoryManager;
@@ -103,7 +104,6 @@ public class War extends JavaPlugin {
     public War() {
         super();
         War.war = this;
-        this.inventoryManager = new InventoryManager();
     }
 
     public static void reloadLanguage() {
@@ -230,9 +230,12 @@ public class War extends JavaPlugin {
         Reward lossReward = new Reward(lossRewardList);
         this.getDefaultInventories().setLossReward(lossReward);
 
+        this.inventoryManager = new InventoryManager();
+
         this.getCommandWhitelist().add("who");
         this.setKillstreakReward(new KillstreakReward());
         this.setMysqlConfig(new MySQLConfig());
+        StatManager.initializeTables();
 
         // Add constants
         this.getDeadlyAdjectives().clear();

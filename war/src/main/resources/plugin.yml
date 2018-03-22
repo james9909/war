@@ -80,6 +80,10 @@ commands:
     description: War> Use to select a class
     usage: Use to select a class. Must be in a warzone
         Ex - /class <class-name>
+  stats:
+    description: War> Use to view your stats
+    usage: Use to view your stats.
+        Ex - /stats
 # Warzone maker commands (must have the 'war.zonemaker' permission or be added as a zone-maker in /plugins/War/war.txt)
 # Battle-related commands
   nextbattle:

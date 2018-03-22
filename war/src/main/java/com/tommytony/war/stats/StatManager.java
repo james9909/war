@@ -3,6 +3,7 @@ package com.tommytony.war.stats;
 import com.tommytony.war.War;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.function.Consumer;
@@ -102,12 +103,40 @@ public class StatManager {
     }
 
     public static boolean addDeath(Player victim) {
-        return runSql(conn -> {
+        return runSql((conn) -> {
             PreparedStatement statement = conn.prepareStatement("INSERT INTO players (player, deaths) VALUES (?, 1) ON DUPLICATE KEY UPDATE `deaths` = `deaths` + 1");
             statement.setString(1, victim.getName());
             statement.executeUpdate();
             statement.close();
         });
+    }
+
+    public static PlayerStat getStats(Player player) {
+        PlayerStat playerStat = new PlayerStat();
+        runSql((conn) -> {
+            PreparedStatement statement = conn.prepareStatement("SELECT COALESCE(COUNT(*), 0) FROM kills WHERE attacker = ?");
+            statement.setString(1, player.getName());
+            ResultSet result = statement.executeQuery();
+            result.next();
+            playerStat.setKills(result.getInt(1));
+
+            statement = conn.prepareStatement("SELECT COALESCE(SUM(amount), 0) FROM heals WHERE healer = ?");
+            statement.setString(1, player.getName());
+            result = statement.executeQuery();
+            result.next();
+            playerStat.setHeartsHealed(result.getDouble(1));
+
+            statement = conn.prepareStatement("SELECT COALESCE(deaths, 0), COALESCE(wins, 0), COALESCE(losses, 0), COALESCE(mvps, 0), FROM players WHERE player = ?");
+            statement.setString(1, player.getName());
+            result = statement.executeQuery();
+            result.next();
+            playerStat.setDeaths(result.getInt(1));
+            playerStat.setWins(result.getInt(2));
+            playerStat.setLosses(result.getInt(3));
+            playerStat.setMvps(result.getInt(4));
+        });
+
+        return playerStat;
     }
 
     @FunctionalInterface

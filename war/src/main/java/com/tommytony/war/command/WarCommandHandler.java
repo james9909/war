@@ -9,6 +9,7 @@ import com.tommytony.war.command.regular.AbstractWarCommand;
 import com.tommytony.war.command.regular.ChooseClassCommand;
 import com.tommytony.war.command.regular.JoinCommand;
 import com.tommytony.war.command.regular.LeaveCommand;
+import com.tommytony.war.command.regular.StatsCommand;
 import com.tommytony.war.command.regular.TeamCommand;
 import com.tommytony.war.command.regular.TeamsCommand;
 import com.tommytony.war.command.regular.WarzonesCommand;
@@ -110,6 +111,9 @@ public class WarCommandHandler {
                     break;
                 case "team":
                     commandObj = new TeamCommand(this, sender, arguments);
+                    break;
+                case "stats":
+                    commandObj = new StatsCommand(this, sender, arguments);
                     break;
                 case "setzone":
                     commandObj = new SetZoneCommand(this, sender, arguments);

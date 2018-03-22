@@ -19,6 +19,7 @@ import com.tommytony.war.job.TeleportToSpawnTimer;
 import com.tommytony.war.job.ZoneTimeJob;
 import com.tommytony.war.mapper.VolumeMapper;
 import com.tommytony.war.mapper.ZoneVolumeMapper;
+import com.tommytony.war.stats.StatManager;
 import com.tommytony.war.structure.Bomb;
 import com.tommytony.war.structure.Cake;
 import com.tommytony.war.structure.CapturePoint;
@@ -1264,6 +1265,7 @@ public class Warzone {
                 it.remove(); // Remove player from team first to prevent anti-tp
                 t.removePlayer(warPlayer);
                 if (winnersStr.contains(t.getName())) {
+                    StatManager.addWin(player);
                     // give reward
                     Reward winReward = t.getInventories().resolveWinReward();
                     if (winReward != null) {
@@ -1281,6 +1283,7 @@ public class Warzone {
                         }
                     }
                 } else {
+                    StatManager.addLoss(player);
                     Reward lossReward = t.getInventories().resolveLossReward();
                     if (lossReward != null) {
                         lossReward.rewardPlayer(player);

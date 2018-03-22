@@ -73,6 +73,24 @@ public class StatManager {
         });
     }
 
+    public static boolean addWin(Player player) {
+        return runSql((conn -> {
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO players (player, wins) VALUES (?, 1) ON DUPLICATE KEY UPDATE `wins` = `wins` + 1");
+            statement.setString(1, player.getName());
+            statement.executeUpdate();
+            statement.close();
+        }));
+    }
+
+    public static boolean addLoss(Player player) {
+        return runSql((conn -> {
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO players (player, losses) VALUES (?, 1) ON DUPLICATE KEY UPDATE `losses` = `losses` + 1");
+            statement.setString(1, player.getName());
+            statement.executeUpdate();
+            statement.close();
+        }));
+    }
+
     public static boolean addKill(Player attacker, Player defender) {
         return runSql((conn) -> {
             PreparedStatement statement = conn.prepareStatement("INSERT INTO kills (date, attacker, defender) VALUES (NOW(), ?, ?)");

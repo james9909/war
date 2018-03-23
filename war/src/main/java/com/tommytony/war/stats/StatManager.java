@@ -19,10 +19,10 @@ public class StatManager {
                 "CREATE TABLE IF NOT EXISTS players (player VARCHAR(16) NOT NULL, deaths INT DEFAULT 0, wins INT DEFAULT 0, losses INT DEFAULT 0, mvps INT DEFAULT 0, PRIMARY KEY (player)) "
                     + "ENGINE=InnoDB DEFAULT CHARSET=latin1");
             statement.execute(
-                "CREATE TABLE IF NOT EXISTS heals (date DATETIME NOT NULL, healer VARCHAR(16) NOT NULL, target VARCHAR(16) NOT NULL, amount DOUBLE NOT NULL, PRIMARY KEY (healer)) "
+                "CREATE TABLE IF NOT EXISTS heals (date DATETIME NOT NULL, healer VARCHAR(16) NOT NULL, target VARCHAR(16) NOT NULL, amount DOUBLE NOT NULL, KEY (healer)) "
                     + "ENGINE=InnoDB DEFAULT CHARSET=latin1");
             statement.executeUpdate(
-                "CREATE TABLE IF NOT EXISTS kills (date DATETIME NOT NULL, attacker VARCHAR(16) NOT NULL, defender VARCHAR(16) NOT NULL, PRIMARY KEY (attacker)) "
+                "CREATE TABLE IF NOT EXISTS kills (date DATETIME NOT NULL, attacker VARCHAR(16) NOT NULL, defender VARCHAR(16) NOT NULL, KEY (attacker)) "
                     + "ENGINE=InnoDB DEFAULT CHARSET=latin1");
             statement.close();
         });
@@ -114,7 +114,7 @@ public class StatManager {
     public static PlayerStat getStats(Player player) {
         PlayerStat playerStat = new PlayerStat();
         runSql((conn) -> {
-            PreparedStatement statement = conn.prepareStatement("SELECT COALESCE(COUNT(*), 0) FROM kills WHERE attacker = ?");
+            PreparedStatement statement = conn.prepareStatement("SELECT COUNT(*) FROM kills WHERE attacker = ?");
             statement.setString(1, player.getName());
             ResultSet result = statement.executeQuery();
             result.next();
@@ -126,14 +126,15 @@ public class StatManager {
             result.next();
             playerStat.setHeartsHealed(result.getDouble(1));
 
-            statement = conn.prepareStatement("SELECT COALESCE(deaths, 0), COALESCE(wins, 0), COALESCE(losses, 0), COALESCE(mvps, 0), FROM players WHERE player = ?");
+            statement = conn.prepareStatement("SELECT deaths, wins, losses, mvps FROM players WHERE player = ?");
             statement.setString(1, player.getName());
             result = statement.executeQuery();
-            result.next();
-            playerStat.setDeaths(result.getInt(1));
-            playerStat.setWins(result.getInt(2));
-            playerStat.setLosses(result.getInt(3));
-            playerStat.setMvps(result.getInt(4));
+            if (result.next()) {
+                playerStat.setDeaths(result.getInt(1));
+                playerStat.setWins(result.getInt(2));
+                playerStat.setLosses(result.getInt(3));
+                playerStat.setMvps(result.getInt(4));
+            }
         });
 
         return playerStat;

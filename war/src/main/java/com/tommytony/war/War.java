@@ -5,7 +5,6 @@ import com.tommytony.war.config.FlagReturn;
 import com.tommytony.war.config.InventoryBag;
 import com.tommytony.war.config.KillstreakReward;
 import com.tommytony.war.config.MySQLConfig;
-import com.tommytony.war.config.ScoreboardType;
 import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.config.TeamConfigBag;
 import com.tommytony.war.config.TeamKind;

@@ -3,7 +3,6 @@ package com.tommytony.war;
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.mana.ManaChangeReason;
 import com.tommytony.war.config.InventoryBag;
-import com.tommytony.war.config.ScoreboardType;
 import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.config.TeamConfigBag;
 import com.tommytony.war.config.TeamKind;

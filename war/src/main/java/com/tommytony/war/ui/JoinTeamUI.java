@@ -9,6 +9,8 @@ import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.WarzoneConfig;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -31,16 +33,17 @@ public class JoinTeamUI extends ChestUI {
     public void build(final Player player, Inventory inv) {
         UIFormatter formatter = new UIFormatter(warzone.getTeams().size());
         for (final TeamKind kind : TeamKind.values()) {
-            ItemStack item = kind.getBlockHead();
             Team team = warzone.getTeamByKind(kind);
-            ItemMeta meta = item.getItemMeta();
             if (team != null) {
-                meta.setDisplayName(kind.getColor() + "Team " + kind.getCapsName());
-                meta.setLore(ImmutableList.of(MessageFormat.format(ChatColor.GRAY + "{0}/{1} players", team.getPlayers().size(), team.getTeamConfig().resolveInt(TeamConfig.TEAMSIZE)),
-                    MessageFormat.format(ChatColor.GRAY + "{0}/{1} pts", team.getPoints(), team.getTeamConfig().resolveInt(TeamConfig.MAXSCORE)),
-                    MessageFormat.format(ChatColor.GRAY + "{0} lives left", team.getRemainingLives()), ChatColor.DARK_GRAY + "Click to join team"));
+                String title = kind.getColor() + "Team " + kind.getCapsName();
+                List<String> lore = Arrays.asList(
+                    String.format(ChatColor.GRAY + "%d/%d players", team.getPlayers().size(), team.getTeamConfig().resolveInt(TeamConfig.TEAMSIZE)),
+                    String.format(ChatColor.GRAY + "%d/%d pts", team.getPoints(), team.getTeamConfig().resolveInt(TeamConfig.MAXSCORE)),
+                    String.format(ChatColor.GRAY + "%d lives left", team.getRemainingLives()),
+                    ChatColor.DARK_GRAY + "Click to join team"
+                );
+                ItemStack item = createItem(kind.getBlockData().getItemType(), title, lore);
 
-                item.setItemMeta(meta);
                 this.addItem(inv, formatter.next(), item, () -> {
                     if (warzone.getWarzoneConfig().getBoolean(WarzoneConfig.DISABLED)) {
                         War.war.badMsg(player, "join.disabled");

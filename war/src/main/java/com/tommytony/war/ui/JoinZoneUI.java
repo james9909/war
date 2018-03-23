@@ -5,6 +5,8 @@ import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.WarzoneConfig;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,21 +21,21 @@ public class JoinZoneUI extends ChestUI {
 
     @Override
     public void build(final Player player, Inventory inv) {
-        ItemStack item = new ItemStack(Material.TNT, 1);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "Warhub");
-        meta.setLore(ImmutableList.of(ChatColor.GRAY + "Teleports you to the " + ChatColor.RED + "Warhub" + ChatColor.GRAY + " lobby", ChatColor.DARK_GRAY + "Warzone doors located here"));
-        item.setItemMeta(meta);
+        List<String> lore = Arrays.asList(ChatColor.GRAY + "Teleports you to the " + ChatColor.RED + "Warhub" + ChatColor.GRAY + " lobby", ChatColor.DARK_GRAY + "Warzone doors located here");
+        String title = ChatColor.RED + "" + ChatColor.BOLD + "Warhub";
+        ItemStack item = createItem(Material.TNT, title, lore);
+
         int i = 0;
         this.addItem(inv, i++, item, () -> player.performCommand("/warhub"));
         for (final Warzone zone : War.war.getEnabledWarzones()) {
-            item = new ItemStack(Material.ENDER_PEARL);
-            meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + zone.getName());
-            meta.setLore(ImmutableList
-                .of(MessageFormat.format(ChatColor.GRAY + "{0}/{1} players", zone.getPlayerCount(), zone.getMaxPlayers()), MessageFormat.format(ChatColor.GRAY + "{0} teams", zone.getTeams().size()),
-                    ChatColor.DARK_GRAY + "Click to join"));
-            item.setItemMeta(meta);
+            title = ChatColor.YELLOW + "" + ChatColor.BOLD + zone.getName();
+            lore = Arrays.asList(
+                String.format(ChatColor.GRAY + "%d/%d players", zone.getPlayerCount(), zone.getMaxPlayers()),
+                String.format(ChatColor.GRAY + "%d teams", zone.getTeams().size()),
+                ChatColor.DARK_GRAY + "Click to join"
+            );
+            item = createItem(Material.ENDER_PEARL, title, lore);
+
             this.addItem(inv, i++, item, () -> {
                 if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.DISABLED)) {
                     War.war.badMsg(player, "join.disabled");

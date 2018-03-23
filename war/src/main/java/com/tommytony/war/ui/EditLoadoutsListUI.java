@@ -26,20 +26,15 @@ public class EditLoadoutsListUI extends ChestUI {
     @Override
     public void build(Player player, Inventory inv) {
         int i = 0;
-        ItemStack item = new ItemStack(Material.CHEST);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.GREEN + "Create new loadout");
-        item.setItemMeta(meta);
-        this.addItem(inv, i++, item, () -> { War.war.getUIManager().assignUI(player, new CreateLoadoutUI(zone, team)); });
+        ItemStack item = createItem(Material.CHEST, ChatColor.GREEN + "Create new loadout", null);
+        this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new CreateLoadoutUI(zone, team)));
 
         Map<String, Loadout> loadouts = getLoadouts();
 
         for (Loadout loadout : loadouts.values()) {
-            item = new ItemStack(Material.CHEST);
-            meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.GREEN + String.format("Edit loadout %s", loadout.getName()));
-            item.setItemMeta(meta);
-            this.addItem(inv, i++, item, () -> { War.war.getUIManager().assignUI(player, new EditLoadoutUI(zone, team, loadout)); });
+            String title = ChatColor.GREEN + String.format("Edit loadout %s", loadout.getName());
+            item = createItem(Material.CHEST, title, null);
+            this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new EditLoadoutUI(zone, team, loadout)));
         }
     }
 

@@ -44,10 +44,7 @@ public class EditRewardsUI extends ChestUI {
             }
         }
 
-        ItemStack item = new ItemStack(Material.NETHER_STAR);
-        ItemMeta meta  = item.getItemMeta();
-        meta.setDisplayName(ChatColor.GRAY + "Save");
-        item.setItemMeta(meta);
+        ItemStack item = createSaveItem();
         this.addItem(inv, getSize() - 2, item, () -> {
             List<ItemStack> newItems = new ArrayList<>();
             for (int i = 0; i < getSize()-2; i++) {
@@ -69,10 +66,7 @@ public class EditRewardsUI extends ChestUI {
             updateBag(player);
         });
 
-        item = new ItemStack(Material.TNT);
-        meta = item.getItemMeta();
-		meta.setDisplayName(ChatColor.GRAY + "Delete");
-		item.setItemMeta(meta);
+        item = createDeleteItem();
 		this.addItem(inv, getSize() - 1, item, () -> {
 		    InventoryBag inventoryBag = getInventoryBag();
 

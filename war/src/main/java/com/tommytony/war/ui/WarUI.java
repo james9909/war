@@ -2,6 +2,9 @@ package com.tommytony.war.ui;
 
 import com.google.common.collect.ImmutableList;
 import com.tommytony.war.War;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -33,32 +36,27 @@ public class WarUI extends ChestUI {
     }
 
     private ItemStack getCreateWarzoneItem() {
-        ItemStack item = new ItemStack(Material.WOOD_AXE, 1);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "Create Warzone");
-        meta.setLore(ImmutableList.of(ChatColor.GRAY + "Click to create, or edit a " + ChatColor.AQUA + "Warzone" + ChatColor.GRAY + "."));
-        item.setItemMeta(meta);
-        return item;
+        String title = ChatColor.YELLOW + "" + ChatColor.BOLD + "Create Warzone";
+        List<String> lore = Collections.singletonList(ChatColor.GRAY + "Click to create, or edit a " + ChatColor.AQUA + "Warzone" + ChatColor.GRAY + ".");
+        return createItem(Material.WOOD_AXE, title, lore);
     }
 
     private ItemStack getJoinWarzoneItem() {
-        ItemStack item = new ItemStack(Material.IRON_SWORD, 1);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "Join Warzone");
-        meta.setLore(
-            ImmutableList.of(ChatColor.GRAY + "Click to access " + ChatColor.AQUA + "Warzones" + ChatColor.GRAY + ".", ChatColor.DARK_GRAY + "Play in PVP areas, with multiple gamemodes here."));
-        item.setItemMeta(meta);
-        return item;
+        String title = ChatColor.RED + "" + ChatColor.BOLD + "Join Warzone";
+        List<String> lore = Arrays.asList(
+            ChatColor.GRAY + "Click to access " + ChatColor.AQUA + "Warzones" + ChatColor.GRAY + ".",
+            ChatColor.DARK_GRAY + "Play in PVP areas, with multiple gamemodes here."
+        );
+        return createItem(Material.IRON_SWORD, title, lore);
     }
 
     private ItemStack getWarAdminItem() {
-        ItemStack item = new ItemStack(Material.EYE_OF_ENDER, 1);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.DARK_RED + "" + ChatColor.BOLD + "Manage War");
-        meta.setLore(ImmutableList.of(ChatColor.GRAY + "Click to display " + ChatColor.DARK_RED + "Admin" + ChatColor.GRAY + " access panel",
-            ChatColor.GRAY + "Includes: " + ChatColor.DARK_GRAY + "Permissions, managing warzones, configs, etc."));
-        item.setItemMeta(meta);
-        return item;
+        String title = ChatColor.DARK_RED + "" + ChatColor.BOLD + "Manage War";
+        List<String> lore = Arrays.asList(
+            ChatColor.GRAY + "Click to display " + ChatColor.DARK_RED + "Admin" + ChatColor.GRAY + " access panel",
+            ChatColor.GRAY + "Includes: " + ChatColor.DARK_GRAY + "Permissions, managing warzones, configs, etc."
+        );
+        return createItem(Material.EYE_OF_ENDER, title, lore);
     }
 
     @Override

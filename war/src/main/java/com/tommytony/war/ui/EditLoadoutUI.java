@@ -29,9 +29,6 @@ public class EditLoadoutUI extends ChestUI {
 
     @Override
     public void build(Player player, Inventory inv) {
-        ItemStack item;
-        ItemMeta meta;
-
         for (ItemStack loadoutItem : loadout.getItems()) {
             if (loadoutItem != null) {
                 inv.addItem(loadoutItem);
@@ -44,10 +41,7 @@ public class EditLoadoutUI extends ChestUI {
         this.addItem(inv, 9*4+3, loadout.getLeggings(), null);
         this.addItem(inv, 9*4+4, loadout.getBoots(), null);
 
-        item = new ItemStack(Material.NETHER_STAR, 1);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.GRAY + "Save");
-        item.setItemMeta(meta);
+        ItemStack item = createSaveItem();
         this.addItem(inv, getSize() - 2, item, () -> {
             ItemStack[] contents = inv.getContents();
             contents = Arrays.copyOfRange(contents, 0, 9*4+5);
@@ -63,19 +57,16 @@ public class EditLoadoutUI extends ChestUI {
             }
         });
 
-        item = new ItemStack(Material.TNT, 1);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.DARK_RED + "" + ChatColor.BOLD + "Delete");
-        item.setItemMeta(meta);
+        item = createDeleteItem();
         this.addItem(inv, getSize() - 1, item, () -> {
             if (zone != null) {
-                zone.getDefaultInventories().getLoadouts().remove(loadout);
+                zone.getDefaultInventories().removeLoadout(loadout.getName());
                 WarzoneConfigBag.afterUpdate(zone, player, "Loadout deleted", false);
             } else if (team != null) {
-                team.getInventories().getLoadouts().remove(loadout);
+                team.getInventories().removeLoadout(loadout.getName());
                 TeamConfigBag.afterUpdate(team, player, "Loadout deleted", false);
             } else {
-                War.war.getDefaultInventories().getLoadouts().remove(loadout);
+                War.war.getDefaultInventories().removeLoadout(loadout.getName());
                 WarConfigBag.afterUpdate(player, "Loadout deleted", false);
             }
         });

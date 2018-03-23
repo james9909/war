@@ -7,6 +7,10 @@ import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.ZoneSetter;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,11 +27,9 @@ public class EditOrCreateZoneUI extends ChestUI {
     @Override
     public void build(final Player player, Inventory inv) {
         int i = 0;
-        ItemStack item = new ItemStack(Material.WOOD_AXE, 1);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.BOLD + "" + ChatColor.YELLOW + "Create Warzone");
-        meta.setLore(ImmutableList.of(ChatColor.GRAY + "Click to create a " + ChatColor.AQUA + "Warzone"));
-        item.setItemMeta(meta);
+        List<String> lore = Collections.singletonList(ChatColor.GRAY + "Click to create a " + ChatColor.AQUA + "Warzone");
+        String title = ChatColor.BOLD + "" + ChatColor.YELLOW + "Create Warzone";
+        ItemStack item = createItem(Material.WOOD_AXE, title, lore);
         this.addItem(inv, i++, item, new Runnable() {
             @Override
             public void run() {
@@ -52,15 +54,14 @@ public class EditOrCreateZoneUI extends ChestUI {
                 });
             }
         });
+
         for (final Warzone zone : War.war.getEnabledWarzones()) {
             if (!War.war.isWarAdmin(player) && !zone.isAuthor(player)) {
                 continue;
             }
-            item = new ItemStack(Material.BOOK_AND_QUILL);
-            meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + zone.getName());
-            meta.setLore(ImmutableList.of(ChatColor.GRAY + "Click to edit"));
-            item.setItemMeta(meta);
+            title = ChatColor.YELLOW + "" + ChatColor.BOLD + zone.getName();
+            lore = Collections.singletonList(ChatColor.GRAY + "Click to edit");
+            item = createItem(Material.BOOK_AND_QUILL, title, lore);
             this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new EditZoneUI(zone)));
         }
     }

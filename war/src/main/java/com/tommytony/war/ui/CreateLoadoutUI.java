@@ -13,7 +13,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class CreateLoadoutUI extends ChestUI {
 
@@ -27,13 +26,7 @@ public class CreateLoadoutUI extends ChestUI {
 
     @Override
     public void build(Player player, Inventory inv) {
-        ItemStack item;
-        ItemMeta meta;
-
-        item = new ItemStack(Material.NETHER_STAR, 1);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.GRAY + "Save");
-        item.setItemMeta(meta);
+        ItemStack item = createSaveItem();
         this.addItem(inv, getSize() - 1, item, () -> {
             ItemStack[] contents = inv.getContents();
             contents = Arrays.copyOfRange(contents, 0, 9*4+5);

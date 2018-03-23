@@ -26,13 +26,8 @@ class EditTeamUI extends ChestUI {
 
     @Override
     public void build(final Player player, Inventory inv) {
-        ItemStack item;
-        ItemMeta meta;
         int i = 0;
-        item = new ItemStack(Material.GOLD_SPADE, 1);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.GREEN + "Add additional spawn");
-        item.setItemMeta(meta);
+        ItemStack item = createItem(Material.GOLD_SPADE, ChatColor.GREEN + "Add additional spawn", null);
         this.addItem(inv, i++, item, () -> {
             if (team.getZone().getVolume().contains(player.getLocation())) {
                 team.addTeamSpawn(player.getLocation());
@@ -42,28 +37,16 @@ class EditTeamUI extends ChestUI {
             }
         });
 
-        item = new ItemStack(Material.CHEST, 1);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "Edit Rewards");
-        item.setItemMeta(meta);
+        item = createItem(Material.CHEST, ChatColor.YELLOW + "Edit Rewards", null);
         this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new EditRewardsListUI(null, team)));
 
-        item = new ItemStack(Material.CHEST, 1);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "Edit Loadouts");
-        item.setItemMeta(meta);
+        item = createItem(Material.CHEST, ChatColor.YELLOW + "Edit Loadouts", null);
         this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new EditLoadoutsListUI(null, team)));
 
-        item = new ItemStack(Material.CHEST, 1);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "Edit Options");
-        item.setItemMeta(meta);
+        item = createItem(Material.CHEST, ChatColor.YELLOW + "Edit options", null);
         this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new EditTeamConfigUI(null, team)));
 
-        item = new ItemStack(Material.TNT, 1);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.DARK_RED + "" + ChatColor.BOLD + "Delete");
-        item.setItemMeta(meta);
+        item = createDeleteItem();
         this.addItem(inv, getSize() - 1, item, () -> {
             if (team.getFlagVolume() != null) {
                 team.getFlagVolume().resetBlocks();

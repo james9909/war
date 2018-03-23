@@ -41,16 +41,10 @@ public class EditRewardsListUI extends ChestUI {
         Reward finalLossReward = lossReward;
         Runnable editLossRewardAction = () -> War.war.getUIManager().assignUI(player, new EditRewardsUI(finalLossReward, zone, team, false));
 
-        ItemStack item = new ItemStack(Material.CHEST);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "Edit Win Reward");
-        item.setItemMeta(meta);
+        ItemStack item = createItem(Material.CHEST, ChatColor.YELLOW + "Edit Win Reward", null);
         this.addItem(inv, 0, item, editWinRewardAction);
 
-        item = new ItemStack(Material.CHEST);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "Edit Loss Reward");
-        item.setItemMeta(meta);
+        item = createItem(Material.CHEST, ChatColor.YELLOW + "Edit loss Reward", null);
         this.addItem(inv, 1, item, editLossRewardAction);
     }
 

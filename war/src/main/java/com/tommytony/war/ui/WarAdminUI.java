@@ -21,35 +21,21 @@ public class WarAdminUI extends ChestUI {
         Runnable editRewardsAction = () -> War.war.getUIManager().assignUI(player, new EditRewardsListUI(null, null));
         Runnable editLoadoutsAction = () -> War.war.getUIManager().assignUI(player, new EditLoadoutsListUI(null, null));
 
-        ItemStack item = new ItemStack(Material.CHEST);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "Edit War Config");
-        item.setItemMeta(meta);
-        this.addItem(inv, 0, item, editWarAction);
+        int i = 0;
+        ItemStack item = createItem(Material.CHEST, ChatColor.YELLOW + "Edit War Config", null);
+        this.addItem(inv, i++, item, editWarAction);
 
-        item = new ItemStack(Material.CHEST);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "Edit Warzone Config");
-        item.setItemMeta(meta);
-        this.addItem(inv, 1, item, editZoneAction);
+        item = createItem(Material.CHEST, ChatColor.YELLOW + "Edit Warzone Config", null);
+        this.addItem(inv, i++, item, editZoneAction);
 
-        item = new ItemStack(Material.CHEST);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "Edit Team Config");
-        item.setItemMeta(meta);
-        this.addItem(inv, 2, item, editTeamAction);
+        item = createItem(Material.CHEST, ChatColor.YELLOW + "Edit Team Config", null);
+        this.addItem(inv, i++, item, editTeamAction);
 
-        item = new ItemStack(Material.CHEST);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "Edit Rewards");
-        item.setItemMeta(meta);
-        this.addItem(inv, 3, item, editRewardsAction);
+        item = createItem(Material.CHEST, ChatColor.YELLOW + "Edit Rewards", null);
+        this.addItem(inv, i++, item, editRewardsAction);
 
-        item = new ItemStack(Material.CHEST);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "Edit Loadouts");
-        item.setItemMeta(meta);
-        this.addItem(inv, 4, item, editLoadoutsAction);
+        item = createItem(Material.CHEST, ChatColor.YELLOW + "Edit Loadouts", null);
+        this.addItem(inv, i, item, editLoadoutsAction);
     }
 
     @Override

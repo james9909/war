@@ -23,18 +23,10 @@ public class EditZoneConfigListUI extends ChestUI {
         Runnable editZoneAction = () -> War.war.getUIManager().assignUI(player, new EditZoneConfigUI(zone));
         Runnable editTeamAction = () -> War.war.getUIManager().assignUI(player, new EditTeamConfigUI(zone, null));
 
-        ItemStack item;
-        ItemMeta meta;
-        item = new ItemStack(Material.CHEST);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "Edit Warzone Config");
-        item.setItemMeta(meta);
+        ItemStack item = createItem(Material.CHEST, ChatColor.YELLOW + "Edit Warzone Config", null);
         this.addItem(inv, 0, item, editZoneAction);
 
-        item = new ItemStack(Material.CHEST);
-        meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "Edit Team Config");
-        item.setItemMeta(meta);
+        item = createItem(Material.CHEST, ChatColor.YELLOW + "Edit Team Config", null);
         this.addItem(inv, 1, item, editTeamAction);
     }
 

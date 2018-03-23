@@ -36,12 +36,8 @@ public class EditTeamConfigUI extends ChestUI {
         UIConfigHelper.addTeamConfigOptions(this, player, inv, config, team, zone, 0);
 
         if (zone != null || team != null) {
-            ItemStack item;
-            ItemMeta meta;
-            item = new ItemStack(Material.SNOW_BALL);
-            meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.GRAY + "" + ChatColor.BOLD + "Restore Defaults");
-            item.setItemMeta(meta);
+            String title = ChatColor.GRAY + "" + ChatColor.BOLD + "Restore Defaults";
+            ItemStack item = createItem(Material.SNOW_BALL, title, null);
             this.addItem(inv, getSize() - 1, item, () -> {
                 config.reset();
                 if (team != null) {

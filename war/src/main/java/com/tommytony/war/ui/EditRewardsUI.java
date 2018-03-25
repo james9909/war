@@ -3,10 +3,10 @@ package com.tommytony.war.ui;
 import com.tommytony.war.Team;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
-import com.tommytony.war.config.InventoryBag;
-import com.tommytony.war.config.TeamConfigBag;
-import com.tommytony.war.config.WarConfigBag;
-import com.tommytony.war.config.WarzoneConfigBag;
+import com.tommytony.war.config.bags.InventoryBag;
+import com.tommytony.war.config.bags.TeamConfigBag;
+import com.tommytony.war.config.bags.WarConfigBag;
+import com.tommytony.war.config.bags.WarzoneConfigBag;
 import com.tommytony.war.utility.Reward;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class EditRewardsUI extends ChestUI {
 

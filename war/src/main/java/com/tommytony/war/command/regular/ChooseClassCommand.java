@@ -4,11 +4,8 @@ import com.tommytony.war.Team;
 import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
-import com.tommytony.war.config.InventoryBag;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.LoadoutSelection;
-import java.util.List;
-import java.util.Map;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

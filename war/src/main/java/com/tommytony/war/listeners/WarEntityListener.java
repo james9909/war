@@ -8,7 +8,7 @@ import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.config.WarConfig;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.event.WarPlayerDeathEvent;
-import com.tommytony.war.job.DeferredBlockResetsJob;
+import com.tommytony.war.runnable.DeferredBlockResetsJob;
 import com.tommytony.war.structure.Bomb;
 import com.tommytony.war.utility.LoadoutSelection;
 import java.util.ArrayList;

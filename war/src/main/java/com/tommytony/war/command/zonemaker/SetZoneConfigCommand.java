@@ -3,7 +3,7 @@ package com.tommytony.war.command.zonemaker;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
-import com.tommytony.war.config.WarzoneConfigBag;
+import com.tommytony.war.config.bags.WarzoneConfigBag;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

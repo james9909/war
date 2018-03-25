@@ -1,7 +1,7 @@
 package com.tommytony.war.volume;
 
 import com.tommytony.war.War;
-import com.tommytony.war.job.BlockResetJob;
+import com.tommytony.war.runnable.BlockResetJob;
 import com.tommytony.war.utility.Direction;
 import java.util.ArrayList;
 import java.util.List;

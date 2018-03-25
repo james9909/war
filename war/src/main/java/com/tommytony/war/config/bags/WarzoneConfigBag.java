@@ -1,7 +1,8 @@
-package com.tommytony.war.config;
+package com.tommytony.war.config.bags;
 
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
+import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
 import java.util.EnumMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.tommytony.war.job;
+package com.tommytony.war.runnable;
 
 import com.tommytony.war.Warzone;
 

@@ -2,7 +2,7 @@ package com.tommytony.war.command.zonemaker;
 
 import com.tommytony.war.War;
 import com.tommytony.war.command.WarCommandHandler;
-import com.tommytony.war.config.WarConfigBag;
+import com.tommytony.war.config.bags.WarConfigBag;
 import com.tommytony.war.utility.Loadout;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;

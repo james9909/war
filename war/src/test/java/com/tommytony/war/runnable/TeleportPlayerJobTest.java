@@ -1,4 +1,4 @@
-package com.tommytony.war.job;
+package com.tommytony.war.runnable;
 
 import org.bukkit.Location;
 import org.bukkit.World;

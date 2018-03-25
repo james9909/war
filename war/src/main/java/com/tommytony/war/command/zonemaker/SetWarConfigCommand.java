@@ -4,7 +4,7 @@ import com.tommytony.war.War;
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.command.admin.AbstractOptionalWarAdminCommand;
 import com.tommytony.war.command.admin.NotWarAdminException;
-import com.tommytony.war.config.WarConfigBag;
+import com.tommytony.war.config.bags.WarConfigBag;
 import org.bukkit.command.CommandSender;
 
 public class SetWarConfigCommand extends AbstractOptionalWarAdminCommand {

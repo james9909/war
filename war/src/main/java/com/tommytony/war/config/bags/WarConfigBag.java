@@ -1,6 +1,7 @@
-package com.tommytony.war.config;
+package com.tommytony.war.config.bags;
 
 import com.tommytony.war.War;
+import com.tommytony.war.config.WarConfig;
 import com.tommytony.war.mapper.WarYmlMapper;
 import java.util.EnumMap;
 import java.util.Map;

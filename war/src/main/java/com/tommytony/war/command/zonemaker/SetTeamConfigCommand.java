@@ -5,7 +5,7 @@ import com.tommytony.war.War;
 import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
-import com.tommytony.war.config.TeamConfigBag;
+import com.tommytony.war.config.bags.TeamConfigBag;
 import com.tommytony.war.config.TeamKind;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

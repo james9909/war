@@ -4,7 +4,7 @@ import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.KillstreakReward;
 import com.tommytony.war.config.MySQLConfig;
-import com.tommytony.war.job.RestoreYmlWarzonesJob;
+import com.tommytony.war.runnable.RestoreYmlWarzonesJob;
 import com.tommytony.war.utility.Reward;
 import java.io.File;
 import java.io.IOException;

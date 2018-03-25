@@ -1,8 +1,8 @@
 package com.tommytony.war;
 
-import com.tommytony.war.config.InventoryBag;
+import com.tommytony.war.config.bags.InventoryBag;
 import com.tommytony.war.config.TeamConfig;
-import com.tommytony.war.config.TeamConfigBag;
+import com.tommytony.war.config.bags.TeamConfigBag;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.TeamSpawnStyle;
 import com.tommytony.war.utility.Direction;

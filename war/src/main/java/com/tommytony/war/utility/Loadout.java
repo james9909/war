@@ -124,16 +124,16 @@ public class Loadout implements Comparable<Loadout> {
         if (offhand != null) {
             inventory.setItemInOffHand(offhand);
         }
-        if (helmet != null) {
+        if (helmet != null && HELMETS.contains(helmet.getType())) {
             inventory.setHelmet(helmet);
         }
-        if (chestplate != null) {
+        if (chestplate != null && CHESTPLATES.contains(chestplate.getType())) {
             inventory.setChestplate(chestplate);
         }
-        if (leggings != null) {
+        if (leggings != null && LEGGINGS.contains(leggings.getType())) {
             inventory.setLeggings(leggings);
         }
-        if (boots != null) {
+        if (boots != null && BOOTS.contains(boots.getType())) {
             inventory.setBoots(boots);
         }
     }

@@ -253,8 +253,6 @@ public class War extends JavaPlugin {
         HelmetProtectionTask helmetProtectionTask = new HelmetProtectionTask();
         this.getServer().getScheduler().scheduleSyncRepeatingTask(this, helmetProtectionTask, 250, 100);
 
-        CapturePointTimer cpt = new CapturePointTimer();
-        cpt.runTaskTimer(this, 100, 20);
         UpdateScoreboardJob usj = new UpdateScoreboardJob();
         usj.runTaskTimerAsynchronously(this, 0, 10);
 

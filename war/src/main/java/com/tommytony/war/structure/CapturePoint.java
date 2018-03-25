@@ -12,13 +12,22 @@ import org.bukkit.util.Vector;
 
 /**
  * Capture points
- *
+ *z
  * @author Connor Monahan
  */
 public class CapturePoint {
 
-    private static int[][][] structure = {{{1, 1, 1}, {1, 2, 1}, {1, 1, 1}}, {{0, 0, 0}, {0, 3, 0}, {0, 0, 0}}, {{0, 0, 0}, {0, 3, 0}, {0, 0, 0}}, {{0, 0, 0}, {0, 3, 0}, {0, 0, 0}},
-        {{0, 0, 0}, {0, 3, 0}, {0, 0, 0}}};
+    private static int[][] structure = {
+        {0, 0, 0, 0, 1, 0, 0, 0, 0},
+        {0, 0, 1, 1, 1, 1, 1, 0, 0},
+        {0, 1, 1, 2, 2, 2, 1, 1, 0},
+        {0, 1, 2, 2, 2, 2, 2, 1, 0},
+        {1, 1, 2, 2, 2, 2, 2, 1, 1},
+        {0, 1, 2, 2, 2, 2, 2, 1, 0},
+        {0, 1, 1, 2, 2, 2, 1, 1, 0},
+        {0, 0, 1, 1, 1, 1, 1, 0, 0},
+        {0, 0, 0, 0, 1, 0, 0, 0, 0},
+    };
 
     private final String name;
     private Volume volume;
@@ -40,50 +49,37 @@ public class CapturePoint {
     }
 
     private Location getOrigin() {
-        return location.clone().subtract(1, 1, 1).getBlock().getLocation();
+        return location.clone().subtract(structure[0].length / 2, 1, structure.length / 2).getBlock().getLocation();
     }
 
     private void updateBlocks() {
         Validate.notNull(location);
         // Set origin to back left corner
         Location origin = this.getOrigin();
+
         // Build structure
-        for (int y = 0; y < structure.length; y++) {
-            for (int z = 0; z < structure[0].length; z++) {
-                for (int x = 0; x < structure[0][0].length; x++) {
-                    BlockState state = origin.clone().add(x, y, z).getBlock().getState();
-                    switch (structure[y][z][x]) {
-                        case 0:
-                            state.setType(Material.AIR);
-                            break;
-                        case 1:
-                            state.setType(this.warzone.getWarzoneMaterials().getMainBlock().getType());
-                            state.setData(this.warzone.getWarzoneMaterials().getMainBlock().getData());
-                            break;
-                        case 2:
-                            state.setType(this.warzone.getWarzoneMaterials().getLightBlock().getType());
-                            state.setData(this.warzone.getWarzoneMaterials().getLightBlock().getData());
-                            break;
-                        case 3:
-                            state.setType(this.warzone.getWarzoneMaterials().getStandBlock().getType());
-                            state.setData(this.warzone.getWarzoneMaterials().getStandBlock().getData());
-                            break;
-                        default:
-                            throw new IllegalStateException("Invalid structure");
-                    }
-                    state.update(true);
+        for (int z = 0; z < structure.length; z++) {
+            for (int x = 0; x < structure[0].length; x++) {
+                BlockState state = origin.clone().add(x, 0, z).getBlock().getState();
+                switch (structure[z][x]) {
+                    case 0:
+                        break;
+                    case 1:
+                        state.setType(Material.OBSIDIAN);
+                        break;
+                    case 2:
+                        if (this.controller != null) {
+                            state.setType(this.controller.getMaterial());
+                            state.setData(this.controller.getBlockData());
+                        } else {
+                            state.setType(Material.DOUBLE_STEP);
+                        }
+                        break;
+                    default:
+                        throw new IllegalStateException("Invalid structure");
                 }
+                state.update(true);
             }
-        }
-        // Add flag block
-        if (strength > 0 && controller != null) {
-            // Make flag point direction of player when setting the capture point
-            int flagHeight = (int) (strength / (getMaxStrength() / 4.0));
-            Vector dir = new Vector(1 + -Math.round(Math.sin(Math.toRadians(location.getYaw()))), flagHeight, 1 + Math.round(Math.cos(Math.toRadians(location.getYaw()))));
-            BlockState state = origin.clone().add(dir).getBlock().getState();
-            state.setType(controller.getMaterial());
-            state.setData(controller.getBlockData());
-            state.update(true);
         }
     }
 
@@ -98,7 +94,7 @@ public class CapturePoint {
     public void setLocation(Location location) {
         this.location = new Location(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), 0);
         this.volume.setCornerOne(this.getOrigin());
-        this.volume.setCornerTwo(this.getOrigin().add(structure[0][0].length, structure.length, structure[0].length));
+        this.volume.setCornerTwo(this.getOrigin().add(structure[0].length, 0, structure.length));
         this.volume.saveBlocks();
         this.updateBlocks();
     }
@@ -125,7 +121,9 @@ public class CapturePoint {
     public void setStrength(int strength) {
         Validate.isTrue(strength <= getMaxStrength());
         this.strength = strength;
-        this.updateBlocks();
+        if (strength == 0 || strength == getMaxStrength()) {
+            this.updateBlocks();
+        }
     }
 
     public int getControlTime() {
@@ -146,6 +144,7 @@ public class CapturePoint {
 
     public void reset() {
         this.controller = defaultController;
+        this.controlTime = 0;
         if (this.controller != null) {
             this.strength = 4;
         } else {

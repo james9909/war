@@ -12,6 +12,7 @@ import com.tommytony.war.event.WarBattleWinEvent;
 import com.tommytony.war.event.WarPlayerLeaveEvent;
 import com.tommytony.war.event.WarPlayerThiefEvent;
 import com.tommytony.war.event.WarScoreCapEvent;
+import com.tommytony.war.runnable.CapturePointTimer;
 import com.tommytony.war.runnable.InitZoneJob;
 import com.tommytony.war.runnable.LoadoutResetJob;
 import com.tommytony.war.runnable.TeleportToSpawnTimer;
@@ -119,6 +120,8 @@ public class Warzone {
     private boolean pvpReady = true;
     private Random killSeed = new Random();
     private boolean scoreboard;
+
+    private CapturePointTimer capturePointTimer;
 
     public Warzone(World world, String name) {
         this.world = world;
@@ -290,8 +293,6 @@ public class Warzone {
             }
 
             this.initZone();
-
-            this.resetPortals();
         }
 
         // Don't forget to reset these to false, or we won't be able to score or empty lifepools anymore
@@ -335,9 +336,7 @@ public class Warzone {
         }
 
         // reset portals
-        for (ZonePortal portal : this.portals) {
-            portal.reset();
-        }
+        this.resetPortals();
 
         this.flagThieves.clear();
         this.bombThieves.clear();
@@ -367,6 +366,9 @@ public class Warzone {
             // omnomnomnom
             entity.remove();
         }
+
+        this.capturePointTimer = new CapturePointTimer(this);
+        this.capturePointTimer.runTaskTimer(War.war, 0, 20);
     }
 
     public void endRound() {
@@ -1292,6 +1294,13 @@ public class Warzone {
             t.resetPoints();
             t.getPlayers().clear(); // empty the team
             t.resetSign();
+        }
+        this.resetPortals();
+        if (this.capturePointTimer != null) {
+            try {
+                capturePointTimer.cancel();
+            } catch (IllegalStateException ignored) {
+            }
         }
         if (this.getWarzoneConfig().getBoolean(WarzoneConfig.RESETBLOCKS)) {
             this.reinitialize();

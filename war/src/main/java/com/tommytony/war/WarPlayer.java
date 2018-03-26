@@ -109,7 +109,7 @@ public class WarPlayer {
             loadout.giveItems(player);
         }
         if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.BLOCKHEADS)) {
-            playerInv.setHelmet(team.getKind().getHat());
+            playerInv.setHelmet(team.getKind().getBlockHead());
         }
     }
 

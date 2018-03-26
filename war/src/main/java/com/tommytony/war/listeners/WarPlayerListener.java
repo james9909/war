@@ -841,14 +841,6 @@ public class WarPlayerListener implements Listener {
             // Prevent thieves from taking their bomb/wool/cake into a chest, etc.
             event.setCancelled(true);
             player.playSound(player.getLocation(), Sound.BLOCK_LAVA_EXTINGUISH, 10, 10);
-        } else if (event.getSlotType() == InventoryType.SlotType.ARMOR && event.getSlot() == 39 && zone.getWarzoneConfig().getBoolean(WarzoneConfig.BLOCKHEADS)) {
-            // Magically give player a wool block when they click their helmet
-            ItemStack teamBlock = warPlayer.getTeam().getKind().getBlockHead();
-            player.getInventory().remove(teamBlock.getType());
-            // Deprecated behavior cannot be removed as it is essential to this function
-            //noinspection deprecation
-            event.setCursor(teamBlock);
-            event.setCancelled(true);
         }
     }
 

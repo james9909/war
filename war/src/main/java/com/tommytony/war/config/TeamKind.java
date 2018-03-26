@@ -5,7 +5,6 @@ import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Wool;
 
@@ -182,16 +181,4 @@ public enum TeamKind {
         return String.valueOf(name().charAt(0)) + name().substring(1).toLowerCase();
     }
 
-    /**
-     * Get a colored hat item for the team.
-     *
-     * @return Hat item with the team's color.
-     */
-    public ItemStack getHat() {
-        ItemStack helmet = new ItemStack(Material.LEATHER_HELMET);
-        LeatherArmorMeta meta = (LeatherArmorMeta) helmet.getItemMeta();
-        meta.setColor(this.getBukkitColor());
-        helmet.setItemMeta(meta);
-        return helmet;
-    }
 }

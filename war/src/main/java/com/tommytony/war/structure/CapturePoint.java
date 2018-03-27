@@ -1,18 +1,25 @@
 package com.tommytony.war.structure;
 
+import com.tommytony.war.Team;
+import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.volume.Volume;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import org.apache.commons.lang.Validate;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
-import org.bukkit.util.Vector;
 
 /**
  * Capture points
- *z
+ *
  * @author Connor Monahan
  */
 public class CapturePoint {
@@ -34,8 +41,10 @@ public class CapturePoint {
     private Location location;
     private TeamKind controller, defaultController;
     private int strength, controlTime;
-    private Warzone warzone;
+    private Warzone zone;
     private long lastMessage = 0;
+
+    private Map<Team, Integer> activeTeams;
 
     public CapturePoint(String name, Location location, TeamKind defaultController, int strength, Warzone warzone) {
         this.name = name;
@@ -43,9 +52,11 @@ public class CapturePoint {
         this.controller = defaultController;
         this.strength = strength;
         this.controlTime = 0;
-        this.warzone = warzone;
+        this.zone = warzone;
         this.volume = new Volume("cp-" + name, warzone.getWorld());
         this.setLocation(location);
+
+        this.activeTeams = new HashMap<>();
     }
 
     private Location getOrigin() {
@@ -163,6 +174,132 @@ public class CapturePoint {
     }
 
     public int getMaxStrength() {
-        return warzone.getWarzoneConfig().getInt(WarzoneConfig.CAPTUREPOINTTIME);
+        return zone.getWarzoneConfig().getInt(WarzoneConfig.CAPTUREPOINTTIME);
+    }
+
+    private void decrementStrength(Team contesting) {
+        if (strength < 1) {
+            // strength is already at minimum, ensure attributes are wiped
+            setController(null);
+            setStrength(0);
+            return;
+        }
+
+        strength--;
+        if (strength == 0) {
+            if (antiChatSpam()) {
+                zone.broadcast("zone.capturepoint.lose", controller.getFormattedName(), name);
+            }
+            setControlTime(0);
+            setController(null);
+        } else if (strength == getMaxStrength() - 1) {
+            if (antiChatSpam()) {
+                zone.broadcast("zone.capturepoint.contest", name, contesting.getKind().getColor() + contesting.getName() + ChatColor.WHITE);
+            }
+        }
+        setStrength(strength);
+    }
+
+    private void decrementStrength(Team contesting, int amount) {
+        for (int i = 0; i < amount; i++) {
+            if (getStrength() > 0) {
+                decrementStrength(contesting);
+            } else {
+                incrementStrength(contesting);
+            }
+        }
+    }
+
+    private void incrementStrength(Team owner) {
+        int maxStrength = getMaxStrength();
+        if (strength > maxStrength) {
+            // cap strength at CapturePoint.MAX_STRENGTH
+            setStrength(maxStrength);
+            return;
+        } else if (strength == maxStrength) {
+            // do nothing
+            return;
+        }
+
+        strength += 1;
+        if (strength == maxStrength) {
+            if (antiChatSpam()) {
+                zone.broadcast("zone.capturepoint.capture", controller.getFormattedName(), name);
+            }
+            owner.addPoint();
+        } else if (strength == 1) {
+            if (antiChatSpam()) {
+                zone.broadcast("zone.capturepoint.fortify", owner.getKind().getFormattedName(), name);
+            }
+            setController(owner.getKind());
+        }
+        setStrength(strength);
+    }
+
+    private void incrementStrength(Team owner, int amount) {
+        int maxStrength = getMaxStrength();
+        for (int i = 0; i < amount; i++) {
+            if (getStrength() < maxStrength) {
+                incrementStrength(owner);
+            }
+        }
+    }
+
+    public void addActiveTeam(Team team) {
+        activeTeams.put(team, activeTeams.getOrDefault(team, 0)+1);
+    }
+
+    public void clearActiveTeams() {
+        activeTeams.clear();
+    }
+
+    public void calculateStrength() {
+        switch (activeTeams.size()) {
+            case 0:
+                break;
+            case 1:
+                // Only one team on the point
+                Team team = (Team) activeTeams.keySet().toArray()[0];
+                if (this.controller == null || this.controller == team.getKind()) {
+                    // Take control of neutral point / fortify team point
+                    incrementStrength(team, activeTeams.get(team));
+                } else {
+                    // Contest enemy point
+                    decrementStrength(team, activeTeams.get(team));
+                }
+                break;
+            case 2:
+                // Two teams on the point
+                Team[] teams = (Team[]) activeTeams.keySet().toArray();
+
+                Team dominant = teams[0];
+                Team other = teams[1];
+                if (activeTeams.get(dominant) < activeTeams.get(other)) {
+                    // Swap
+                    Team tmp = dominant;
+                    dominant = other;
+                    other = tmp;
+                }
+
+                int dominantCount = activeTeams.get(dominant);
+                int otherCount = activeTeams.get(other);
+                if (dominantCount == otherCount) {
+                    // Both teams have equal presence, so nothing happens
+                    break;
+                } else {
+                    int difference = dominantCount - otherCount;
+                    if (this.controller == null || this.controller == dominant.getKind()) {
+                        // Take control of neutral point / fortify team point
+                        incrementStrength(dominant, difference);
+                    } else {
+                        // Contest enemy point
+                        decrementStrength(dominant, difference);
+                    }
+                }
+                break;
+            default:
+                // More than 2 teams is not supported
+                break;
+        }
     }
 }

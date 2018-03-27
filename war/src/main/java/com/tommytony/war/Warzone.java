@@ -276,8 +276,10 @@ public class Warzone {
         if (capturePointTimer != null) {
             capturePointTimer.cancel();
         }
-        capturePointTimer = new CapturePointTimer(this);
-        capturePointTimer.runTaskTimer(War.war, 0, 20);
+        if (this.getCapturePoints().size() > 0) {
+            capturePointTimer = new CapturePointTimer(this);
+            capturePointTimer.runTaskTimer(War.war, 0, 20);
+        }
 
         if (this.ready() && this.volume.isSaved()) {
             // everyone back to team spawn with full health

@@ -89,7 +89,7 @@ public class WarEntityListener implements Listener {
                     return;
                 }
 
-                LoadoutSelection attackerLoadoutState = dPlayer.getLoadoutSelection();
+                LoadoutSelection attackerLoadoutState = aPlayer.getLoadoutSelection();
                 if (attackerLoadoutState.isStillInSpawn()) {
                     War.war.badMsg(a, "pvp.self.spawn");
                     event.setCancelled(true);
@@ -198,31 +198,6 @@ public class WarEntityListener implements Listener {
 
                 event.setCancelled(true); // can't attack someone inside a warzone if you're not in a team
             }
-        } else if (defender instanceof Player) {
-            // attacked by dispenser arrow most probably
-            // Detect death, prevent it and respawn the player
-            Player d = (Player) defender;
-            WarPlayer dPlayer = WarPlayer.getPlayer(d.getUniqueId());
-            Warzone defenderWarzone = dPlayer.getZone();
-            if (defenderWarzone != null && event.getFinalDamage() >= d.getHealth()) {
-                LoadoutSelection defenderLoadoutState = dPlayer.getLoadoutSelection();
-                if (defenderLoadoutState != null && defenderLoadoutState.isStillInSpawn()) {
-                    event.setCancelled(true);
-                    return;
-                }
-                if (defenderWarzone.getReallyDeadFighters().contains(d.getUniqueId())) {
-                    // don't re-kill a dead person
-                    return;
-                }
-
-                WarPlayerDeathEvent event1 = new WarPlayerDeathEvent(defenderWarzone, d, null, event.getCause());
-                War.war.getServer().getPluginManager().callEvent(event1);
-                if (!defenderWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
-                    // fast respawn, don't really die
-                    event.setCancelled(true);
-                }
-                defenderWarzone.handleNaturalKill(d, event);
-            }
         }
     }
 
@@ -300,7 +275,6 @@ public class WarEntityListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageEvent event) {
-
         if (!War.war.isLoaded()) {
             return;
         }
@@ -309,41 +283,40 @@ public class WarEntityListener implements Listener {
         if (!(entity instanceof Player)) {
             return;
         }
+
         Player player = (Player) entity;
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
-
-        // prevent godmode
         Warzone zone = warPlayer.getZone();
-        if (zone != null) {
-            event.setCancelled(false);
+        Team team = warPlayer.getTeam();
+        if (team == null || zone == null) {
+            return;
+        }
+
+        LoadoutSelection playerLoadoutState = warPlayer.getLoadoutSelection();
+        if (team.isSpawnLocation(player.getLocation()) && playerLoadoutState != null && playerLoadoutState.isStillInSpawn()) {
+            // don't let a player still in spawn get damaged
+            event.setCancelled(true);
+            return;
         }
 
         // pass pvp-damage
         if (event instanceof EntityDamageByEntityEvent) {
             this.handlerAttackDefend((EntityDamageByEntityEvent) event);
         } else {
-            Team team = warPlayer.getTeam();
-
-            if (zone != null && team != null) {
-                LoadoutSelection playerLoadoutState = warPlayer.getLoadoutSelection();
-                if (team.isSpawnLocation(player.getLocation()) && playerLoadoutState != null && playerLoadoutState.isStillInSpawn()) {
-                    // don't let a player still in spawn get damaged
-                    event.setCancelled(true);
-                } else if (event.getFinalDamage() >= player.getHealth()) {
-                    if (zone.getReallyDeadFighters().contains(player.getUniqueId())) {
-                        // don't re-count the death points of an already dead person
-                        return;
-                    }
-
-                    // Detect death, prevent it and respawn the player
-                    WarPlayerDeathEvent event1 = new WarPlayerDeathEvent(zone, player, null, event.getCause());
-                    War.war.getServer().getPluginManager().callEvent(event1);
-                    if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
-                        // fast respawn, don't really die
-                        event.setCancelled(true);
-                    }
-                    zone.handleNaturalKill(player, event);
+            if (event.getFinalDamage() >= player.getHealth()) {
+                if (zone.getReallyDeadFighters().contains(player.getUniqueId())) {
+                    // don't re-count the death points of an already dead person
+                    return;
                 }
+
+                // Detect death, prevent it and respawn the player
+                WarPlayerDeathEvent event1 = new WarPlayerDeathEvent(zone, player, null, event.getCause());
+                War.war.getServer().getPluginManager().callEvent(event1);
+                if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
+                    // fast respawn, don't really die
+                    event.setCancelled(true);
+                }
+                zone.handleNaturalKill(player, event);
             }
         }
     }

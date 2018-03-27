@@ -2,6 +2,7 @@ package com.tommytony.war.command.zonemaker;
 
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
+import com.tommytony.war.mapper.WarzoneYmlMapper;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -33,6 +34,7 @@ public class DeletePortalCommand extends AbstractZoneMakerCommand {
         }
 
         if (zone.deletePortal(portalName)) {
+            WarzoneYmlMapper.save(zone);
             this.msg("Portal {0} for {1} has been deleted", portalName, zoneName);
         } else {
             this.badMsg("Portal not found");

@@ -46,6 +46,11 @@ public class SetCapturePointCommand extends AbstractZoneMakerCommand {
             return false;
         }
 
+        if (zone.getTeams().size() > 2) {
+            this.badMsg("Capture points are only supported for warzones with 2 teams");
+            return true;
+        }
+
         if (zone.hasCapturePoint(this.args[0])) {
             // move the existing capture point
             CapturePoint cp = zone.getCapturePoint(this.args[0]);

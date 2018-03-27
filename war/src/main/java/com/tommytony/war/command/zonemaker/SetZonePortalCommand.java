@@ -41,6 +41,7 @@ public class SetZonePortalCommand extends AbstractZoneMakerCommand {
 
         zone.addPortal(portal);
         WarzoneYmlMapper.save(zone);
+
         this.msg("Portal {0} set for zone {1}", portalName, zone.getName());
         return true;
     }

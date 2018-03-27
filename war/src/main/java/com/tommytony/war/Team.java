@@ -416,15 +416,7 @@ public class Team {
             warPlayer.restorePlayerState();
         }
         WarScoreboard.removeScoreboard(warPlayer.getPlayer());
-        Runnable resetScoreboard = () -> {
-            player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
-        };
-        // Make sure that the scoreboard is reset
-        War.war.getServer().getScheduler().runTaskLater(War.war, resetScoreboard, 1L);
-        War.war.getServer().getScheduler().runTaskLater(War.war, resetScoreboard, 2L);
-        War.war.getServer().getScheduler().runTaskLater(War.war, resetScoreboard, 3L);
-        War.war.getServer().getScheduler().runTaskLater(War.war, resetScoreboard, 4L);
-        War.war.getServer().getScheduler().runTaskLater(War.war, resetScoreboard, 5L);
+        player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
     }
 
     public int getRemainingLives() {

@@ -273,6 +273,12 @@ public class Warzone {
     }
 
     public void initializeZone(Player respawnExempted) {
+        if (capturePointTimer != null) {
+            capturePointTimer.cancel();
+        }
+        capturePointTimer = new CapturePointTimer(this);
+        capturePointTimer.runTaskTimer(War.war, 0, 20);
+
         if (this.ready() && this.volume.isSaved()) {
             // everyone back to team spawn with full health
             for (Team team : this.teams) {
@@ -343,16 +349,14 @@ public class Warzone {
         this.cakeThieves.clear();
         this.reallyDeadFighters.clear();
 
-        //get them config (here be crazy grinning's!)
         int pvpready = warzoneConfig.getInt(WarzoneConfig.PREPTIME);
 
-        if (pvpready != 0) { //if it is equalz to zeroz then dinosaurs will take over the earth
+        if (pvpready != 0) {
             this.pvpReady = false;
             ZoneTimeJob timer = new ZoneTimeJob(this);
             War.war.getServer().getScheduler().runTaskLater(War.war, timer, pvpready * 20);
         }
 
-        // nom drops
         for (Entity entity : (this.getWorld().getEntities())) {
             if (!(entity instanceof Item)) {
                 continue;
@@ -363,12 +367,8 @@ public class Warzone {
                 continue;
             }
 
-            // omnomnomnom
             entity.remove();
         }
-
-        this.capturePointTimer = new CapturePointTimer(this);
-        this.capturePointTimer.runTaskTimer(War.war, 0, 20);
     }
 
     public void endRound() {
@@ -1295,13 +1295,8 @@ public class Warzone {
             t.getPlayers().clear(); // empty the team
             t.resetSign();
         }
+
         this.resetPortals();
-        if (this.capturePointTimer != null) {
-            try {
-                capturePointTimer.cancel();
-            } catch (IllegalStateException ignored) {
-            }
-        }
         if (this.getWarzoneConfig().getBoolean(WarzoneConfig.RESETBLOCKS)) {
             this.reinitialize();
         } else {

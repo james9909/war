@@ -43,12 +43,11 @@ public class CapturePointTimer extends BukkitRunnable {
                 Block standing = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
                 boolean valid = standing.getType().equals(Material.WOOL) || standing.getType().equals(Material.DOUBLE_STEP);
                 if (valid && cp.getVolume().contains(standing)) {
-                    cp.addActiveTeam(team);
+                    cp.addActiveTeam(team.getKind());
                     it.remove();
                 }
-
-                cp.calculateStrength();
             }
+            cp.calculateStrength();
 
             if (cp.getController() != null && cp.getController() != cp.getDefaultController() && cp.getStrength() == cp.getMaxStrength()) {
                 int controlTime = cp.getControlTime() + 1;

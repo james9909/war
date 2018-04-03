@@ -5,6 +5,7 @@ import com.tommytony.war.Team;
 import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamConfig;
+import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.structure.CapturePoint;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,7 +29,7 @@ public class WarScoreboard {
     private WarPlayer warPlayer;
     private Objective objective;
 
-    private boolean flashed;
+    private long lastFlash;
     private int lines;
 
     public WarScoreboard(WarPlayer warPlayer) {
@@ -37,6 +38,7 @@ public class WarScoreboard {
         this.warPlayer = warPlayer;
         this.objective = scoreboard.registerNewObjective(player.getName(), "dummy");
         this.lines = 10;
+        this.lastFlash = 0;
 
         scoreboard.clearSlot(DisplaySlot.SIDEBAR);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -77,6 +79,9 @@ public class WarScoreboard {
 
         addText("");
 
+        long now = System.currentTimeMillis();
+        boolean flash = now - lastFlash >= 1000;
+
         // Flag status
         if (team.getTeamFlag() != null) {
             // flag status
@@ -85,12 +90,12 @@ public class WarScoreboard {
 
                 // Implement alternating colors
                 String format;
-                if (flashed) {
+
+                if (flash) {
                     format = "&8";
                 } else {
                     format = "&7";
                 }
-                flashed = !flashed;
 
                 Map<UUID, Team> thieves = zone.getFlagThieves();
                 UUID thiefId = null;
@@ -109,7 +114,6 @@ public class WarScoreboard {
                 }
             } else {
                 flagStatus = "&6Flag&7: &fBase";
-                flashed = false;
             }
             addText(flagStatus);
         }
@@ -117,8 +121,39 @@ public class WarScoreboard {
         if (zone.getCapturePoints().size() == 1) {
             CapturePoint cp = new ArrayList<>(zone.getCapturePoints()).get(0);
 
-            String cpStatus = String.format("&6Koth&7: &e%d&7/&e%d", cp.getStrength(), cp.getMaxStrength());
+            TeamKind challenger = cp.getChallenger();
+            TeamKind controller = cp.getController();
+            String cpStatus;
+
+            if (challenger != null) {
+                String color;
+                if (flash) {
+                    if (controller == null) {
+                        color = challenger.getColor() + "";
+                    } else {
+                        color = controller.getColor() + "";
+                    }
+                } else {
+                    color = ChatColor.WHITE + "";
+                }
+
+                if (controller == null) {
+                    // Capture point is neutral, so show the challenging team
+                    cpStatus = String.format("&6Koth&7: %s%s", color, challenger.name().toLowerCase());
+                } else {
+                    // Flash the current controller
+                    cpStatus = String.format("&6Koth&7: %s%s", color, controller.name().toLowerCase());
+                }
+            } else if (controller != null) {
+                cpStatus = String.format("&6Koth&7: &F%s", controller.name().toLowerCase());
+            } else {
+                cpStatus = "&6Koth&7: &FNeutral";
+            }
             addText(cpStatus);
+        }
+
+        if (flash) {
+            lastFlash = now;
         }
 
         updating.put(player.getUniqueId(), false);

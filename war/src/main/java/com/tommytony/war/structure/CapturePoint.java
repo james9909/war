@@ -1,18 +1,16 @@
 package com.tommytony.war.structure;
 
 import com.tommytony.war.Team;
-import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.volume.Volume;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import org.apache.commons.lang.Validate;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
@@ -39,24 +37,35 @@ public class CapturePoint {
     private final String name;
     private Volume volume;
     private Location location;
-    private TeamKind controller, defaultController;
+    private TeamKind controller;
+    private TeamKind defaultController;
+    private TeamKind challenger;
     private int strength, controlTime;
     private Warzone zone;
     private long lastMessage = 0;
 
-    private Map<Team, Integer> activeTeams;
+    private Map<TeamKind, Integer> activeTeams;
+
+    private SecureRandom random;
+    private List<BlockState> neutralBlocks;
+    private List<BlockState> coloredBlocks;
 
     public CapturePoint(String name, Location location, TeamKind defaultController, int strength, Warzone warzone) {
         this.name = name;
         this.defaultController = defaultController;
         this.controller = defaultController;
+        this.challenger = null;
         this.strength = strength;
         this.controlTime = 0;
         this.zone = warzone;
         this.volume = new Volume("cp-" + name, warzone.getWorld());
-        this.setLocation(location);
 
         this.activeTeams = new HashMap<>();
+        this.neutralBlocks = new ArrayList<>();
+        this.coloredBlocks = new ArrayList<>();
+        this.random = new SecureRandom();
+
+        this.setLocation(location);
     }
 
     private Location getOrigin() {
@@ -79,12 +88,8 @@ public class CapturePoint {
                         state.setType(Material.OBSIDIAN);
                         break;
                     case 2:
-                        if (this.controller != null) {
-                            state.setType(this.controller.getMaterial());
-                            state.setData(this.controller.getBlockData());
-                        } else {
-                            state.setType(Material.DOUBLE_STEP);
-                        }
+                        state.setType(Material.DOUBLE_STEP);
+                        neutralBlocks.add(state);
                         break;
                     default:
                         throw new IllegalStateException("Invalid structure");
@@ -107,6 +112,9 @@ public class CapturePoint {
         this.volume.setCornerOne(this.getOrigin());
         this.volume.setCornerTwo(this.getOrigin().add(structure[0].length, 0, structure.length));
         this.volume.saveBlocks();
+
+        this.neutralBlocks.clear();
+        this.coloredBlocks.clear();
         this.updateBlocks();
     }
 
@@ -120,9 +128,14 @@ public class CapturePoint {
 
     public void setController(TeamKind controller) {
         this.controller = controller;
-        if (strength > 0) {
-            this.updateBlocks();
-        }
+    }
+
+    public void setChallenger(TeamKind challenger) {
+        this.challenger = challenger;
+    }
+
+    public TeamKind getChallenger() {
+        return challenger;
     }
 
     public int getStrength() {
@@ -132,9 +145,6 @@ public class CapturePoint {
     public void setStrength(int strength) {
         Validate.isTrue(strength <= getMaxStrength());
         this.strength = strength;
-        if (strength == 0 || strength == getMaxStrength()) {
-            this.updateBlocks();
-        }
     }
 
     public int getControlTime() {
@@ -161,6 +171,8 @@ public class CapturePoint {
         } else {
             this.strength = 0;
         }
+        this.neutralBlocks.clear();
+        this.coloredBlocks.clear();
         this.updateBlocks();
     }
 
@@ -177,76 +189,124 @@ public class CapturePoint {
         return zone.getWarzoneConfig().getInt(WarzoneConfig.CAPTUREPOINTTIME);
     }
 
-    private void decrementStrength(Team contesting) {
+    private BlockState removeRandomBlock(List<BlockState> blocks) {
+        if (blocks.size() == 0) {
+            return null;
+        }
+
+        int size = blocks.size();
+        int index = random.nextInt(size);
+        return blocks.remove(index);
+    }
+
+    private void decrementStrength(TeamKind contester) {
         if (strength < 1) {
             // strength is already at minimum, ensure attributes are wiped
             setController(null);
+            setChallenger(null);
             setStrength(0);
             return;
         }
 
+        BlockState target = removeRandomBlock(coloredBlocks);
+        if (target != null) {
+            target.setType(Material.DOUBLE_STEP);
+            target.update(true);
+            neutralBlocks.add(target);
+        }
+
         strength--;
         if (strength == 0) {
-            if (antiChatSpam()) {
+            if (antiChatSpam() && controller != null) {
                 zone.broadcast("zone.capturepoint.lose", controller.getFormattedName(), name);
             }
             setControlTime(0);
+            setChallenger(null);
             setController(null);
         } else if (strength == getMaxStrength() - 1) {
+            // Capture point is being challenged
             if (antiChatSpam()) {
-                zone.broadcast("zone.capturepoint.contest", name, contesting.getKind().getColor() + contesting.getName() + ChatColor.WHITE);
+                zone.broadcast("zone.capturepoint.contest", name, contester.getFormattedName());
+            }
+            setChallenger(contester);
+        } else {
+            if (contester == null) {
+                setChallenger(null);
+            } else {
+                setChallenger(contester);
             }
         }
         setStrength(strength);
     }
 
-    private void decrementStrength(Team contesting, int amount) {
+    private void decrementStrength(TeamKind contester, int amount) {
         for (int i = 0; i < amount; i++) {
             if (getStrength() > 0) {
-                decrementStrength(contesting);
+                decrementStrength(contester);
             } else {
-                incrementStrength(contesting);
+                incrementStrength(contester);
             }
         }
     }
 
-    private void incrementStrength(Team owner) {
+    private void incrementStrength(TeamKind contester) {
         int maxStrength = getMaxStrength();
         if (strength > maxStrength) {
             // cap strength at CapturePoint.MAX_STRENGTH
             setStrength(maxStrength);
+            setChallenger(null);
             return;
         } else if (strength == maxStrength) {
-            // do nothing
+            setChallenger(null);
             return;
         }
 
-        strength += 1;
-        if (strength == maxStrength) {
+        BlockState target = removeRandomBlock(neutralBlocks);
+        if (target != null) {
+            target.setType(contester.getMaterial());
+            target.setData(contester.getBlockData());
+            target.update(true);
+            coloredBlocks.add(target);
+        }
+
+        strength++;
+        if (strength == maxStrength && controller == null) {
             if (antiChatSpam()) {
-                zone.broadcast("zone.capturepoint.capture", controller.getFormattedName(), name);
+                zone.broadcast("zone.capturepoint.capture", contester.getFormattedName(), name);
             }
-            owner.addPoint();
+            setController(contester);
+            setChallenger(null);
+
+            Team contesterTeam = zone.getTeamByKind(contester);
+            contesterTeam.addPoint();
+            contesterTeam.resetSign();
         } else if (strength == 1) {
+            // Capture point is being challenged
             if (antiChatSpam()) {
-                zone.broadcast("zone.capturepoint.fortify", owner.getKind().getFormattedName(), name);
+                zone.broadcast("zone.capturepoint.fortify", contester.getFormattedName(), name);
             }
-            setController(owner.getKind());
+            setChallenger(contester);
+        } else {
+            if (contester == controller) {
+                setChallenger(null);
+            } else {
+                setChallenger(contester);
+            }
         }
         setStrength(strength);
     }
 
-    private void incrementStrength(Team owner, int amount) {
+    private void incrementStrength(TeamKind contester, int amount) {
         int maxStrength = getMaxStrength();
         for (int i = 0; i < amount; i++) {
             if (getStrength() < maxStrength) {
-                incrementStrength(owner);
+                incrementStrength(contester);
             }
         }
     }
 
-    public void addActiveTeam(Team team) {
-        activeTeams.put(team, activeTeams.getOrDefault(team, 0)+1);
+    public void addActiveTeam(TeamKind kind) {
+        activeTeams.put(kind, activeTeams.getOrDefault(kind, 0)+1);
     }
 
     public void clearActiveTeams() {
@@ -256,39 +316,43 @@ public class CapturePoint {
     public void calculateStrength() {
         switch (activeTeams.size()) {
             case 0:
+                if (controller == null && strength > 0) {
+                    // Nobody owns the point, so decrease the strength
+                    decrementStrength(null);
+                } else if (controller != null && strength < getMaxStrength()) {
+                    // Increase strength for the capture point
+                    incrementStrength(controller);
+                }
                 break;
             case 1:
                 // Only one team on the point
-                Team team = (Team) activeTeams.keySet().toArray()[0];
-                if (this.controller == null || this.controller == team.getKind()) {
+                TeamKind kind = (TeamKind) activeTeams.keySet().toArray()[0];
+                if (this.controller == null || this.controller == kind) {
                     // Take control of neutral point / fortify team point
-                    incrementStrength(team, activeTeams.get(team));
+                    incrementStrength(kind, activeTeams.get(kind));
                 } else {
                     // Contest enemy point
-                    decrementStrength(team, activeTeams.get(team));
+                    decrementStrength(kind, activeTeams.get(kind));
                 }
                 break;
             case 2:
                 // Two teams on the point
-                Team[] teams = (Team[]) activeTeams.keySet().toArray();
+                List<TeamKind> teams = new ArrayList<>(activeTeams.keySet());
 
-                Team dominant = teams[0];
-                Team other = teams[1];
+                TeamKind dominant = teams.get(0);
+                TeamKind other = teams.get(1);
                 if (activeTeams.get(dominant) < activeTeams.get(other)) {
                     // Swap
-                    Team tmp = dominant;
+                    TeamKind tmp = dominant;
                     dominant = other;
                     other = tmp;
                 }
 
                 int dominantCount = activeTeams.get(dominant);
                 int otherCount = activeTeams.get(other);
-                if (dominantCount == otherCount) {
-                    // Both teams have equal presence, so nothing happens
-                    break;
-                } else {
+                if (dominantCount != otherCount) {
                     int difference = dominantCount - otherCount;
-                    if (this.controller == null || this.controller == dominant.getKind()) {
+                    if (this.controller == null || this.controller == dominant) {
                         // Take control of neutral point / fortify team point
                         incrementStrength(dominant, difference);
                     } else {

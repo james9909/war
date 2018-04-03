@@ -84,14 +84,14 @@ public class WarEntityListener implements Listener {
 
                 LoadoutSelection defenderLoadoutState = dPlayer.getLoadoutSelection();
                 if (defenderLoadoutState.isStillInSpawn()) {
-                    War.war.badMsg(a, "pvp.target.spawn");
+                    // War.war.badMsg(a, "pvp.target.spawn");
                     event.setCancelled(true);
                     return;
                 }
 
                 LoadoutSelection attackerLoadoutState = aPlayer.getLoadoutSelection();
                 if (attackerLoadoutState.isStillInSpawn()) {
-                    War.war.badMsg(a, "pvp.self.spawn");
+                    // War.war.badMsg(a, "pvp.self.spawn");
                     event.setCancelled(true);
                     return;
                 }

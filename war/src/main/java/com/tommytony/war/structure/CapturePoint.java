@@ -313,7 +313,14 @@ public class CapturePoint {
         activeTeams.clear();
     }
 
-    public void calculateStrength() {
+    public void calculateStrength(boolean active) {
+        if (!active) {
+            if (controller == null && strength > 0) {
+                decrementStrength(null);
+            }
+            return;
+        }
+
         switch (activeTeams.size()) {
             case 0:
                 if (controller == null && strength > 0) {

@@ -30,6 +30,13 @@ public class CapturePointTimer extends BukkitRunnable {
         if (zone.getTeams().size() > 2) {
             return;
         }
+        boolean active = true;
+        for (Team team : zone.getTeams()) {
+            if (team.getPlayers().size() == 0) {
+                active = false;
+                break;
+            }
+        }
 
         Set<WarPlayer> players = zone.getPlayers();
         for (CapturePoint cp : zone.getCapturePoints()) {
@@ -47,7 +54,7 @@ public class CapturePointTimer extends BukkitRunnable {
                     it.remove();
                 }
             }
-            cp.calculateStrength();
+            cp.calculateStrength(active);
 
             if (cp.getController() != null && cp.getController() != cp.getDefaultController() && cp.getStrength() == cp.getMaxStrength()) {
                 int controlTime = cp.getControlTime() + 1;

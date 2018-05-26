@@ -9,6 +9,7 @@ import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.config.bags.WarzoneConfigBag;
 import com.tommytony.war.event.WarBattleWinEvent;
+import com.tommytony.war.event.WarPlayerJoinEvent;
 import com.tommytony.war.event.WarPlayerLeaveEvent;
 import com.tommytony.war.event.WarPlayerThiefEvent;
 import com.tommytony.war.event.WarScoreCapEvent;
@@ -65,6 +66,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
@@ -838,6 +840,9 @@ public class Warzone {
         if (player.getWorld() != this.getWorld()) {
             player.teleport(this.getWorld().getSpawnLocation());
         }
+        WarPlayerJoinEvent event = new WarPlayerJoinEvent(player, this);
+        War.war.getServer().getPluginManager().callEvent(event);
+
         PermissionAttachment attachment = player.addAttachment(War.war);
         this.attachments.put(player.getUniqueId(), attachment);
         attachment.setPermission("war.playing", true);
@@ -900,9 +905,13 @@ public class Warzone {
             } else if (damager instanceof Projectile) {
                 weaponString = War.war.getString("pvp.kill.weapon.aim");
             }
-            String adjectiveString = War.war.getDeadlyAdjectives().isEmpty() ? "" : War.war.getDeadlyAdjectives().get(this.killSeed.nextInt(War.war.getDeadlyAdjectives().size()));
             String verbString = War.war.getKillerVerbs().isEmpty() ? "" : War.war.getKillerVerbs().get(this.killSeed.nextInt(War.war.getKillerVerbs().size()));
-            this.broadcast("pvp.kill.format", attackerString + ChatColor.WHITE, adjectiveString, weaponString.toLowerCase().replace('_', ' '), verbString, defenderString);
+            if (damager instanceof LivingEntity) {
+                this.broadcast("pvp.kill.format", attackerString + ChatColor.WHITE, "", "minion", verbString, defenderString);
+            } else {
+                String adjectiveString = War.war.getDeadlyAdjectives().isEmpty() ? "" : War.war.getDeadlyAdjectives().get(this.killSeed.nextInt(War.war.getDeadlyAdjectives().size()));
+                this.broadcast("pvp.kill.format", attackerString + ChatColor.WHITE, adjectiveString, weaponString.toLowerCase().replace('_', ' '), verbString, defenderString);
+            }
         }
         warAttacker.addKill(defender);
         if (attackerTeam.getTeamConfig().resolveBoolean(TeamConfig.XPKILLMETER)) {

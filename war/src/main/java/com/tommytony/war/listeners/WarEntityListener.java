@@ -1,5 +1,8 @@
 package com.tommytony.war.listeners;
 
+import com.nisovin.magicspells.MagicSpells;
+import com.nisovin.magicspells.Spell;
+import com.nisovin.magicspells.spells.buff.MinionSpell;
 import com.tommytony.war.Team;
 import com.tommytony.war.War;
 import com.tommytony.war.WarPlayer;
@@ -11,9 +14,13 @@ import com.tommytony.war.event.WarPlayerDeathEvent;
 import com.tommytony.war.runnable.DeferredBlockResetsJob;
 import com.tommytony.war.structure.Bomb;
 import com.tommytony.war.utility.LoadoutSelection;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,6 +28,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
@@ -59,16 +67,21 @@ public class WarEntityListener implements Listener {
      *
      * @param event fired event
      */
-    private void handlerAttackDefend(EntityDamageByEntityEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         Entity attacker = event.getDamager();
         Entity defender = event.getEntity();
 
         // Maybe an arrow was thrown
-        if (attacker != null && event.getDamager() instanceof Projectile && ((Projectile) event.getDamager()).getShooter() instanceof Player) {
-            attacker = ((Player) ((Projectile) event.getDamager()).getShooter());
+        if (attacker != null && attacker instanceof Projectile && ((Projectile) attacker).getShooter() instanceof Player) {
+            attacker = ((Player) ((Projectile) attacker).getShooter());
         }
 
-        if (attacker != null && defender != null && attacker instanceof Player && defender instanceof Player) {
+        if (attacker == null || defender == null) {
+            return;
+        }
+
+        if (attacker instanceof Player && defender instanceof Player) {
             // only let adversaries (same warzone, different team) attack each other
             Player a = (Player) attacker;
             Player d = (Player) defender;
@@ -108,7 +121,6 @@ public class WarEntityListener implements Listener {
                 }
 
                 if (!defenderWarzone.getPvpReady()) {
-                    //if the timer is still tickin we gotta handle defense! (there be notchz in virgina)
                     event.setCancelled(true);
                     return;
                 }
@@ -147,7 +159,7 @@ public class WarEntityListener implements Listener {
 
                     if (defenderWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
                         // and respawn him and remove from deadmen (cause realdeath + handleDeath means no respawn and getting queued up for onPlayerRespawn)
-                        defenderWarzone.getReallyDeadFighters().remove(d.getName());
+                        defenderWarzone.getReallyDeadFighters().remove(d.getUniqueId());
                         defenderWarzone.respawnPlayer(d);
                     }
 
@@ -198,6 +210,42 @@ public class WarEntityListener implements Listener {
 
                 event.setCancelled(true); // can't attack someone inside a warzone if you're not in a team
             }
+        } else if (defender instanceof Player && attacker instanceof LivingEntity) {
+             LivingEntity monster = (LivingEntity) attacker;
+             WarPlayer warDefender = WarPlayer.getPlayer(defender.getUniqueId());
+             Warzone zone = warDefender.getZone();
+             if (zone == null) {
+                 return;
+             }
+             if (event.getFinalDamage() < ((Player) defender).getHealth()) {
+                 return;
+             }
+
+             for (Spell spell : MagicSpells.spells()) {
+                 if (!(spell instanceof MinionSpell)) {
+                     continue;
+                 }
+                 MinionSpell minionSpell = (MinionSpell) spell;
+                 try {
+                     Field field = minionSpell.getClass().getDeclaredField("players");
+                     field.setAccessible(true);
+                     Map<LivingEntity, UUID> players = (Map<LivingEntity, UUID>) field.get(minionSpell);
+                     if (!players.containsKey(monster)) {
+                         continue;
+                     }
+
+                     Player caster = Bukkit.getPlayer(players.get(monster));
+                     if (caster == null) {
+                         continue;
+                     }
+
+                     zone.handleKill(caster, warDefender.getPlayer(), monster);
+                     return;
+                 } catch (Exception ignored) {
+                     return;
+                 }
+             }
+             zone.handleNaturalKill(warDefender.getPlayer(), event);
         }
     }
 
@@ -279,6 +327,11 @@ public class WarEntityListener implements Listener {
             return;
         }
 
+        if (event instanceof EntityDamageByEntityEvent) {
+            // Let the actual EntityDamageByEntityEvent handler take care of it
+            return;
+        }
+
         Entity entity = event.getEntity();
         if (!(entity instanceof Player)) {
             return;
@@ -299,25 +352,20 @@ public class WarEntityListener implements Listener {
             return;
         }
 
-        // pass pvp-damage
-        if (event instanceof EntityDamageByEntityEvent) {
-            this.handlerAttackDefend((EntityDamageByEntityEvent) event);
-        } else {
-            if (event.getFinalDamage() >= player.getHealth()) {
-                if (zone.getReallyDeadFighters().contains(player.getUniqueId())) {
-                    // don't re-count the death points of an already dead person
-                    return;
-                }
-
-                // Detect death, prevent it and respawn the player
-                WarPlayerDeathEvent event1 = new WarPlayerDeathEvent(zone, player, null, event.getCause());
-                War.war.getServer().getPluginManager().callEvent(event1);
-                if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
-                    // fast respawn, don't really die
-                    event.setCancelled(true);
-                }
-                zone.handleNaturalKill(player, event);
+        if (event.getFinalDamage() >= player.getHealth()) {
+            if (zone.getReallyDeadFighters().contains(player.getUniqueId())) {
+                // don't re-count the death points of an already dead person
+                return;
             }
+
+            // Detect death, prevent it and respawn the player
+            WarPlayerDeathEvent event1 = new WarPlayerDeathEvent(zone, player, null, event.getCause());
+            War.war.getServer().getPluginManager().callEvent(event1);
+            if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
+                // fast respawn, don't really die
+                event.setCancelled(true);
+            }
+            zone.handleNaturalKill(player, event);
         }
     }
 

@@ -31,6 +31,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  * @author tommytony
@@ -356,6 +357,20 @@ public class WarBlockListener implements Listener {
             War.war.badMsg(player, "build.denied.zone.break");
             event.setCancelled(true);
             return;
+        }
+
+        if (blockZone != null && block.getType() == Material.TNT) {
+            if (event instanceof BlockBreakEvent) {
+                ItemStack toDrop = new ItemStack(Material.TNT);
+                String name = ChatColor.translateAlternateColorCodes('&', "&4Explosives");
+                ItemMeta meta = toDrop.getItemMeta();
+                meta.setDisplayName(name);
+                toDrop.setItemMeta(meta);
+
+                block.getWorld().dropItemNaturally(block.getLocation(), toDrop);
+                ((BlockBreakEvent) event).setDropItems(false);
+                return;
+            }
         }
 
         if (team != null && !team.canModify(block.getType())) {

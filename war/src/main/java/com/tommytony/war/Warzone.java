@@ -906,8 +906,9 @@ public class Warzone {
                 weaponString = War.war.getString("pvp.kill.weapon.aim");
             }
             String verbString = War.war.getKillerVerbs().isEmpty() ? "" : War.war.getKillerVerbs().get(this.killSeed.nextInt(War.war.getKillerVerbs().size()));
-            if (damager instanceof LivingEntity) {
-                this.broadcast("pvp.kill.format", attackerString + ChatColor.WHITE, "", "minion", verbString, defenderString);
+            if (!(damager instanceof Player) && damager instanceof LivingEntity) {
+                // Kill message for minions
+                this.broadcast("{0}'s minion {1} {2}", attackerString + ChatColor.WHITE, verbString, defenderString);
             } else {
                 String adjectiveString = War.war.getDeadlyAdjectives().isEmpty() ? "" : War.war.getDeadlyAdjectives().get(this.killSeed.nextInt(War.war.getDeadlyAdjectives().size()));
                 this.broadcast("pvp.kill.format", attackerString + ChatColor.WHITE, adjectiveString, weaponString.toLowerCase().replace('_', ' '), verbString, defenderString);

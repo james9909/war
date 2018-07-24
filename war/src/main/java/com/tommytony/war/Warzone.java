@@ -273,6 +273,20 @@ public class Warzone {
         // Don't forget to reset these to false, or we won't be able to score or empty lifepools anymore
         this.isReinitializing = false;
         this.isEndOfGame = false;
+        fixLighting();
+    }
+
+    public void fixLighting() {
+        ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+        Location firstLocation = volume.getCornerOne();
+        String corner1 = firstLocation.getBlockX() + "," + firstLocation.getBlockY() + "," + firstLocation.getBlockZ();
+
+        Location secondLocation = volume.getCornerTwo();
+        String corner2 = secondLocation.getBlockX() + "," + secondLocation.getBlockY() + "," + secondLocation.getBlockZ();
+
+        Bukkit.dispatchCommand(console, "/pos1 " + corner1);
+        Bukkit.dispatchCommand(console, "/pos2 " + corner2);
+        Bukkit.dispatchCommand(console, "/fixlighting");
     }
 
     public void initializeZoneAsJob(Player respawnExempted) {
@@ -1016,6 +1030,7 @@ public class Warzone {
     public void reinitialize() {
         this.isReinitializing = true;
         this.getVolume().resetBlocksAsJob();
+        fixLighting();
     }
 
     public void handlePlayerLeave(Player player, boolean removeFromTeam) {

@@ -2,85 +2,51 @@ package com.tommytony.war;
 
 import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.mana.ManaChangeReason;
-import com.tommytony.war.config.bags.InventoryBag;
 import com.tommytony.war.config.TeamConfig;
-import com.tommytony.war.config.bags.TeamConfigBag;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.WarzoneConfig;
+import com.tommytony.war.config.bags.InventoryBag;
+import com.tommytony.war.config.bags.TeamConfigBag;
 import com.tommytony.war.config.bags.WarzoneConfigBag;
-import com.tommytony.war.event.WarBattleWinEvent;
-import com.tommytony.war.event.WarPlayerJoinEvent;
-import com.tommytony.war.event.WarPlayerLeaveEvent;
-import com.tommytony.war.event.WarPlayerThiefEvent;
-import com.tommytony.war.event.WarScoreCapEvent;
-import com.tommytony.war.runnable.CapturePointTimer;
-import com.tommytony.war.runnable.InitZoneJob;
-import com.tommytony.war.runnable.LoadoutResetJob;
-import com.tommytony.war.runnable.TeleportToSpawnTimer;
-import com.tommytony.war.runnable.ZoneTimeJob;
+import com.tommytony.war.event.*;
 import com.tommytony.war.mapper.VolumeMapper;
 import com.tommytony.war.mapper.ZoneVolumeMapper;
+import com.tommytony.war.runnable.*;
 import com.tommytony.war.stats.StatManager;
-import com.tommytony.war.structure.Bomb;
-import com.tommytony.war.structure.Cake;
-import com.tommytony.war.structure.CapturePoint;
-import com.tommytony.war.structure.Monument;
-import com.tommytony.war.structure.WarzoneMaterials;
-import com.tommytony.war.structure.ZonePortal;
-import com.tommytony.war.structure.ZoneWallGuard;
-import com.tommytony.war.utility.Direction;
-import com.tommytony.war.utility.Loadout;
-import com.tommytony.war.utility.LoadoutSelection;
-import com.tommytony.war.utility.PotionEffectHelper;
-import com.tommytony.war.utility.Reward;
+import com.tommytony.war.structure.*;
+import com.tommytony.war.utility.*;
 import com.tommytony.war.volume.Volume;
 import com.tommytony.war.volume.ZoneVolume;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
-import java.util.logging.Level;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.TNTPrimed;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
-import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.logging.Level;
 
 /**
  * @author tommytony
@@ -109,7 +75,6 @@ public class Warzone {
     private Map<UUID, Team> flagThieves = new HashMap<>();
     private Map<UUID, Bomb> bombThieves = new HashMap<>();
     private Map<UUID, Cake> cakeThieves = new HashMap<>();
-    private Map<UUID, PermissionAttachment> attachments = new HashMap<>();
     private InventoryBag defaultInventories = new InventoryBag();
     private List<ZonePortal> portals = new ArrayList<>();
 
@@ -841,12 +806,9 @@ public class Warzone {
             player.teleport(this.getWorld().getSpawnLocation());
         }
         WarPlayerJoinEvent event = new WarPlayerJoinEvent(player, this);
-        War.war.getServer().getPluginManager().callEvent(event);
+        PluginManager pm = War.war.getServer().getPluginManager();
+        pm.callEvent(event);
 
-        PermissionAttachment attachment = player.addAttachment(War.war);
-        this.attachments.put(player.getUniqueId(), attachment);
-        attachment.setPermission("war.playing", true);
-        attachment.setPermission("war.playing." + this.getName().toLowerCase(), true);
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
         warPlayer.setTeam(team);
         warPlayer.setZone(this);
@@ -1066,8 +1028,8 @@ public class Warzone {
         if (playerTeam != null) {
             playerTeam.removePlayer(warPlayer);
             this.broadcast("leave.broadcast", playerTeam.getKind().getColor() + player.getName() + ChatColor.WHITE);
+
             playerTeam.resetSign();
-            player.removeAttachment(this.attachments.remove(player.getUniqueId()));
             if (this.getPlayerCount() == 0 && this.getWarzoneConfig().getBoolean(WarzoneConfig.RESETONEMPTY)) {
                 // reset the zone for a new game when the last player leaves
                 for (Team team : this.getTeams()) {

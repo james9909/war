@@ -76,16 +76,18 @@ public class WarBlockListener implements Listener {
             return;
         }
 
-        // protect the hub
-        /*
-        if (War.war.getWarHub() != null && War.war.getWarHub().getVolume().contains(block)) {
-            War.war.badMsg(player, "build.denied.location");
+        // Can only build inside a zone when playing
+        Warzone blockZone = Warzone.getZoneByLocation(new Location(block.getWorld(), block.getX(), block.getY(), block.getZ()));
+        if (zone == null && blockZone != null && War.war.getWarConfig().getBoolean(WarConfig.BUILDINZONESONLY)) {
+            if (!War.war.getWarConfig().getBoolean(WarConfig.DISABLEBUILDMESSAGE)) {
+                War.war.badMsg(player, "build.denied.location");
+            }
             cancelAndKeepItem(event);
             return;
-        }*/
+        }
 
-        // buildInZonesOnly
-        if (zone == null && War.war.getWarConfig().getBoolean(WarConfig.BUILDINZONESONLY) && !War.war.canBuildOutsideZone(player)) {
+        // Can only build outside a zone when not playing
+        if (zone != null && blockZone == null && War.war.getWarConfig().getBoolean(WarConfig.BUILDINZONESONLY)) {
             if (!War.war.getWarConfig().getBoolean(WarConfig.DISABLEBUILDMESSAGE)) {
                 War.war.badMsg(player, "build.denied.outside");
             }
@@ -343,7 +345,7 @@ public class WarBlockListener implements Listener {
 
         // buildInZonesOnly
         Warzone blockZone = Warzone.getZoneByLocation(new Location(block.getWorld(), block.getX(), block.getY(), block.getZ()));
-        if (blockZone == null && War.war.getWarConfig().getBoolean(WarConfig.BUILDINZONESONLY) && !War.war.canBuildOutsideZone(player)) {
+        if (blockZone == null && zone != null && War.war.getWarConfig().getBoolean(WarConfig.BUILDINZONESONLY)) {
             if (!War.war.getWarConfig().getBoolean(WarConfig.DISABLEBUILDMESSAGE)) {
                 War.war.badMsg(player, "build.denied.outside");
             }

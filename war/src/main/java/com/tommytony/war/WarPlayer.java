@@ -12,10 +12,13 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class WarPlayer {
     private static final Map<UUID, WarPlayer> totalPlayers = new ConcurrentHashMap<>();
@@ -109,7 +112,13 @@ public class WarPlayer {
             loadout.giveItems(player);
         }
         if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.BLOCKHEADS)) {
-            playerInv.setHelmet(team.getKind().getBlockHead());
+            ItemStack helmet = team.getKind().getBlockHead();
+            if (!getLoadoutSelection().getSelectedLoadout().equalsIgnoreCase("knight")) {
+                ItemMeta meta = helmet.getItemMeta();
+                meta.addEnchant(Enchantment.PROTECTION_PROJECTILE, 3, true);
+                helmet.setItemMeta(meta);
+            }
+            playerInv.setHelmet(helmet);
         }
     }
 

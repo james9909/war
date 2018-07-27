@@ -7,9 +7,11 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.config.WarzoneConfig;
 import java.util.HashMap;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 
 
 /**
@@ -34,7 +36,13 @@ public class HelmetProtectionTask implements Runnable {
                         teamBlockMaterial = team.getKind().getMaterial();
                         // 1) Replace missing block head
                         if (playerInv.getHelmet() == null || playerInv.getHelmet().getType() != Material.WOOL) {
-                            playerInv.setHelmet(team.getKind().getBlockHead());
+                            ItemStack helmet = team.getKind().getBlockHead();
+                            if (!warPlayer.getLoadoutSelection().getSelectedLoadout().equalsIgnoreCase("knight")) {
+                                ItemMeta meta = helmet.getItemMeta();
+                                meta.addEnchant(Enchantment.PROTECTION_PROJECTILE, 3, true);
+                                helmet.setItemMeta(meta);
+                            }
+                            playerInv.setHelmet(helmet);
                         }
 
                         // 2) Get rid of extra blocks in inventory: only keep one

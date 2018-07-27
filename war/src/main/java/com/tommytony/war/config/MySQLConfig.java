@@ -35,8 +35,8 @@ public class MySQLConfig {
         section.set("host", "localhost");
         section.set("port", 3306);
         section.set("database", "war");
-        section.set("username", "root");
-        section.set("password", "meow");
+        section.set("username", "war");
+        section.set("password", "password");
         section.set("logging.enabled", false);
         section.set("logging.autoclear", "WHERE `date` < NOW() - INTERVAL 7 DAY");
     }

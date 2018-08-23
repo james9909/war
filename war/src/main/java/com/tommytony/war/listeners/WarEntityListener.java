@@ -13,6 +13,7 @@ import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.event.WarPlayerDeathEvent;
 import com.tommytony.war.runnable.DeferredBlockResetsJob;
 import com.tommytony.war.structure.Bomb;
+import com.tommytony.war.utility.LastDamager;
 import com.tommytony.war.utility.LoadoutSelection;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -49,7 +50,6 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
@@ -146,6 +146,7 @@ public class WarEntityListener implements Listener {
                     if (d == a) {
                         defenderWarzone.handleSuicide(d);
                     } else {
+                        dPlayer.setLastDamager(a, event.getDamager());
                         defenderWarzone.handleKill(a, d, event.getDamager());
                     }
                 } else if (defenderWarzone.isBombThief(dPlayer) && d.getLocation().distance(a.getLocation()) < 2) {
@@ -155,6 +156,7 @@ public class WarEntityListener implements Listener {
                     // Kill the bomber
                     WarPlayerDeathEvent event1 = new WarPlayerDeathEvent(defenderWarzone, d, null, event.getCause());
                     War.war.getServer().getPluginManager().callEvent(event1);
+                    aPlayer.addKill(d);
                     defenderWarzone.handleDeath(d);
 
                     if (defenderWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
@@ -174,21 +176,24 @@ public class WarEntityListener implements Listener {
 
                     // Notify everyone
                     for (Team t : defenderWarzone.getTeams()) {
-                        t.sendAchievement(attackerTeam.getKind().getColor() + a.getName() + ChatColor.YELLOW + " made ",
-                            defenderTeam.getKind().getColor() + d.getName() + ChatColor.YELLOW + " blow up!", new ItemStack(Material.TNT), 10000);
                         t.teamcast("pvp.kill.bomb", attackerTeam.getKind().getColor() + a.getName() + ChatColor.WHITE, defenderTeam.getKind().getColor() + d.getName() + ChatColor.WHITE);
                     }
+                } else {
+                    // Regular damage (but not enough to kill), so record it
+                    dPlayer.setLastDamager(a, event.getDamager());
                 }
             } else if (attackerTeam != null && defenderTeam != null && attackerTeam == defenderTeam && attackerWarzone == defenderWarzone && attacker.getEntityId() != defender.getEntityId()) {
                 // same team, but not same person
                 if (attackerWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.FRIENDLYFIRE)) {
                     War.war.badMsg(a, "pvp.ff.enabled"); // if ff is on, let the attack go through
+                    dPlayer.setLastDamager(aPlayer.getPlayer(), aPlayer.getPlayer());
                 } else {
                     War.war.badMsg(a, "pvp.ff.disabled");
                     event.setCancelled(true); // ff is off
                 }
             } else if (attackerTeam == null && defenderTeam == null && War.war.canPvpOutsideZones(a)) {
                 // let normal PVP through is its not turned off or if you have perms
+                dPlayer.setLastDamager(aPlayer.getPlayer(), aPlayer.getPlayer());
             } else if (attackerTeam == null && defenderTeam == null && !War.war.canPvpOutsideZones(a)) {
                 if (!War.war.getWarConfig().getBoolean(WarConfig.DISABLEPVPMESSAGE)) {
                     War.war.badMsg(a, "pvp.outside.permission");
@@ -217,9 +222,10 @@ public class WarEntityListener implements Listener {
              if (zone == null) {
                  return;
              }
-             if (event.getFinalDamage() < ((Player) defender).getHealth()) {
-                 return;
-             }
+             // if (event.getFinalDamage() < ((Player) defender).getHealth()) {
+             //     return;
+             // }
+             boolean isDeath = event.getFinalDamage() < ((Player) defender).getHealth();
 
              for (Spell spell : MagicSpells.spells()) {
                  if (!(spell instanceof MinionSpell)) {
@@ -239,7 +245,10 @@ public class WarEntityListener implements Listener {
                          continue;
                      }
 
-                     zone.handleKill(caster, warDefender.getPlayer(), monster);
+                     warDefender.setLastDamager(caster, monster);
+                     if (isDeath) {
+                         zone.handleKill(caster, warDefender.getPlayer(), monster);
+                     }
                      return;
                  } catch (Exception ignored) {
                      return;

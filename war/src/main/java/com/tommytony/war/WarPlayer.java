@@ -2,6 +2,7 @@ package com.tommytony.war;
 
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.stats.StatManager;
+import com.tommytony.war.utility.LastDamager;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.LoadoutSelection;
 import com.tommytony.war.utility.PlayerState;
@@ -13,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
@@ -32,12 +35,15 @@ public class WarPlayer {
     private int deathCount;
     private int healCount;
 
+    private LastDamager lastDamager;
+
     public WarPlayer(UUID uuid) {
         this.uuid = uuid;
         this.killCount = 0;
         this.deathCount = 0;
         this.healCount = 0;
         totalPlayers.put(uuid, this);
+        this.lastDamager = new LastDamager();
     }
 
     public static WarPlayer getPlayer(UUID uuid) {
@@ -205,5 +211,13 @@ public class WarPlayer {
 
         // Prevent player from keeping items he was transferring in his inventory
         openedInv.setCursor(null);
+    }
+
+    public LastDamager getLastDamager() {
+        return this.lastDamager;
+    }
+
+    public void setLastDamager(Player attacker, Entity damager) {
+        this.lastDamager.setAttacker(attacker, damager);
     }
 }

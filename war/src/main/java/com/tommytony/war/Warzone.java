@@ -860,18 +860,26 @@ public class Warzone {
         Team attackerTeam = warAttacker.getTeam();
         Team defenderTeam = warDefender.getTeam();
 
+        LastDamager lastDamager = warDefender.getLastDamager();
+        boolean direct = false;
+        if (!lastDamager.isValid()) {
+            attacker = lastDamager.getAttacker();
+            damager = lastDamager.getDamager();
+            direct = true;
+        }
+
         if (this.getWarzoneConfig().getBoolean(WarzoneConfig.DEATHMESSAGES)) {
             String attackerString = attackerTeam.getKind().getColor() + attacker.getName();
             String defenderString = defenderTeam.getKind().getColor() + defender.getName();
             ItemStack weapon = attacker.getInventory().getItemInMainHand(); // Not the right way to do this, as they could kill with their other hand, but whatever
             Material killerWeapon = weapon.getType();
             String weaponString = killerWeapon.toString();
-            if (weapon.hasItemMeta() && weapon.getItemMeta().hasDisplayName()) {
+            if (weapon.hasItemMeta() && weapon.getItemMeta().hasDisplayName() && direct) {
                 weaponString = weapon.getItemMeta().getDisplayName() + ChatColor.WHITE;
             }
             if (killerWeapon == Material.AIR) {
                 weaponString = War.war.getString("pvp.kill.weapon.hand");
-            } else if (killerWeapon == Material.BOW || damager instanceof Arrow) {
+            } else if ((killerWeapon == Material.BOW || damager instanceof Arrow)) {
                 int rand = killSeed.nextInt(3);
                 if (rand == 0) {
                     weaponString = War.war.getString("pvp.kill.weapon.bow");
@@ -884,12 +892,15 @@ public class Warzone {
             String verbString = War.war.getKillerVerbs().isEmpty() ? "" : War.war.getKillerVerbs().get(this.killSeed.nextInt(War.war.getKillerVerbs().size()));
             if (!(damager instanceof Player) && damager instanceof LivingEntity) {
                 // Kill message for minions
-                this.broadcast("{0}'s minion {1} {2}", attackerString + ChatColor.WHITE, verbString, defenderString);
-            } else {
+                this.broadcast("pvp.kill.minion.format", attackerString + ChatColor.WHITE, verbString, defenderString);
+            } else if (direct) {
                 String adjectiveString = War.war.getDeadlyAdjectives().isEmpty() ? "" : War.war.getDeadlyAdjectives().get(this.killSeed.nextInt(War.war.getDeadlyAdjectives().size()));
                 this.broadcast("pvp.kill.format", attackerString + ChatColor.WHITE, adjectiveString, weaponString.toLowerCase().replace('_', ' '), verbString, defenderString);
+            } else {
+                this.broadcast("pvp.kill.indirect", attackerString + ChatColor.WHITE, defenderString);
             }
         }
+
         warAttacker.addKill(defender);
         if (attackerTeam.getTeamConfig().resolveBoolean(TeamConfig.XPKILLMETER)) {
             attacker.setLevel(warAttacker.getKills());
@@ -911,6 +922,11 @@ public class Warzone {
      */
     public void handleSuicide(Player player) {
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        LastDamager lastDamager = warPlayer.getLastDamager();
+        if (!lastDamager.isValid()) {
+            this.handleKill(lastDamager.getAttacker(), player, lastDamager.getDamager());
+            return;
+        }
         if (this.getWarzoneConfig().getBoolean(WarzoneConfig.DEATHMESSAGES)) {
             String defenderString = warPlayer.getTeam().getKind().getColor() + player.getName() + ChatColor.WHITE;
             this.broadcast("pvp.kill.self", defenderString);
@@ -925,8 +941,14 @@ public class Warzone {
      * @param event Event causing damage
      */
     public void handleNaturalKill(Player player, EntityDamageEvent event) {
+        WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        LastDamager lastDamager = warPlayer.getLastDamager();
+        if (!lastDamager.isValid()) {
+            this.handleKill(lastDamager.getAttacker(), player, lastDamager.getDamager());
+            return;
+        }
+
         if (this.getWarzoneConfig().getBoolean(WarzoneConfig.DEATHMESSAGES)) {
-            WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
             String defenderString = warPlayer.getTeam().getKind().getColor() + player.getName() + ChatColor.WHITE;
             if (event instanceof EntityDamageByEntityEvent && ((EntityDamageByEntityEvent) event).getDamager() instanceof TNTPrimed) {
                 this.broadcast("pvp.death.explosion", defenderString + ChatColor.WHITE);
@@ -950,6 +972,7 @@ public class Warzone {
      */
     public synchronized void handleDeath(Player player) {
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        warPlayer.setLastDamager(null, null);
         Team playerTeam = warPlayer.getTeam();
         warPlayer.addDeath();
 

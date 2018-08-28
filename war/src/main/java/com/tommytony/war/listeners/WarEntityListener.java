@@ -222,11 +222,8 @@ public class WarEntityListener implements Listener {
              if (zone == null) {
                  return;
              }
-             // if (event.getFinalDamage() < ((Player) defender).getHealth()) {
-             //     return;
-             // }
-             boolean isDeath = event.getFinalDamage() < ((Player) defender).getHealth();
 
+            boolean isDeath = event.getFinalDamage() >= d.getHealth();
              for (Spell spell : MagicSpells.spells()) {
                  if (!(spell instanceof MinionSpell)) {
                      continue;

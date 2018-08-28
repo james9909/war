@@ -73,7 +73,7 @@ public class WarEntityListener implements Listener {
         Entity defender = event.getEntity();
 
         // Maybe an arrow was thrown
-        if (attacker != null && attacker instanceof Projectile && ((Projectile) attacker).getShooter() instanceof Player) {
+        if (attacker instanceof Projectile && ((Projectile) attacker).getShooter() instanceof Player) {
             attacker = ((Player) ((Projectile) attacker).getShooter());
         }
 
@@ -81,10 +81,14 @@ public class WarEntityListener implements Listener {
             return;
         }
 
-        if (attacker instanceof Player && defender instanceof Player) {
+        if (!(defender instanceof Player)) {
+            return;
+        }
+
+        Player d = (Player) defender;
+        if (attacker instanceof Player) {
             // only let adversaries (same warzone, different team) attack each other
             Player a = (Player) attacker;
-            Player d = (Player) defender;
             WarPlayer aPlayer = WarPlayer.getPlayer(a.getUniqueId());
             WarPlayer dPlayer = WarPlayer.getPlayer(d.getUniqueId());
             Warzone attackerWarzone = aPlayer.getZone();
@@ -205,17 +209,15 @@ public class WarEntityListener implements Listener {
                     War.war.badMsg(a, "pvp.self.notplaying");
                 } else if (defenderTeam == null) {
                     War.war.badMsg(a, "pvp.target.notplaying");
-                } else if (attacker != null && defender != null && attacker.getEntityId() == defender.getEntityId()) {
+                } else if (attacker.getEntityId() == defender.getEntityId()) {
                     // You just hit yourself, probably with a bouncing arrow
                 } else if (attackerTeam == defenderTeam) {
                     War.war.badMsg(a, "pvp.ff.disabled");
-                } else if (attackerWarzone != defenderWarzone) {
-                    War.war.badMsg(a, "pvp.target.otherzone");
                 }
 
                 event.setCancelled(true); // can't attack someone inside a warzone if you're not in a team
             }
-        } else if (defender instanceof Player && attacker instanceof LivingEntity) {
+        } else if (attacker instanceof LivingEntity) {
              LivingEntity monster = (LivingEntity) attacker;
              WarPlayer warDefender = WarPlayer.getPlayer(defender.getUniqueId());
              Warzone zone = warDefender.getZone();

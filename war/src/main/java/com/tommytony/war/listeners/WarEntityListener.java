@@ -71,27 +71,30 @@ public class WarEntityListener implements Listener {
         }
 
         Player d = (Player) defender;
+        WarPlayer warDefender = WarPlayer.getPlayer(defender.getUniqueId());
+        if (warDefender.getZone() == null) {
+            return;
+        }
+
+        LoadoutSelection defenderLoadoutState = warDefender.getLoadoutSelection();
+        if (defenderLoadoutState.isStillInSpawn()) {
+            event.setCancelled(true);
+            return;
+        }
+
         if (attacker instanceof Player) {
             // only let adversaries (same warzone, different team) attack each other
             Player a = (Player) attacker;
-            WarPlayer aPlayer = WarPlayer.getPlayer(a.getUniqueId());
-            WarPlayer dPlayer = WarPlayer.getPlayer(d.getUniqueId());
-            Warzone attackerWarzone = aPlayer.getZone();
-            Team attackerTeam = aPlayer.getTeam();
-            Warzone defenderWarzone = dPlayer.getZone();
-            Team defenderTeam = dPlayer.getTeam();
+            WarPlayer warAttacker = WarPlayer.getPlayer(a.getUniqueId());
+            Warzone attackerWarzone = warAttacker.getZone();
+            Team attackerTeam = warAttacker.getTeam();
+            Warzone defenderWarzone = warDefender.getZone();
+            Team defenderTeam = warDefender.getTeam();
 
             if ((attackerTeam != null && defenderTeam != null && attackerTeam != defenderTeam && attackerWarzone == defenderWarzone) || (attackerTeam != null && defenderTeam != null
                 && attacker.getEntityId() == defender.getEntityId())) {
 
-                LoadoutSelection defenderLoadoutState = dPlayer.getLoadoutSelection();
-                if (defenderLoadoutState.isStillInSpawn()) {
-                    // War.war.badMsg(a, "pvp.target.spawn");
-                    event.setCancelled(true);
-                    return;
-                }
-
-                LoadoutSelection attackerLoadoutState = aPlayer.getLoadoutSelection();
+                LoadoutSelection attackerLoadoutState = warAttacker.getLoadoutSelection();
                 if (attackerLoadoutState.isStillInSpawn()) {
                     // War.war.badMsg(a, "pvp.self.spawn");
                     event.setCancelled(true);
@@ -99,11 +102,11 @@ public class WarEntityListener implements Listener {
                 }
 
                 // Make sure none of them are locked in by respawn timer
-                if (defenderWarzone.isRespawning(dPlayer)) {
+                if (defenderWarzone.isRespawning(warDefender)) {
                     War.war.badMsg(a, "pvp.target.respawn");
                     event.setCancelled(true);
                     return;
-                } else if (attackerWarzone.isRespawning(aPlayer)) {
+                } else if (attackerWarzone.isRespawning(warAttacker)) {
                     War.war.badMsg(a, "pvp.self.respawn");
                     event.setCancelled(true);
                     return;
@@ -135,17 +138,17 @@ public class WarEntityListener implements Listener {
                     if (d == a) {
                         defenderWarzone.handleSuicide(d);
                     } else {
-                        dPlayer.setLastDamager(a, event.getDamager());
+                        warDefender.setLastDamager(a, event.getDamager());
                         defenderWarzone.handleKill(a, d, event.getDamager());
                     }
-                } else if (defenderWarzone.isBombThief(dPlayer) && d.getLocation().distance(a.getLocation()) < 2) {
+                } else if (defenderWarzone.isBombThief(warDefender) && d.getLocation().distance(a.getLocation()) < 2) {
                     // Close combat, close enough to detonate
-                    Bomb bomb = defenderWarzone.getBombForThief(dPlayer);
+                    Bomb bomb = defenderWarzone.getBombForThief(warDefender);
 
                     // Kill the bomber
                     WarPlayerDeathEvent event1 = new WarPlayerDeathEvent(defenderWarzone, d, null, event.getCause());
                     War.war.getServer().getPluginManager().callEvent(event1);
-                    aPlayer.addKill(d);
+                    warAttacker.addKill(d);
                     defenderWarzone.handleDeath(d);
 
                     if (defenderWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
@@ -169,20 +172,20 @@ public class WarEntityListener implements Listener {
                     }
                 } else {
                     // Regular damage (but not enough to kill), so record it
-                    dPlayer.setLastDamager(a, event.getDamager());
+                    warDefender.setLastDamager(a, event.getDamager());
                 }
             } else if (attackerTeam != null && defenderTeam != null && attackerTeam == defenderTeam && attackerWarzone == defenderWarzone && attacker.getEntityId() != defender.getEntityId()) {
                 // same team, but not same person
                 if (attackerWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.FRIENDLYFIRE)) {
                     War.war.badMsg(a, "pvp.ff.enabled"); // if ff is on, let the attack go through
-                    dPlayer.setLastDamager(aPlayer.getPlayer(), aPlayer.getPlayer());
+                    warDefender.setLastDamager(warAttacker.getPlayer(), warAttacker.getPlayer());
                 } else {
                     War.war.badMsg(a, "pvp.ff.disabled");
                     event.setCancelled(true); // ff is off
                 }
             } else if (attackerTeam == null && defenderTeam == null && War.war.canPvpOutsideZones(a)) {
                 // let normal PVP through is its not turned off or if you have perms
-                dPlayer.setLastDamager(aPlayer.getPlayer(), aPlayer.getPlayer());
+                warDefender.setLastDamager(warAttacker.getPlayer(), warAttacker.getPlayer());
             } else if (attackerTeam == null && defenderTeam == null && !War.war.canPvpOutsideZones(a)) {
                 if (!War.war.getWarConfig().getBoolean(WarConfig.DISABLEPVPMESSAGE)) {
                     War.war.badMsg(a, "pvp.outside.permission");
@@ -204,7 +207,6 @@ public class WarEntityListener implements Listener {
             }
         } else if (attacker instanceof LivingEntity) {
              LivingEntity monster = (LivingEntity) attacker;
-             WarPlayer warDefender = WarPlayer.getPlayer(defender.getUniqueId());
              Warzone zone = warDefender.getZone();
              if (zone == null) {
                  return;

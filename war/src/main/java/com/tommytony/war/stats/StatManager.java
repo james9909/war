@@ -1,14 +1,11 @@
 package com.tommytony.war.stats;
 
 import com.tommytony.war.War;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import org.bukkit.entity.Player;
+
+import java.sql.*;
 import java.util.function.Consumer;
 import java.util.logging.Level;
-import org.bukkit.entity.Player;
 
 public class StatManager {
 

@@ -5,8 +5,9 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.mapper.WarYmlMapper;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
-import java.util.logging.Level;
 import org.bukkit.command.CommandSender;
+
+import java.util.logging.Level;
 
 /**
  * Deletes a warzone.

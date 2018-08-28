@@ -1,7 +1,8 @@
 package com.tommytony.war.utility;
 
-import java.util.List;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 public class DeferredBlockReset {
 

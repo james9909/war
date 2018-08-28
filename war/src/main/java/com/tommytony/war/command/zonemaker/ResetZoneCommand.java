@@ -6,9 +6,10 @@ import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.runnable.PartialZoneResetJob;
+import org.bukkit.command.CommandSender;
+
 import java.util.Iterator;
 import java.util.logging.Level;
-import org.bukkit.command.CommandSender;
 
 
 public class ResetZoneCommand extends AbstractZoneMakerCommand {

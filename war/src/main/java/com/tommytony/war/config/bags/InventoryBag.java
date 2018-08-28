@@ -4,9 +4,8 @@ import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.Reward;
-import java.util.ArrayList;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class InventoryBag {

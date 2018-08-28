@@ -1,9 +1,10 @@
 package com.tommytony.war.event;
 
 import com.tommytony.war.Team;
-import java.util.List;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import java.util.List;
 
 public class WarScoreCapEvent extends Event {
 

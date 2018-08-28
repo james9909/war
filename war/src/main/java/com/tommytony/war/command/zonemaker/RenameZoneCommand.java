@@ -6,10 +6,11 @@ import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.mapper.WarYmlMapper;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
+import org.bukkit.command.CommandSender;
+
 import java.io.File;
 import java.sql.SQLException;
 import java.util.logging.Level;
-import org.bukkit.command.CommandSender;
 
 public class RenameZoneCommand extends AbstractZoneMakerCommand {
 

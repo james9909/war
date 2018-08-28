@@ -7,11 +7,12 @@ import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
-import java.util.Collections;
-import java.util.logging.Level;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Collections;
+import java.util.logging.Level;
 
 /**
  * Places a soawn

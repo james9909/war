@@ -2,14 +2,12 @@ package com.tommytony.war.mapper;
 
 import com.tommytony.war.War;
 import com.tommytony.war.utility.Loadout;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class LoadoutYmlMapper {
 

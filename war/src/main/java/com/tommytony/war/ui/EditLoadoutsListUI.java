@@ -4,14 +4,13 @@ import com.tommytony.war.Team;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.utility.Loadout;
-import java.util.List;
-import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Map;
 
 public class EditLoadoutsListUI extends ChestUI {
 

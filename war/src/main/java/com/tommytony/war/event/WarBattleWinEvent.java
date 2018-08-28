@@ -2,9 +2,10 @@ package com.tommytony.war.event;
 
 import com.tommytony.war.Team;
 import com.tommytony.war.Warzone;
-import java.util.List;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import java.util.List;
 
 public class WarBattleWinEvent extends Event {
 

@@ -3,11 +3,12 @@ package com.tommytony.war.config.bags;
 import com.tommytony.war.War;
 import com.tommytony.war.config.WarConfig;
 import com.tommytony.war.mapper.WarYmlMapper;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.logging.Level;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 
 public class WarConfigBag {
 

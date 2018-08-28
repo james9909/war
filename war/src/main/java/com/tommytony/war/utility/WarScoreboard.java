@@ -7,17 +7,18 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.structure.CapturePoint;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WarScoreboard {
 

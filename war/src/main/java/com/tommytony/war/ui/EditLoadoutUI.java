@@ -7,11 +7,12 @@ import com.tommytony.war.config.bags.TeamConfigBag;
 import com.tommytony.war.config.bags.WarConfigBag;
 import com.tommytony.war.config.bags.WarzoneConfigBag;
 import com.tommytony.war.utility.Loadout;
-import java.util.Arrays;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
 
 public class EditLoadoutUI extends ChestUI {
 

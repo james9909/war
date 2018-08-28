@@ -1,10 +1,11 @@
 package com.tommytony.war.mapper;
 
 import com.tommytony.war.utility.Reward;
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RewardYmlMapper {
 

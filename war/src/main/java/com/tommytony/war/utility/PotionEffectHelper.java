@@ -1,8 +1,9 @@
 package com.tommytony.war.utility;
 
-import java.util.Collection;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
+
+import java.util.Collection;
 
 public class PotionEffectHelper {
 

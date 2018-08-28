@@ -1,10 +1,11 @@
 package com.tommytony.war.runnable;
 
 import com.tommytony.war.War;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public abstract class LogSqlJob extends BukkitRunnable {
 

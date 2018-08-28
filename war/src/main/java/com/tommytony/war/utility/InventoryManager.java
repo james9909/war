@@ -1,14 +1,15 @@
 package com.tommytony.war.utility;
 
 import com.tommytony.war.War;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Behavior adapted from MobArena's own InventoryManager

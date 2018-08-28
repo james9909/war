@@ -8,11 +8,12 @@ import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.config.TeamSpawnStyle;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.logging.Level;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 
 public class TeamConfigBag {
 

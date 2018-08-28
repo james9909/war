@@ -4,11 +4,12 @@ import com.tommytony.war.War;
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.command.regular.AbstractWarCommand;
 import com.tommytony.war.mapper.WarYmlMapper;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.logging.Level;
 
 /**
  * Makes a player zonemaker and other way round.

@@ -6,10 +6,11 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
-import java.util.logging.Level;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.logging.Level;
 
 /**
  * Places a teamflag

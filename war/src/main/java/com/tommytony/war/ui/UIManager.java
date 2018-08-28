@@ -1,8 +1,6 @@
 package com.tommytony.war.ui;
 
 import com.tommytony.war.War;
-import java.util.HashMap;
-import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,6 +12,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Connor on 7/25/2017.

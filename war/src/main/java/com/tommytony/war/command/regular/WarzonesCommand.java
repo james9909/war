@@ -3,9 +3,10 @@ package com.tommytony.war.command.regular;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
-import java.text.MessageFormat;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.text.MessageFormat;
 
 /**
  * Lists all warzones

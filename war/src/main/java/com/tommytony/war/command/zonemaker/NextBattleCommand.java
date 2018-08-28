@@ -4,8 +4,9 @@ import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.runnable.PartialZoneResetJob;
-import java.util.logging.Level;
 import org.bukkit.command.CommandSender;
+
+import java.util.logging.Level;
 
 
 public class NextBattleCommand extends AbstractZoneMakerCommand {

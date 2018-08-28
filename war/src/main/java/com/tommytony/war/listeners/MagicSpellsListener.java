@@ -1,7 +1,5 @@
 package com.tommytony.war.listeners;
 
-import static org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH;
-
 import com.nisovin.magicspells.Spell;
 import com.nisovin.magicspells.events.MinionTargetEvent;
 import com.nisovin.magicspells.events.SpellCastEvent;
@@ -13,13 +11,13 @@ import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.utility.LoadoutSelection;
-import java.lang.reflect.Field;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
+import java.lang.reflect.Field;
 
 public class MagicSpellsListener implements Listener {
 

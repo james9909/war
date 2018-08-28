@@ -6,13 +6,14 @@ import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.structure.CapturePoint;
-import java.util.Iterator;
-import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.Iterator;
+import java.util.Set;
 
 public class CapturePointTimer extends BukkitRunnable {
 

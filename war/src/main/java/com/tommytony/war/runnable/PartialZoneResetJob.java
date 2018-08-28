@@ -5,6 +5,12 @@ import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.mapper.ZoneVolumeMapper;
 import com.tommytony.war.volume.ZoneVolume;
+import org.bukkit.Material;
+import org.bukkit.block.BlockState;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -14,11 +20,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import org.bukkit.Material;
-import org.bukkit.block.BlockState;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class PartialZoneResetJob extends BukkitRunnable implements Cloneable {
 

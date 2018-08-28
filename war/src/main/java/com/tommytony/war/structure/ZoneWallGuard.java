@@ -3,14 +3,15 @@ package com.tommytony.war.structure;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.utility.Direction;
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**

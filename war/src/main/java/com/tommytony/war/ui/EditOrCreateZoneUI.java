@@ -1,23 +1,20 @@
 package com.tommytony.war.ui;
 
-import com.google.common.collect.ImmutableList;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.ZoneSetter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Connor on 7/27/2017.

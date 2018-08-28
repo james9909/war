@@ -1,14 +1,7 @@
 package com.tommytony.war;
 
 import com.tommytony.war.command.WarCommandHandler;
-import com.tommytony.war.config.FlagReturn;
-import com.tommytony.war.config.KillstreakReward;
-import com.tommytony.war.config.MySQLConfig;
-import com.tommytony.war.config.TeamConfig;
-import com.tommytony.war.config.TeamKind;
-import com.tommytony.war.config.TeamSpawnStyle;
-import com.tommytony.war.config.WarConfig;
-import com.tommytony.war.config.WarzoneConfig;
+import com.tommytony.war.config.*;
 import com.tommytony.war.config.bags.InventoryBag;
 import com.tommytony.war.config.bags.TeamConfigBag;
 import com.tommytony.war.config.bags.WarConfigBag;
@@ -28,21 +21,6 @@ import com.tommytony.war.utility.InventoryManager;
 import com.tommytony.war.utility.Reward;
 import com.tommytony.war.utility.SizeCounter;
 import com.tommytony.war.utility.WarLogFormatter;
-import java.io.File;
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.UUID;
-import java.util.logging.FileHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Level;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -59,6 +37,14 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.logging.FileHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Level;
 
 /**
  * Main class of War

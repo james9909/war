@@ -5,9 +5,10 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
 import com.tommytony.war.structure.Bomb;
-import java.util.logging.Level;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.logging.Level;
 
 /**
  * Places a bomb

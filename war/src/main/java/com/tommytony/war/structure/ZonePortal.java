@@ -6,11 +6,12 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.utility.Direction;
 import com.tommytony.war.volume.Volume;
-import java.text.MessageFormat;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+
+import java.text.MessageFormat;
 
 public class ZonePortal {
 

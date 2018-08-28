@@ -5,13 +5,14 @@ import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.config.TeamKind;
-import java.util.Collections;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Collections;
 
 /**
  * Created by Connor on 7/25/2017.

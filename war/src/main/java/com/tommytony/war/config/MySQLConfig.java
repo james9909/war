@@ -1,12 +1,13 @@
 package com.tommytony.war.config;
 
+import org.apache.commons.lang.Validate;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemoryConfiguration;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
-import org.apache.commons.lang.Validate;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemoryConfiguration;
 
 /**
  * Storage class for MySQL configuration settings.

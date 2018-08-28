@@ -1,10 +1,11 @@
 package com.tommytony.war.runnable;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DeferredBlockResetsJob implements Runnable {
 

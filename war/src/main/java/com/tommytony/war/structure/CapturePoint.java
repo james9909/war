@@ -5,15 +5,16 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.volume.Volume;
+import org.apache.commons.lang.Validate;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.BlockState;
+
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.Validate;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.BlockState;
 
 /**
  * Capture points

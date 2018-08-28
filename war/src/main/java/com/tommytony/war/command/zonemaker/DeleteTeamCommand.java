@@ -7,8 +7,9 @@ import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
 import com.tommytony.war.volume.Volume;
-import java.util.logging.Level;
 import org.bukkit.command.CommandSender;
+
+import java.util.logging.Level;
 
 /**
  * Deletes a team.

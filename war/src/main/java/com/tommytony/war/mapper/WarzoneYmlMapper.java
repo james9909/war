@@ -6,28 +6,21 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.WarzoneConfig;
-import com.tommytony.war.structure.Bomb;
-import com.tommytony.war.structure.Cake;
-import com.tommytony.war.structure.CapturePoint;
-import com.tommytony.war.structure.Monument;
-import com.tommytony.war.structure.ZonePortal;
+import com.tommytony.war.structure.*;
 import com.tommytony.war.utility.Reward;
 import com.tommytony.war.volume.Volume;
-import java.io.File;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.logging.Level;
 
 public class WarzoneYmlMapper {
 

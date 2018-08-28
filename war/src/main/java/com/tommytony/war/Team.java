@@ -1,36 +1,27 @@
 package com.tommytony.war;
 
-import com.tommytony.war.config.bags.InventoryBag;
 import com.tommytony.war.config.TeamConfig;
-import com.tommytony.war.config.bags.TeamConfigBag;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.TeamSpawnStyle;
+import com.tommytony.war.config.bags.InventoryBag;
+import com.tommytony.war.config.bags.TeamConfigBag;
 import com.tommytony.war.utility.Direction;
 import com.tommytony.war.utility.WarScoreboard;
 import com.tommytony.war.volume.Volume;
-import java.io.File;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
-import java.util.logging.Level;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Sign;
+
+import java.io.File;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Level;
 
 /**
  * @author tommytony

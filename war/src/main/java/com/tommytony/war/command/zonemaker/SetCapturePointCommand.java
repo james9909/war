@@ -6,9 +6,10 @@ import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
 import com.tommytony.war.structure.CapturePoint;
-import java.util.logging.Level;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.logging.Level;
 
 /**
  * Sets a capture point

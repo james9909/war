@@ -55,6 +55,7 @@ import java.util.logging.Level;
 public class Warzone {
 
     private final Set<Team> teams = new HashSet<>();
+    private final Set<WarPlayer> spectators = new HashSet<>();
     private final Set<Monument> monuments = new HashSet<>();
     private final Set<CapturePoint> capturePoints = new HashSet<>();
     private final Set<Bomb> bombs = new HashSet<>();
@@ -786,6 +787,10 @@ public class Warzone {
             War.war.badMsg(player, "You are already in a warzone");
             return null;
         }
+        if (warPlayer.isSpectating()) {
+            War.war.badMsg(player, "You are currently spectating a warzone");
+            return null;
+        }
 
         int lowest = Integer.MAX_VALUE;
         Team toAssign = null;
@@ -1062,6 +1067,11 @@ public class Warzone {
 
     private void handlePlayerLeave(Player player) {
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        if (warPlayer.isSpectating()) {
+            this.removeSpectator(warPlayer);
+            return;
+        }
+
         Team playerTeam = warPlayer.getTeam();
         if (playerTeam != null) {
             playerTeam.removePlayer(warPlayer);
@@ -1302,6 +1312,11 @@ public class Warzone {
                         lossReward.rewardPlayer(player);
                     }
                 }
+            }
+            for (Iterator<WarPlayer> it = this.spectators.iterator(); it.hasNext();) {
+                WarPlayer spectator = it.next();
+                it.remove();
+                spectator.restorePlayerState();
             }
             t.resetPoints();
             t.getPlayers().clear(); // empty the team
@@ -1701,5 +1716,33 @@ public class Warzone {
 
     public void setPvpReady(boolean ready) {
         this.pvpReady = ready;
+    }
+
+    public void addSpectator(WarPlayer warPlayer) {
+        warPlayer.setZone(this);
+        warPlayer.setSpectating(true);
+        this.spectators.add(warPlayer);
+        warPlayer.savePlayerState();
+        Player player = warPlayer.getPlayer();
+
+        int size = this.teams.size();
+        int index = new Random().nextInt(size);
+        int i = 0;
+        for (Team team: this.teams) {
+            if (i == index) {
+                player.teleport(team.getRandomSpawn());
+                player.setGameMode(GameMode.SPECTATOR);
+                War.war.msg(player, "You are now a spectator!");
+                return;
+            }
+            i++;
+        }
+    }
+
+    public void removeSpectator(WarPlayer warPlayer) {
+        warPlayer.setZone(null);
+        warPlayer.setSpectating(false);
+        this.spectators.remove(warPlayer);
+        warPlayer.restorePlayerState();
     }
 }

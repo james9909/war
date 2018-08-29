@@ -32,6 +32,10 @@ public class MagicSpellsListener implements Listener {
         if (target instanceof Player) {
             WarPlayer warOwner = WarPlayer.getPlayer(owner.getUniqueId());
             WarPlayer warTarget = WarPlayer.getPlayer(target.getUniqueId());
+            if (warTarget.isSpectating()) {
+                event.setCancelled(true);
+                return;
+            }
 
             Team ownerTeam = warOwner.getTeam();
             Team targetTeam = warTarget.getTeam();
@@ -82,6 +86,11 @@ public class MagicSpellsListener implements Listener {
             Player target = (Player) livingEntity;
 
             WarPlayer targetWarPlayer = WarPlayer.getPlayer(target.getUniqueId());
+            if (targetWarPlayer.isSpectating()) {
+                event.setCancelled(true);
+                return;
+            }
+
             WarPlayer casterWarPlayer = WarPlayer.getPlayer(caster.getUniqueId());
 
             Warzone targetZone = targetWarPlayer.getZone();

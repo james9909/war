@@ -84,6 +84,9 @@ public class WarCommandHandler {
                 case "stats":
                     commandObj = new StatsCommand(this, sender, arguments);
                     break;
+                case "spectate":
+                    commandObj = new SpectateZoneCommand(this, sender, arguments);
+                    break;
                 case "setzone":
                     commandObj = new SetZoneCommand(this, sender, arguments);
                     break;

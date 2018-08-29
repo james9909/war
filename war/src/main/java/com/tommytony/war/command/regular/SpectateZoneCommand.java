@@ -1,30 +1,25 @@
 package com.tommytony.war.command.regular;
 
+import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.config.WarzoneConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-/**
- * Joins a team.
- *
- * @author Tim Düsterhus
- */
-public class JoinCommand extends AbstractWarCommand {
-
-    public JoinCommand(WarCommandHandler handler, CommandSender sender, String[] args) {
+public class SpectateZoneCommand extends AbstractWarCommand {
+    public SpectateZoneCommand(WarCommandHandler handler, CommandSender sender, String[] args) {
         super(handler, sender, args);
     }
 
     @Override
     public boolean handle() {
-        if (!(this.getSender() instanceof Player)) {
+        CommandSender sender = this.getSender();
+        if (!(sender instanceof Player)) {
             this.badMsg("command.console");
             return true;
         }
-
-        Player player = (Player) this.getSender();
+        Player player = (Player) sender;
 
         Warzone zone;
         if (this.args.length == 0) {
@@ -36,15 +31,24 @@ public class JoinCommand extends AbstractWarCommand {
             this.badMsg("That's not a valid warzone");
             return true;
         }
+
         if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.DISABLED)) {
             this.badMsg("join.disabled");
         } else if (zone.isReinitializing()) {
             this.badMsg("join.disabled");
-        } else if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.JOINMIDBATTLE) && zone.isEnoughPlayers()) {
-            this.badMsg("join.progress");
         } else {
-            zone.autoAssign(player);
+            WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+            if (warPlayer.isSpectating()) {
+                this.badMsg("You are already spectating!");
+                return true;
+            }
+            if (warPlayer.getZone() != null) {
+                this.badMsg("You are already playing!");
+                return true;
+            }
+            zone.addSpectator(warPlayer);
         }
+
         return true;
     }
 }

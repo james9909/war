@@ -369,6 +369,13 @@ public class WarPlayerListener implements Listener {
             }
         }
 
+        if (warPlayer.isSpectating() && locZone == null) {
+            // Prevent spectators from leaving ths bounds
+            War.war.badMsg(player, "Please don't leave the warzone!");
+            event.setCancelled(true);
+            return;
+        }
+
         if (playerWarzone != null && playerTeam != null) {
             // Player belongs to a warzone team but is outside: he snuck out or is at spawn and died
             if (locZone == null) {
@@ -674,7 +681,7 @@ public class WarPlayerListener implements Listener {
                 warPlayer.getLoadoutSelection().setStillInSpawn(false);
             }
 
-        } else if (locZone != null && !isMaker) {
+        } else if (locZone != null && !isMaker && !warPlayer.isSpectating()) {
             // player is not in any team, but inside warzone boundaries, get him out
             player.teleport(player.getWorld().getSpawnLocation());
             War.war.badMsg(player, "zone.noteamnotice");
@@ -768,10 +775,16 @@ public class WarPlayerListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
+            if (event.getCause() == TeleportCause.SPECTATE) {
+                event.setCancelled(true);
+                War.war.badMsg(player, "Sorry, you can't do this.");
+                return;
+            }
+
             if (!zone.getVolume().contains(event.getTo())) {
                 // Prevent teleporting out of the warzone
                 if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
-                    War.war.badMsg(event.getPlayer(), "Use /leave (or /war leave) to exit the zone.");
+                    War.war.badMsg(player, "Use /leave (or /war leave) to exit the zone.");
                 }
                 zone.dropAllStolenObjects(warPlayer, false);
                 zone.respawnPlayer(player);

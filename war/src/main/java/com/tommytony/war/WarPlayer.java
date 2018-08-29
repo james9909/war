@@ -35,6 +35,8 @@ public class WarPlayer {
     private int deathCount;
     private int healCount;
 
+    private boolean spectating;
+
     private LastDamager lastDamager;
 
     public WarPlayer(UUID uuid) {
@@ -44,6 +46,7 @@ public class WarPlayer {
         this.healCount = 0;
         totalPlayers.put(uuid, this);
         this.lastDamager = new LastDamager();
+        this.spectating = false;
     }
 
     public static WarPlayer getPlayer(UUID uuid) {
@@ -219,5 +222,13 @@ public class WarPlayer {
 
     public void setLastDamager(Player attacker, Entity damager) {
         this.lastDamager.setAttacker(attacker, damager);
+    }
+
+    public boolean isSpectating() {
+        return spectating;
+    }
+
+    public void setSpectating(boolean spectating) {
+        this.spectating = spectating;
     }
 }

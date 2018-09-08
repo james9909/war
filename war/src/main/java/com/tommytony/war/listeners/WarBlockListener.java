@@ -27,12 +27,19 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * @author tommytony
  */
 public class WarBlockListener implements Listener {
+
+    private static final HashMap<Material, String> DROP_NAMES = new HashMap<>();
+    static {
+        DROP_NAMES.put(Material.TNT, ChatColor.translateAlternateColorCodes('&', "&4Explosives"));
+        DROP_NAMES.put(Material.SMOOTH_BRICK, ChatColor.translateAlternateColorCodes('&', "&7Stone Bricks"));
+    }
 
     @EventHandler
     public void onBlockPlace(final BlockPlaceEvent event) {
@@ -357,10 +364,11 @@ public class WarBlockListener implements Listener {
             return;
         }
 
-        if (blockZone != null && block.getType() == Material.TNT) {
+        Material blockType = block.getType();
+        if (blockZone != null && DROP_NAMES.containsKey(blockType)) {
             if (event instanceof BlockBreakEvent) {
-                ItemStack toDrop = new ItemStack(Material.TNT);
-                String name = ChatColor.translateAlternateColorCodes('&', "&4Explosives");
+                ItemStack toDrop = new ItemStack(blockType);
+                String name = DROP_NAMES.get(blockType);
                 ItemMeta meta = toDrop.getItemMeta();
                 meta.setDisplayName(name);
                 toDrop.setItemMeta(meta);

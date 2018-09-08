@@ -770,25 +770,26 @@ public class WarPlayerListener implements Listener {
         Player player = event.getPlayer();
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
         Warzone zone = warPlayer.getZone();
-        if (zone != null) {
-            if (event.getCause() == TeleportCause.ENDER_PEARL) {
-                event.setCancelled(true);
-                return;
-            }
-            if (event.getCause() == TeleportCause.SPECTATE) {
-                event.setCancelled(true);
-                War.war.badMsg(player, "Sorry, you can't do this.");
-                return;
-            }
+        if (zone == null) {
+            return;
+        }
+        if (event.getCause() == TeleportCause.ENDER_PEARL) {
+            event.setCancelled(true);
+            return;
+        }
+        if (event.getCause() == TeleportCause.SPECTATE) {
+            event.setCancelled(true);
+            War.war.badMsg(player, "Sorry, you can't do this.");
+            return;
+        }
 
-            if (!zone.getVolume().contains(event.getTo())) {
-                // Prevent teleporting out of the warzone
-                if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
-                    War.war.badMsg(player, "Use /leave (or /war leave) to exit the zone.");
-                }
-                zone.dropAllStolenObjects(warPlayer, false);
-                zone.respawnPlayer(player);
+        if (!zone.getVolume().contains(event.getTo())) {
+            // Prevent teleporting out of the warzone
+            if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
+                War.war.badMsg(player, "Use /leave (or /war leave) to exit the zone.");
             }
+            zone.dropAllStolenObjects(warPlayer, false);
+            zone.respawnPlayer(player);
         }
     }
 

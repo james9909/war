@@ -296,21 +296,22 @@ public class WarEntityListener implements Listener {
         }
 
         int dontExplodeSize = dontExplode.size();
-        if (dontExplode.size() > 0) {
-            // Reset the exploded blocks that shouldn't have exploded (some of these are zone artifacts, if rollbackexplosion some may be outside-of-zone blocks
-            DeferredBlockResetsJob job = new DeferredBlockResetsJob();
-            for (Block dont : dontExplode) {
-                job.add(dont.getState());
-            }
-            War.war.getServer().getScheduler().scheduleSyncDelayedTask(War.war, job);
-
-            // Changed explosion yield following proportion of explosion prevention (makes drops less buggy too)
-            int explodedSize = explodedBlocks.size();
-            float middleYeild = (float) (explodedSize - dontExplodeSize) / (float) explodedSize;
-            float newYeild = middleYeild * event.getYield();
-
-            event.setYield(newYeild);
+        if (dontExplode.isEmpty()) {
+            return;
         }
+        // Reset the exploded blocks that shouldn't have exploded (some of these are zone artifacts, if rollbackexplosion some may be outside-of-zone blocks
+        DeferredBlockResetsJob job = new DeferredBlockResetsJob();
+        for (Block dont : dontExplode) {
+            job.add(dont.getState());
+        }
+        War.war.getServer().getScheduler().scheduleSyncDelayedTask(War.war, job);
+
+        // Changed explosion yield following proportion of explosion prevention (makes drops less buggy too)
+        int explodedSize = explodedBlocks.size();
+        float middleYeild = (float) (explodedSize - dontExplodeSize) / (float) explodedSize;
+        float newYeild = middleYeild * event.getYield();
+
+        event.setYield(newYeild);
     }
 
     /**
@@ -397,15 +398,17 @@ public class WarEntityListener implements Listener {
         Player player = (Player) entity;
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
         Warzone zone = warPlayer.getZone();
-        if (zone != null) {
-            Team team = warPlayer.getTeam();
-            if (event.getRegainReason() == RegainReason.SATIATED && team.getTeamConfig().resolveBoolean(TeamConfig.NOHUNGER)) {
-                // noHunger setting means you can't auto-heal with full hunger bar (use saturation instead to control how fast you get hungry)
-                event.setCancelled(true);
-            } else if (event.getRegainReason() == RegainReason.REGEN) {
-                // disable peaceful mode regen
-                event.setCancelled(true);
-            }
+        if (zone == null) {
+            return;
+        }
+
+        Team team = warPlayer.getTeam();
+        if (event.getRegainReason() == RegainReason.SATIATED && team.getTeamConfig().resolveBoolean(TeamConfig.NOHUNGER)) {
+            // noHunger setting means you can't auto-heal with full hunger bar (use saturation instead to control how fast you get hungry)
+            event.setCancelled(true);
+        } else if (event.getRegainReason() == RegainReason.REGEN) {
+            // disable peaceful mode regen
+            event.setCancelled(true);
         }
     }
 
@@ -430,19 +433,20 @@ public class WarEntityListener implements Listener {
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
         Warzone zone = warPlayer.getZone();
 
-        if (zone != null) {
-            event.getDrops().clear();
-            if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
-                // catch the odd death that gets away from us when usually intercepting and preventing deaths
-                zone.handleDeath(player);
-                Team team = warPlayer.getTeam();
-                if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.DEATHMESSAGES)) {
-                    zone.broadcast("pvp.death.other", team.getKind().getColor() + player.getName());
-                }
-                War.war.getLogger().log(Level.WARNING, "We missed the death of player {0} - something went wrong.", player.getName());
-            } else {
-                event.setDeathMessage("");
+        if (zone == null) {
+            return;
+        }
+        event.getDrops().clear();
+        if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
+            // catch the odd death that gets away from us when usually intercepting and preventing deaths
+            zone.handleDeath(player);
+            Team team = warPlayer.getTeam();
+            if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.DEATHMESSAGES)) {
+                zone.broadcast("pvp.death.other", team.getKind().getColor() + player.getName());
             }
+            War.war.getLogger().log(Level.WARNING, "We missed the death of player {0} - something went wrong.", player.getName());
+        } else {
+            event.setDeathMessage("");
         }
     }
 
@@ -469,19 +473,20 @@ public class WarEntityListener implements Listener {
             return;
         }
         if (event.getEntityType() == EntityType.EGG) {
-            if (event.getEntity().hasMetadata("warAirstrike")) {
-                Location loc = event.getEntity().getLocation();
-                Warzone zone = Warzone.getZoneByLocation(loc);
-                if (zone == null) {
-                    return;
-                }
-                Location tntPlace = new Location(loc.getWorld(), loc.getX(), Warzone.getZoneByLocation(loc).getVolume().getMaxY(), loc.getZ());
-                loc.getWorld().spawnEntity(tntPlace, EntityType.PRIMED_TNT);
-                loc.getWorld().spawnEntity(tntPlace.clone().add(new Vector(2, 0, 0)), EntityType.PRIMED_TNT);
-                loc.getWorld().spawnEntity(tntPlace.clone().add(new Vector(-2, 0, 0)), EntityType.PRIMED_TNT);
-                loc.getWorld().spawnEntity(tntPlace.clone().add(new Vector(0, 0, 2)), EntityType.PRIMED_TNT);
-                loc.getWorld().spawnEntity(tntPlace.clone().add(new Vector(0, 0, -2)), EntityType.PRIMED_TNT);
+            if (!event.getEntity().hasMetadata("warAirstrike")) {
+                return;
             }
+            Location loc = event.getEntity().getLocation();
+            Warzone zone = Warzone.getZoneByLocation(loc);
+            if (zone == null) {
+                return;
+            }
+            Location tntPlace = new Location(loc.getWorld(), loc.getX(), Warzone.getZoneByLocation(loc).getVolume().getMaxY(), loc.getZ());
+            loc.getWorld().spawnEntity(tntPlace, EntityType.PRIMED_TNT);
+            loc.getWorld().spawnEntity(tntPlace.clone().add(new Vector(2, 0, 0)), EntityType.PRIMED_TNT);
+            loc.getWorld().spawnEntity(tntPlace.clone().add(new Vector(-2, 0, 0)), EntityType.PRIMED_TNT);
+            loc.getWorld().spawnEntity(tntPlace.clone().add(new Vector(0, 0, 2)), EntityType.PRIMED_TNT);
+            loc.getWorld().spawnEntity(tntPlace.clone().add(new Vector(0, 0, -2)), EntityType.PRIMED_TNT);
         }
     }
 
@@ -492,17 +497,21 @@ public class WarEntityListener implements Listener {
         }
         if (event.getEntityType() == EntityType.EGG) {
             ProjectileSource shooter = event.getEntity().getShooter();
-            if (shooter instanceof Player) {
-                Player player = (Player) shooter;
-                WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
-                Warzone zone = warPlayer.getZone();
-                if (zone != null) {
-                    Team team = warPlayer.getTeam();
-                    if (War.war.getKillstreakReward().getAirstrikePlayers().remove(player.getName())) {
-                        event.getEntity().setMetadata("warAirstrike", new FixedMetadataValue(War.war, true));
-                        zone.broadcast("zone.airstrike", team.getKind().getColor() + player.getName() + ChatColor.WHITE);
-                    }
-                }
+            if (!(shooter instanceof Player)) {
+                return;
+            }
+
+            Player player = (Player) shooter;
+            WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+            Warzone zone = warPlayer.getZone();
+            if (zone == null) {
+                return;
+            }
+
+            Team team = warPlayer.getTeam();
+            if (War.war.getKillstreakReward().getAirstrikePlayers().remove(player.getName())) {
+                event.getEntity().setMetadata("warAirstrike", new FixedMetadataValue(War.war, true));
+                zone.broadcast("zone.airstrike", team.getKind().getColor() + player.getName() + ChatColor.WHITE);
             }
         }
     }

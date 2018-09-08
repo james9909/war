@@ -46,6 +46,9 @@ public class SpectateZoneCommand extends AbstractWarCommand {
                 this.badMsg("You are already playing!");
                 return true;
             }
+            if (zone.getPlayers().isEmpty()) {
+                this.badMsg("That warzone is empty.");
+            }
             zone.addSpectator(warPlayer);
         }
 

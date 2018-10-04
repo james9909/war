@@ -138,8 +138,7 @@ public class WarEntityListener implements Listener {
                     if (d == a) {
                         defenderWarzone.handleSuicide(d);
                     } else {
-                        warDefender.setLastDamager(a, event.getDamager());
-                        defenderWarzone.handleKill(a, d, event.getDamager());
+                        defenderWarzone.handleKill(a, d, event.getDamager(), true);
                     }
                 } else if (defenderWarzone.isBombThief(warDefender) && d.getLocation().distance(a.getLocation()) < 2) {
                     // Close combat, close enough to detonate
@@ -231,9 +230,10 @@ public class WarEntityListener implements Listener {
                          continue;
                      }
 
-                     warDefender.setLastDamager(caster, monster);
                      if (isDeath) {
-                         zone.handleKill(caster, warDefender.getPlayer(), monster);
+                         zone.handleKill(caster, warDefender.getPlayer(), monster, true);
+                     } else {
+                         warDefender.setLastDamager(caster, monster);
                      }
                      return;
                  } catch (Exception ignored) {

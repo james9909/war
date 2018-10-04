@@ -859,19 +859,11 @@ public class Warzone {
      * @param defender Player who was killed
      * @param damager Entity who caused the damage. Usually an arrow. Used for specific death messages. Can be null.
      */
-    public void handleKill(Player attacker, Player defender, Entity damager) {
+    public void handleKill(Player attacker, Player defender, Entity damager, boolean direct) {
         WarPlayer warAttacker = WarPlayer.getPlayer(attacker.getUniqueId());
         WarPlayer warDefender = WarPlayer.getPlayer(defender.getUniqueId());
         Team attackerTeam = warAttacker.getTeam();
         Team defenderTeam = warDefender.getTeam();
-
-        LastDamager lastDamager = warDefender.getLastDamager();
-        boolean direct = false;
-        if (!lastDamager.isValid()) {
-            attacker = lastDamager.getAttacker();
-            damager = lastDamager.getDamager();
-            direct = true;
-        }
 
         if (this.getWarzoneConfig().getBoolean(WarzoneConfig.DEATHMESSAGES)) {
             String attackerString = attackerTeam.getKind().getColor() + attacker.getName();
@@ -921,15 +913,15 @@ public class Warzone {
     }
 
     /**
-     * Handle death messages before passing to {@link #handleDeath(Player)} for post-processing. It's like {@link #handleKill(Player, Player, Entity)}, but only for suicides.
+     * Handle death messages before passing to {@link #handleDeath(Player)} for post-processing. It's like {@link #handleKill(Player, Player, Entity, boolean)}, but only for suicides.
      *
      * @param player WarPlayer who killed himself
      */
     public void handleSuicide(Player player) {
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
         LastDamager lastDamager = warPlayer.getLastDamager();
-        if (!lastDamager.isValid()) {
-            this.handleKill(lastDamager.getAttacker(), player, lastDamager.getDamager());
+        if (lastDamager.isValid()) {
+            this.handleKill(lastDamager.getAttacker(), player, lastDamager.getDamager(), false);
             return;
         }
         if (this.getWarzoneConfig().getBoolean(WarzoneConfig.DEATHMESSAGES)) {
@@ -948,8 +940,8 @@ public class Warzone {
     public void handleNaturalKill(Player player, EntityDamageEvent event) {
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
         LastDamager lastDamager = warPlayer.getLastDamager();
-        if (!lastDamager.isValid()) {
-            this.handleKill(lastDamager.getAttacker(), player, lastDamager.getDamager());
+        if (lastDamager.isValid()) {
+            this.handleKill(lastDamager.getAttacker(), player, lastDamager.getDamager(), false);
             return;
         }
 

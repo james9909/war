@@ -29,14 +29,13 @@ import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -46,6 +45,31 @@ import java.util.logging.Level;
  * @package com.tommytony.war.event
  */
 public class WarEntityListener implements Listener {
+
+    private static final HashSet<PotionEffectType> HARMFUL_POTIONS = new HashSet<>();
+    private static final HashSet<PotionEffectType> BENEFICIAL_POTIONS = new HashSet<>();
+
+    static {
+        HARMFUL_POTIONS.add(PotionEffectType.HARM);
+        HARMFUL_POTIONS.add(PotionEffectType.POISON);
+        HARMFUL_POTIONS.add(PotionEffectType.WEAKNESS);
+        HARMFUL_POTIONS.add(PotionEffectType.SLOW);
+
+        BENEFICIAL_POTIONS.add(PotionEffectType.SPEED);
+        BENEFICIAL_POTIONS.add(PotionEffectType.INCREASE_DAMAGE);
+        BENEFICIAL_POTIONS.add(PotionEffectType.REGENERATION);
+        BENEFICIAL_POTIONS.add(PotionEffectType.DAMAGE_RESISTANCE);
+        BENEFICIAL_POTIONS.add(PotionEffectType.FIRE_RESISTANCE);
+        BENEFICIAL_POTIONS.add(PotionEffectType.FAST_DIGGING);
+        BENEFICIAL_POTIONS.add(PotionEffectType.ABSORPTION);
+        BENEFICIAL_POTIONS.add(PotionEffectType.HEAL);
+        BENEFICIAL_POTIONS.add(PotionEffectType.HEALTH_BOOST);
+        BENEFICIAL_POTIONS.add(PotionEffectType.INVISIBILITY);
+        BENEFICIAL_POTIONS.add(PotionEffectType.NIGHT_VISION);
+        BENEFICIAL_POTIONS.add(PotionEffectType.WATER_BREATHING);
+        BENEFICIAL_POTIONS.add(PotionEffectType.JUMP);
+    }
+
 
     /**
      * Handles PVP-Damage
@@ -571,6 +595,57 @@ public class WarEntityListener implements Listener {
                 // prevent wolves from teleporting to players in zones
                 event.setCancelled(true);
                 event.setTo(event.getFrom());
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPotionSplash(PotionSplashEvent event) {
+        ThrownPotion potion = event.getPotion();
+        ProjectileSource shooter = potion.getShooter();
+        if (!(shooter instanceof Player)) {
+            return;
+        }
+
+        Player thrower = (Player) shooter;
+        WarPlayer warThrower = WarPlayer.getPlayer(thrower.getUniqueId());
+        if (warThrower.isSpectating()) {
+            event.setCancelled(true);
+            return;
+        }
+
+        Warzone zone = warThrower.getZone();
+        if (zone == null) {
+            return;
+        }
+
+        boolean beneficial = true;
+        Collection<PotionEffect> effects = potion.getEffects();
+        for (PotionEffect effect : effects) {
+            if (HARMFUL_POTIONS.contains(effect.getType())) {
+                beneficial = false;
+                break;
+            } else if (BENEFICIAL_POTIONS.contains(effect.getType())) {
+                break;
+            }
+        }
+
+        Collection<LivingEntity> affected = event.getAffectedEntities();
+        for (LivingEntity target : affected) {
+            if (!(target instanceof Player)) {
+                continue;
+            }
+
+            Player player = (Player) target;
+            WarPlayer warTarget = WarPlayer.getPlayer(player.getUniqueId());
+            if (warTarget.getZone() == null) {
+                event.setIntensity(target, 0);
+            } else {
+                boolean sameTeam = warTarget.getTeam() == warThrower.getTeam();
+                boolean shouldAffect = beneficial == sameTeam;
+                if (!shouldAffect) {
+                    event.setIntensity(target, 0);
+                }
             }
         }
     }

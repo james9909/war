@@ -38,7 +38,7 @@ public class WarScoreboard {
         this.player = warPlayer.getPlayer();
         this.warPlayer = warPlayer;
         this.objective = scoreboard.registerNewObjective(player.getName(), "dummy");
-        this.lines = 10;
+        this.lines = 20;
         this.lastFlash = 0;
 
         scoreboard.clearSlot(DisplaySlot.SIDEBAR);
@@ -49,26 +49,9 @@ public class WarScoreboard {
         player.setScoreboard(scoreboard);
     }
 
-    public void update() {
-        if (updating.getOrDefault(player.getUniqueId(), false)) {
-            return;
-        }
-        updating.put(player.getUniqueId(), true);
-        this.lines = 10;
-
-        Warzone zone = warPlayer.getZone();
-        addText("");
-
-        // Team name
-        Team team = warPlayer.getTeam();
-        String currentTeam = warPlayer.getTeam().getName();
-        String teamName = String.format("&6Team&7: &f%s", currentTeam);
+    public void addTeamText(Team team, boolean flash) {
+        String teamName = String.format("&6Team&7: &f%s", team.getName());
         addText(teamName);
-
-        // Kill count
-        int kills = warPlayer.getKills();
-        String killScore = String.format("&6Kills&7: &e%d", kills);
-        addText(killScore);
 
         // Team points
         String teamPoints = String.format("&6Points&7: &e%d&7/&e%d", team.getPoints(), team.getTeamConfig().resolveInt(TeamConfig.MAXSCORE));
@@ -78,12 +61,8 @@ public class WarScoreboard {
         String teamLives = String.format("&6Lives&7: &e%d&7/&e%d", team.getRemainingLives(), team.getTeamConfig().resolveInt(TeamConfig.LIFEPOOL));
         addText(teamLives);
 
-        addText("");
-
-        long now = System.currentTimeMillis();
-        boolean flash = now - lastFlash >= 1000;
-
         // Flag status
+        Warzone zone = team.getZone();
         if (team.getTeamFlag() != null) {
             // flag status
             String flagStatus = "";
@@ -117,6 +96,31 @@ public class WarScoreboard {
                 flagStatus = "&6Flag&7: &fBase";
             }
             addText(flagStatus);
+        }
+
+    }
+
+    public void update() {
+        if (updating.getOrDefault(player.getUniqueId(), false)) {
+            return;
+        }
+        updating.put(player.getUniqueId(), true);
+        this.lines = 20;
+
+        Warzone zone = warPlayer.getZone();
+        addText("");
+
+        // Kill count
+        int kills = warPlayer.getKills();
+        String killScore = String.format("&6Kills&7: &e%d", kills);
+        addText(killScore);
+        addText("");
+
+        long now = System.currentTimeMillis();
+        boolean flash = now - lastFlash >= 1000;
+        for (Team team : zone.getTeams()) {
+            addTeamText(team, flash);
+            addText("");
         }
 
         if (zone.getCapturePoints().size() == 1) {

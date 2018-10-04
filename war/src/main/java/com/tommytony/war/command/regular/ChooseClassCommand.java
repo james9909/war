@@ -1,9 +1,11 @@
 package com.tommytony.war.command.regular;
 
 import com.tommytony.war.Team;
+import com.tommytony.war.War;
 import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.WarCommandHandler;
+import com.tommytony.war.event.WarPlayerChooseClassEvent;
 import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.LoadoutSelection;
 import org.bukkit.command.CommandSender;
@@ -59,6 +61,9 @@ public class ChooseClassCommand extends AbstractWarCommand {
             loadout.giveItems(player);
             this.msg("zone.class.equip", loadoutName);
             loadoutSelection.setSelectedLoadout(loadout.getName());
+
+            WarPlayerChooseClassEvent event = new WarPlayerChooseClassEvent(player, loadout.getName());
+            War.war.getServer().getPluginManager().callEvent(event);
         } else {
             this.badMsg("zone.class.reenter");
         }

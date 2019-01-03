@@ -11,6 +11,7 @@ import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.config.WarConfig;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.event.WarPlayerDeathEvent;
+import com.tommytony.war.event.WarPlayerKillEvent;
 import com.tommytony.war.runnable.DeferredBlockResetsJob;
 import com.tommytony.war.structure.Bomb;
 import com.tommytony.war.utility.LoadoutSelection;
@@ -155,6 +156,10 @@ public class WarEntityListener implements Listener {
                     }
                     WarPlayerDeathEvent event1 = new WarPlayerDeathEvent(defenderWarzone, d, a, event.getCause());
                     War.war.getServer().getPluginManager().callEvent(event1);
+
+                    WarPlayerKillEvent killEvent = new WarPlayerKillEvent(attackerWarzone, a, d, event.getCause());
+                    War.war.getServer().getPluginManager().callEvent(killEvent);
+
                     if (!defenderWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
                         // fast respawn, don't really die
                         event.setCancelled(true);
@@ -171,7 +176,6 @@ public class WarEntityListener implements Listener {
                     // Kill the bomber
                     WarPlayerDeathEvent event1 = new WarPlayerDeathEvent(defenderWarzone, d, null, event.getCause());
                     War.war.getServer().getPluginManager().callEvent(event1);
-                    warAttacker.addKill(d);
                     defenderWarzone.handleDeath(d);
 
                     if (defenderWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {

@@ -16,6 +16,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.permissions.PermissionAttachment;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -26,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WarPlayer {
     private static final Map<UUID, WarPlayer> totalPlayers = new ConcurrentHashMap<>();
 
+    private PermissionAttachment permissions;
     private UUID uuid;
     private Team team;
     private Warzone zone;
@@ -47,6 +49,7 @@ public class WarPlayer {
         totalPlayers.put(uuid, this);
         this.lastDamager = new LastDamager();
         this.spectating = false;
+        this.permissions = getPlayer().addAttachment(War.war);
     }
 
     public static WarPlayer getPlayer(UUID uuid) {
@@ -230,5 +233,12 @@ public class WarPlayer {
 
     public void setSpectating(boolean spectating) {
         this.spectating = spectating;
+    }
+
+    public PermissionAttachment getPermissions() {
+        if (permissions == null) {
+            permissions = getPlayer().addAttachment(War.war);
+        }
+        return permissions;
     }
 }

@@ -34,6 +34,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
+import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -1713,6 +1714,7 @@ public class Warzone {
     public void addSpectator(WarPlayer warPlayer) {
         warPlayer.setZone(this);
         warPlayer.setSpectating(true);
+        warPlayer.getPermissions().setPermission("magicspells.notarget", true);
         this.spectators.add(warPlayer);
         warPlayer.savePlayerState();
         Player player = warPlayer.getPlayer();
@@ -1734,6 +1736,8 @@ public class Warzone {
     public void removeSpectator(WarPlayer warPlayer) {
         warPlayer.setZone(null);
         warPlayer.setSpectating(false);
+        warPlayer.getPermissions().unsetPermission("magicspells.notarget");
+
         this.spectators.remove(warPlayer);
         warPlayer.restorePlayerState();
     }

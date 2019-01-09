@@ -342,18 +342,18 @@ public class Warzone {
             War.war.getServer().getScheduler().runTaskLater(War.war, timer, pvpready * 20);
         }
 
-        for (Entity entity : (this.getWorld().getEntities())) {
-            if (!(entity instanceof Item)) {
-                continue;
-            }
+        // for (Entity entity : (this.getWorld().getEntities())) {
+        //     if (!(entity instanceof Item)) {
+        //         continue;
+        //     }
 
-            // validate position
-            if (!this.getVolume().contains(entity.getLocation())) {
-                continue;
-            }
+        //     // validate position
+        //     if (!this.getVolume().contains(entity.getLocation())) {
+        //         continue;
+        //     }
 
-            entity.remove();
-        }
+        //     entity.remove();
+        // }
     }
 
     public void endRound() {

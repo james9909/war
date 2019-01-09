@@ -150,9 +150,9 @@ public class WarPlayer {
         this.healCount = 0;
     }
 
-    public void addKill(Player defender) {
+    public void addKill(WarPlayer defender) {
         this.killCount++;
-        StatManager.addKill(getPlayer(), defender);
+        StatManager.addKill(this, defender);
     }
 
     public int getKills() {
@@ -161,16 +161,16 @@ public class WarPlayer {
 
     public void addDeath() {
         this.deathCount++;
-        StatManager.addDeath(getPlayer());
+        StatManager.addDeath(this);
     }
 
     public int getDeathCount() {
         return deathCount;
     }
 
-    public void addHeal(Player target, double amount) {
+    public void addHeal(WarPlayer target, double amount) {
         this.healCount++;
-        StatManager.addHeal(getPlayer(), target, amount);
+        StatManager.addHeal(this, target, amount);
     }
 
     public int getHeals() {

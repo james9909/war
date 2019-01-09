@@ -163,7 +163,7 @@ public class MagicSpellsListener implements Listener {
                 Double healAmount = (Double) field.get(healSpell);
                 healAmount = Math.min(healAmount, target.getMaxHealth() - Math.round(target.getHealth()));
 
-                casterWarPlayer.addHeal(target, healAmount / 2.0);
+                casterWarPlayer.addHeal(targetWarPlayer, healAmount / 2.0);
             } catch (Exception ignored) {
             }
         }

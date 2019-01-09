@@ -899,7 +899,7 @@ public class Warzone {
             }
         }
 
-        warAttacker.addKill(defender);
+        warAttacker.addKill(warDefender);
         if (attackerTeam.getTeamConfig().resolveBoolean(TeamConfig.XPKILLMETER)) {
             attacker.setLevel(warAttacker.getKills());
         }
@@ -1281,7 +1281,7 @@ public class Warzone {
                 it.remove(); // Remove player from team first to prevent anti-tp
                 t.removePlayer(warPlayer);
                 if (winnersStr.contains(t.getName())) {
-                    StatManager.addWin(player);
+                    StatManager.addWin(warPlayer);
                     // give reward
                     Reward winReward = t.getInventories().resolveWinReward();
                     if (winReward != null) {
@@ -1299,7 +1299,7 @@ public class Warzone {
                         }
                     }
                 } else {
-                    StatManager.addLoss(player);
+                    StatManager.addLoss(warPlayer);
                     Reward lossReward = t.getInventories().resolveLossReward();
                     if (lossReward != null) {
                         lossReward.rewardPlayer(player);

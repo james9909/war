@@ -1,9 +1,13 @@
 package com.tommytony.war.stats;
 
 import com.tommytony.war.War;
+import com.tommytony.war.WarPlayer;
 import org.bukkit.entity.Player;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -16,11 +20,15 @@ public class StatManager {
                 "CREATE TABLE IF NOT EXISTS players (player VARCHAR(16) NOT NULL, deaths INT DEFAULT 0, wins INT DEFAULT 0, losses INT DEFAULT 0, mvps INT DEFAULT 0, PRIMARY KEY (player)) "
                     + "ENGINE=InnoDB DEFAULT CHARSET=latin1");
             statement.execute(
-                "CREATE TABLE IF NOT EXISTS heals (date DATETIME NOT NULL, healer VARCHAR(16) NOT NULL, target VARCHAR(16) NOT NULL, amount DOUBLE NOT NULL, KEY (healer)) "
+                "CREATE TABLE IF NOT EXISTS heals (date DATETIME NOT NULL, healer VARCHAR(16) NOT NULL, target VARCHAR(16) NOT NULL, amount DOUBLE NOT NULL, class VARCHAR(16) NOT NULL, KEY (healer)) "
                     + "ENGINE=InnoDB DEFAULT CHARSET=latin1");
             statement.executeUpdate(
-                "CREATE TABLE IF NOT EXISTS kills (date DATETIME NOT NULL, attacker VARCHAR(16) NOT NULL, defender VARCHAR(16) NOT NULL, KEY (attacker)) "
+                "CREATE TABLE IF NOT EXISTS kills (date DATETIME NOT NULL, attacker VARCHAR(16) NOT NULL, defender VARCHAR(16) NOT NULL, attacker_class VARCHAR(16) NOT NULL, defender_class VARCHAR(16) NOT NULL, KEY (attacker)) "
                     + "ENGINE=InnoDB DEFAULT CHARSET=latin1");
+            statement.executeUpdate(
+                "CREATE INDEX idx_attacker on kills (attacker)");
+            statement.executeUpdate(
+                "CREATE INDEX idx_defender on kills (defender)");
             statement.close();
         });
     }
@@ -60,49 +68,52 @@ public class StatManager {
         });
     }
 
-    public static boolean addHeal(Player healer, Player target, double amount) {
+    public static boolean addHeal(WarPlayer healer, WarPlayer target, double amount) {
         return runSql((conn) -> {
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO heals (date, healer, target, amount) VALUES (NOW(), ?, ?, ?)");
-            statement.setString(1, healer.getName());
-            statement.setString(2, target.getName());
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO heals (date, healer, target, amount, class) VALUES (NOW(), ?, ?, ?, ?)");
+            statement.setString(1, healer.getPlayer().getName());
+            statement.setString(2, target.getPlayer().getName());
             statement.setDouble(3, amount);
+            statement.setString(4, healer.getLoadoutSelection().getSelectedLoadout());
             statement.execute();
             statement.close();
         });
     }
 
-    public static boolean addWin(Player player) {
+    public static boolean addWin(WarPlayer player) {
         return runSql((conn -> {
             PreparedStatement statement = conn.prepareStatement("INSERT INTO players (player, wins) VALUES (?, 1) ON DUPLICATE KEY UPDATE `wins` = `wins` + 1");
-            statement.setString(1, player.getName());
+            statement.setString(1, player.getPlayer().getName());
             statement.executeUpdate();
             statement.close();
         }));
     }
 
-    public static boolean addLoss(Player player) {
+    public static boolean addLoss(WarPlayer player) {
         return runSql((conn -> {
             PreparedStatement statement = conn.prepareStatement("INSERT INTO players (player, losses) VALUES (?, 1) ON DUPLICATE KEY UPDATE `losses` = `losses` + 1");
-            statement.setString(1, player.getName());
+            statement.setString(1, player.getPlayer().getName());
             statement.executeUpdate();
             statement.close();
         }));
     }
 
-    public static boolean addKill(Player attacker, Player defender) {
+    public static boolean addKill(WarPlayer attacker, WarPlayer defender) {
         return runSql((conn) -> {
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO kills (date, attacker, defender) VALUES (NOW(), ?, ?)");
-            statement.setString(1, attacker.getName());
-            statement.setString(2, defender.getName());
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO kills (date, attacker, defender, attacker_class, defender_class) VALUES (NOW(), ?, ?, ?, ?)");
+            statement.setString(1, attacker.getPlayer().getName());
+            statement.setString(2, defender.getPlayer().getName());
+            statement.setString(3, attacker.getLoadoutSelection().getSelectedLoadout());
+            statement.setString(4, defender.getLoadoutSelection().getSelectedLoadout());
             statement.execute();
             statement.close();
         });
     }
 
-    public static boolean addDeath(Player victim) {
+    public static boolean addDeath(WarPlayer victim) {
         return runSql((conn) -> {
             PreparedStatement statement = conn.prepareStatement("INSERT INTO players (player, deaths) VALUES (?, 1) ON DUPLICATE KEY UPDATE `deaths` = `deaths` + 1");
-            statement.setString(1, victim.getName());
+            statement.setString(1, victim.getPlayer().getName());
             statement.executeUpdate();
             statement.close();
         });

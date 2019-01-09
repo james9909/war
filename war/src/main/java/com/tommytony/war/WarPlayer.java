@@ -1,5 +1,6 @@
 package com.tommytony.war;
 
+import com.nisovin.magicspells.util.Util;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.stats.StatManager;
 import com.tommytony.war.utility.LastDamager;
@@ -124,7 +125,10 @@ public class WarPlayer {
             loadout.giveItems(player);
         }
         if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.BLOCKHEADS)) {
-            ItemStack helmet = team.getKind().getBlockHead();
+            ItemStack helmet = Util.getItemStackFromString(String.format("War_%s%s", team.getKind().getCapsName(), loadoutSelection.getSelectedLoadout()));
+            if (helmet == null) {
+                helmet = team.getKind().getBlockHead();
+            }
             if (!getLoadoutSelection().getSelectedLoadout().equalsIgnoreCase("knight")) {
                 ItemMeta meta = helmet.getItemMeta();
                 meta.addEnchant(Enchantment.PROTECTION_PROJECTILE, 3, true);

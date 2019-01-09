@@ -175,6 +175,9 @@ public class WarCommandHandler {
                 case "clearstats":
                     commandObj = new ClearStatsCommand(this, sender, arguments);
                     break;
+                case "leaderboard":
+                    commandObj = new LeaderboardCommand(this, sender, arguments);
+                    break;
             }
             // we are not responsible for any other command
         } catch (NotWarAdminException e) {

@@ -276,6 +276,11 @@ commands:
     usage: Clear all player stats.
         Ex -
         /clearstats
+  leaderboard:
+    description: War> Show the leaderboard for a certain class. Defaults to sorcerer.
+    usage: Show the leaderboard
+        Ex -
+        /leaderboard Sorcerer
   unloadwar:
     description: War> Disables the War plugin.
     usage: Disables the War plugin.

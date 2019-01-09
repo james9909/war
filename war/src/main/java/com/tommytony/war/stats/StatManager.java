@@ -148,6 +148,44 @@ public class StatManager {
         return playerStat;
     }
 
+    public static List<ArrayList<String>> getLeaderboardStats(String className) {
+        ArrayList<String> topKills = new ArrayList<>();
+        ArrayList<String> topKdr = new ArrayList<>();
+        ArrayList<String> topHeals = new ArrayList<>();
+
+        runSql((conn) -> {
+            PreparedStatement statement = conn.prepareStatement("SELECT attacker FROM kills WHERE attacker_class = ? GROUP BY attacker ORDER BY COUNT(*) DESC LIMIT 10");
+            statement.setString(1, className);
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                topKills.add(result.getString(1));
+            }
+
+            statement = conn.prepareStatement("SELECT attacker FROM " +
+                "(SELECT COUNT(*) as kills, attacker FROM kills WHERE attacker_class = ? GROUP BY attacker) as s1, " +
+                "(SELECT COUNT(*) as deaths, defender FROM kills WHERE defender_class = ? GROUP BY defender) as s2 " +
+                "WHERE s1.attacker = s2.defender " +
+                "ORDER BY (s1.kills / s2.deaths) DESC LIMIT 10"
+            );
+
+            statement.setString(1, className);
+            statement.setString(2, className);
+            result = statement.executeQuery();
+            while (result.next()) {
+                topKdr.add(result.getString(1));
+            }
+
+            statement = conn.prepareStatement("SELECT healer FROM heals where class = ? GROUP BY healer ORDER BY COALESCE(SUM(amount), 0) LIMIT 10");
+            statement.setString(1, className);
+            result = statement.executeQuery();
+            while (result.next()) {
+                topHeals.add(result.getString(1));
+            }
+        });
+
+        return Arrays.asList(topKills, topKdr, topHeals);
+    }
+
     @FunctionalInterface
     private interface SqlConsumer<Connection> extends Consumer<Connection> {
 

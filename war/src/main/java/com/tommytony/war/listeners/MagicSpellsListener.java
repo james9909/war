@@ -75,6 +75,12 @@ public class MagicSpellsListener implements Listener {
         LoadoutSelection casterLoadoutState = casterWarPlayer.getLoadoutSelection();
         if (team.isSpawnLocation(caster.getLocation()) && casterLoadoutState.isStillInSpawn()) {
             event.setCancelled(true);
+            return;
+        }
+
+        Warzone zone = casterWarPlayer.getZone();
+        if (zone.isThief(casterWarPlayer)) {
+            event.setCancelled(true);
         }
     }
 

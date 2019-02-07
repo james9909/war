@@ -10,6 +10,7 @@ import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.structure.Bomb;
 import com.tommytony.war.structure.Cake;
 import com.tommytony.war.structure.Monument;
+import com.tommytony.war.utility.PotionEffectHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -271,6 +272,7 @@ public class WarBlockListener implements Listener {
                         player.getInventory().clear();
                         player.getInventory().addItem(teamKindBlock);
                         zone.addFlagThief(lostFlagTeam, warPlayer);
+                        PotionEffectHelper.clearPotionEffects(player);
                         block.setType(Material.AIR);
                         for (Team t : zone.getTeams()) {
                             t.teamcast("zone.steal.flag.broadcast", team.getKind().getColor() + player.getName() + ChatColor.WHITE, lostFlagTeam.getName());
@@ -299,6 +301,7 @@ public class WarBlockListener implements Listener {
                     player.getInventory().clear();
                     player.getInventory().addItem(tntBlock);
                     zone.addBombThief(bomb, warPlayer);
+                    PotionEffectHelper.clearPotionEffects(player);
                     block.setType(Material.AIR);
                     for (Team t : zone.getTeams()) {
                         t.teamcast("zone.steal.bomb.broadcast", team.getKind().getColor() + player.getName() + ChatColor.WHITE, ChatColor.GREEN + bomb.getName() + ChatColor.WHITE);
@@ -322,6 +325,7 @@ public class WarBlockListener implements Listener {
                     player.getInventory().clear();
                     player.getInventory().addItem(cakeBlock);
                     zone.addCakeThief(cake, warPlayer);
+                    PotionEffectHelper.clearPotionEffects(player);
                     block.setType(Material.AIR);
                     for (Team t : zone.getTeams()) {
                         t.teamcast("zone.steal.cake.broadcast", team.getKind().getColor() + player.getName() + ChatColor.WHITE, ChatColor.GREEN + cake.getName() + ChatColor.WHITE);

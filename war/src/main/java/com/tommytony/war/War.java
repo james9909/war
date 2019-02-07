@@ -153,6 +153,7 @@ public class War extends JavaPlugin {
         warConfig.put(WarConfig.AUTOJOIN, "");
         warConfig.put(WarConfig.TPWARMUP, 0);
         warConfig.put(WarConfig.LOADOUTCMD, "");
+        warConfig.put(WarConfig.MAXMIMUMHP, 20);
 
         warzoneDefaultConfig.put(WarzoneConfig.AUTOASSIGN, false);
         warzoneDefaultConfig.put(WarzoneConfig.BLOCKHEADS, true);

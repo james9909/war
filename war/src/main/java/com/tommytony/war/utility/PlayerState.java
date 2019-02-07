@@ -32,7 +32,7 @@ public class PlayerState {
     public void update() {
         this.location = player.getLocation();
         this.gamemode = player.getGameMode();
-        this.health = player.getHealth();
+        this.health = Math.min(player.getHealth(), 20);
         this.exhaustion = player.getExhaustion();
         this.saturation = player.getSaturation();
         this.foodLevel = player.getFoodLevel();
@@ -44,8 +44,7 @@ public class PlayerState {
 
     public void resetPlayer(Player player) {
         player.setGameMode(getGamemode());
-        double maxH = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-        player.setHealth(Math.max(Math.min(getHealth(), maxH), 0.0D));
+        player.setHealth(Math.max(getHealth(), 0));
         player.setExhaustion(getExhaustion());
         player.setSaturation(getSaturation());
         player.setFoodLevel(getFoodLevel());

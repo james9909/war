@@ -4,6 +4,7 @@ import com.nisovin.magicspells.MagicSpells;
 import com.nisovin.magicspells.mana.ManaChangeReason;
 import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.config.TeamKind;
+import com.tommytony.war.config.WarConfig;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.config.bags.InventoryBag;
 import com.tommytony.war.config.bags.TeamConfigBag;
@@ -402,7 +403,7 @@ public class Warzone {
         for (AttributeModifier mod : ai.getModifiers()) {
             ai.removeModifier(mod);
         }
-        ai.setBaseValue(20.0);
+        ai.setBaseValue(War.war.getWarConfig().getInt(WarConfig.MAXMIMUMHP));
         player.setHealth(ai.getValue());
         player.setFoodLevel(20);
         player.setSaturation(team.getTeamConfig().resolveInt(TeamConfig.SATURATION));

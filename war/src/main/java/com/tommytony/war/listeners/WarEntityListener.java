@@ -154,8 +154,8 @@ public class WarEntityListener implements Listener {
                         // don't re-kill a dead person
                         return;
                     }
-                    WarPlayerDeathEvent event1 = new WarPlayerDeathEvent(defenderWarzone, d, a, event.getCause());
-                    War.war.getServer().getPluginManager().callEvent(event1);
+                    WarPlayerDeathEvent deathEvent = new WarPlayerDeathEvent(defenderWarzone, d, a, event.getCause());
+                    War.war.getServer().getPluginManager().callEvent(deathEvent);
 
                     WarPlayerKillEvent killEvent = new WarPlayerKillEvent(attackerWarzone, a, d, event.getCause());
                     War.war.getServer().getPluginManager().callEvent(killEvent);
@@ -239,7 +239,7 @@ public class WarEntityListener implements Listener {
                  return;
              }
 
-            boolean isDeath = event.getFinalDamage() >= d.getHealth();
+             boolean isDeath = event.getFinalDamage() >= d.getHealth();
              for (Spell spell : MagicSpells.spells()) {
                  if (!(spell instanceof MinionSpell)) {
                      continue;
@@ -259,6 +259,9 @@ public class WarEntityListener implements Listener {
                      }
 
                      if (isDeath) {
+                         WarPlayerDeathEvent deathEvent = new WarPlayerDeathEvent(warDefender.getZone(), d, caster, event.getCause());
+                         War.war.getServer().getPluginManager().callEvent(deathEvent);
+
                          zone.handleKill(caster, warDefender.getPlayer(), monster, true);
                      } else {
                          warDefender.setLastDamager(caster, monster);
@@ -268,7 +271,12 @@ public class WarEntityListener implements Listener {
                      return;
                  }
              }
-             zone.handleNaturalKill(warDefender.getPlayer(), event);
+             if (isDeath) {
+                 WarPlayerDeathEvent deathEvent = new WarPlayerDeathEvent(warDefender.getZone(), d, attacker, event.getCause());
+                 War.war.getServer().getPluginManager().callEvent(deathEvent);
+
+                 zone.handleNaturalKill(warDefender.getPlayer(), event);
+             }
         }
     }
 
@@ -383,8 +391,9 @@ public class WarEntityListener implements Listener {
             }
 
             // Detect death, prevent it and respawn the player
-            WarPlayerDeathEvent event1 = new WarPlayerDeathEvent(zone, player, null, event.getCause());
-            War.war.getServer().getPluginManager().callEvent(event1);
+            WarPlayerDeathEvent deathEvent = new WarPlayerDeathEvent(zone, player, null, event.getCause());
+            War.war.getServer().getPluginManager().callEvent(deathEvent);
+
             if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
                 // fast respawn, don't really die
                 event.setCancelled(true);

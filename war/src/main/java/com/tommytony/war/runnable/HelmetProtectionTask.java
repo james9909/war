@@ -1,10 +1,12 @@
 package com.tommytony.war.runnable;
 
+import com.nisovin.magicspells.util.Util;
 import com.tommytony.war.Team;
 import com.tommytony.war.War;
 import com.tommytony.war.WarPlayer;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.config.WarzoneConfig;
+import com.tommytony.war.utility.LoadoutSelection;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -35,14 +37,11 @@ public class HelmetProtectionTask implements Runnable {
 
                     if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.BLOCKHEADS)) {
                         teamBlockMaterial = team.getKind().getMaterial();
+
+                        LoadoutSelection loadout = warPlayer.getLoadoutSelection();
                         // 1) Replace missing block head
                         if (playerInv.getHelmet() == null || playerInv.getHelmet().getType() != Material.WOOL) {
                             ItemStack helmet = team.getKind().getBlockHead();
-                            if (!warPlayer.getLoadoutSelection().getSelectedLoadout().equalsIgnoreCase("knight")) {
-                                ItemMeta meta = helmet.getItemMeta();
-                                meta.addEnchant(Enchantment.PROTECTION_PROJECTILE, 3, true);
-                                helmet.setItemMeta(meta);
-                            }
                             playerInv.setHelmet(helmet);
                         }
 

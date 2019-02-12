@@ -28,4 +28,9 @@ public class WarPlayerJoinEvent extends Event {
     public Warzone getZone() {
         return zone;
     }
+
+    @Override
+    public HandlerList getHandlers() {
+        return null;
+    }
 }

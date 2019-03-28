@@ -456,7 +456,7 @@ public class Warzone {
         }
 
         if (warPlayer.getLoadoutSelection() == null) {
-            warPlayer.setLoadoutSelection(new LoadoutSelection(true, "Sorcerer"));
+            warPlayer.setLoadoutSelection(new LoadoutSelection(true, warzoneConfig.getString(WarzoneConfig.DEFAULTCLASS)));
         } else {
             warPlayer.getLoadoutSelection().setStillInSpawn(true);
         }

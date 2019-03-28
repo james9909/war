@@ -79,6 +79,14 @@ public class WarzoneConfigBag {
         }
     }
 
+    public String getString(WarzoneConfig config) {
+        if (bag.containsKey(config)) {
+            return (String) bag.get(config);
+        } else {
+            return War.war.getWarzoneDefaultConfig().getString(config);
+        }
+    }
+
     public boolean contains(WarzoneConfig config) {
         return this.bag.containsKey(config);
     }

@@ -50,8 +50,8 @@ public class EditZoneConfigUI extends ChestUI {
     @Override
     public int getSize() {
         if (zone == null) {
-            return 9 * 3;
+            return 9 * 4;
         }
-        return 9 * 4;
+        return 9 * 5;
     }
 }

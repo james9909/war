@@ -182,6 +182,7 @@ public class War extends JavaPlugin {
         warzoneDefaultConfig.put(WarzoneConfig.RESETBLOCKS, true);
         warzoneDefaultConfig.put(WarzoneConfig.CAPTUREPOINTTIME, 21);
         warzoneDefaultConfig.put(WarzoneConfig.PREPTIME, 0);
+        warzoneDefaultConfig.put(WarzoneConfig.DEFAULTCLASS, "Sorcerer");
 
         teamDefaultConfig.put(TeamConfig.FLAGMUSTBEHOME, true);
         teamDefaultConfig.put(TeamConfig.FLAGPOINTSONLY, false);

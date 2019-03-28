@@ -17,7 +17,7 @@ public class WarPlayerJoinEvent extends Event {
         this.zone = zone;
     }
 
-    public HandlerList getHandlerList() {
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 
@@ -31,6 +31,6 @@ public class WarPlayerJoinEvent extends Event {
 
     @Override
     public HandlerList getHandlers() {
-        return null;
+        return handlers;
     }
 }

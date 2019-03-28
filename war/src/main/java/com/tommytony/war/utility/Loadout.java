@@ -114,9 +114,10 @@ public class Loadout implements Comparable<Loadout> {
     public void giveItems(Player player) {
         PlayerInventory inventory = player.getInventory();
         if (items != null) {
-            for (ItemStack item : items) {
+            for (int i = 0; i < items.length; i++) {
+                ItemStack item = items[i];
                 if (item != null) {
-                    inventory.addItem(item);
+                    inventory.setItem(i, item);
                 }
             }
         }

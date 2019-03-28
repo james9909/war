@@ -29,10 +29,6 @@
       <url>http://maven.sk89q.com/repo/</url>
     </repository>
     <repository>
-      <id>herocraft</id>
-      <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
-    </repository>
-    <repository>
       <id>bensku-repo</id>
       <url>https://raw.githubusercontent.com/bensku/mvn-repo/master</url>
     </repository>

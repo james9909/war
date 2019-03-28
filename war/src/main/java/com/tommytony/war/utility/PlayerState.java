@@ -3,6 +3,8 @@ package com.tommytony.war.utility;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 
@@ -43,8 +45,13 @@ public class PlayerState {
     }
 
     public void resetPlayer(Player player) {
+        AttributeInstance ai = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        for (AttributeModifier mod : ai.getModifiers()) {
+            ai.removeModifier(mod);
+        }
+        ai.setBaseValue(20);
         player.setGameMode(getGamemode());
-        player.setHealth(Math.max(getHealth(), 0));
+        player.setHealth(20);
         player.setExhaustion(getExhaustion());
         player.setSaturation(getSaturation());
         player.setFoodLevel(getFoodLevel());

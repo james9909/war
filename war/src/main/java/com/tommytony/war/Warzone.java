@@ -411,16 +411,18 @@ public class Warzone {
         player.setFallDistance(0);
         player.setFireTicks(0);
         player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 5, 255));
-        Runnable antiFireAction = () -> {
+        Runnable cleanup = () -> {
             // Stop fire here, since doing it in the same tick as death doesn't extinguish it
             player.setFireTicks(0);
+            player.setHealth(ai.getValue());
         };
         // ughhhhh bukkit
-        War.war.getServer().getScheduler().runTaskLater(War.war, antiFireAction, 1L);
-        War.war.getServer().getScheduler().runTaskLater(War.war, antiFireAction, 2L);
-        War.war.getServer().getScheduler().runTaskLater(War.war, antiFireAction, 3L);
-        War.war.getServer().getScheduler().runTaskLater(War.war, antiFireAction, 4L);
-        War.war.getServer().getScheduler().runTaskLater(War.war, antiFireAction, 5L);
+        War.war.getServer().getScheduler().runTaskLater(War.war, cleanup, 1L);
+        War.war.getServer().getScheduler().runTaskLater(War.war, cleanup, 2L);
+        War.war.getServer().getScheduler().runTaskLater(War.war, cleanup, 3L);
+        War.war.getServer().getScheduler().runTaskLater(War.war, () -> {
+            PotionEffectHelper.clearPotionEffects(player);
+        }, 4L);
 
         player.setLevel(0);
         player.setExp(0);

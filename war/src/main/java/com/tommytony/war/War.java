@@ -201,7 +201,7 @@ public class War extends JavaPlugin {
         teamDefaultConfig.put(TeamConfig.BLOCKWHITELIST, "all");
         teamDefaultConfig.put(TeamConfig.PLACEBLOCK, true);
         teamDefaultConfig.put(TeamConfig.APPLYPOTION, "");
-        teamDefaultConfig.put(TeamConfig.ECOREWARD, 0.0);
+        teamDefaultConfig.put(TeamConfig.ECOREWARD, 5.0);
         teamDefaultConfig.put(TeamConfig.INVENTORYDROP, false);
         teamDefaultConfig.put(TeamConfig.BORDERDROP, false);
 

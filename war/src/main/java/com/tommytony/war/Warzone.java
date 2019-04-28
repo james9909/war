@@ -1261,6 +1261,16 @@ public class Warzone {
         return flagThieves.values().contains(team);
     }
 
+    public double getEconReward(double base) {
+        int totalPlayers = getPlayerCount();
+        int maxCapacity = getTotalCapacity();
+        if (totalPlayers < 2) {
+            // This should never happen, but just in case...
+            return base;
+        }
+        return base + (base * (totalPlayers - 2) / (Math.sqrt(maxCapacity) * 2));
+    }
+
     public void handleScoreCapReached(String winnersStr) {
         // Score cap reached. Reset everything.
         this.isEndOfGame = true;
@@ -1275,8 +1285,9 @@ public class Warzone {
             String winnersStrAndExtra = "Score cap reached. Game is over! Winning team(s): " + winnersStr;
             winnersStrAndExtra += ". Resetting warzone and your inventory...";
             t.teamcast(winnersStrAndExtra);
-            double ecoReward = t.getTeamConfig().resolveDouble(TeamConfig.ECOREWARD);
-            boolean doEcoReward = ecoReward != 0 && War.war.getEconomy() != null;
+            double baseReward = t.getTeamConfig().resolveDouble(TeamConfig.ECOREWARD);
+            double econReward = getEconReward(baseReward);
+            boolean doEcoReward = econReward != 0 && War.war.getEconomy() != null;
             for (Iterator<WarPlayer> it = t.getPlayers().iterator(); it.hasNext(); ) {
                 WarPlayer warPlayer = it.next();
                 Player player = warPlayer.getPlayer();
@@ -1292,13 +1303,13 @@ public class Warzone {
                     }
                     if (doEcoReward) {
                         EconomyResponse r;
-                        if (ecoReward > 0) {
-                            r = War.war.getEconomy().depositPlayer(player.getName(), ecoReward);
+                        if (econReward > 0) {
+                            r = War.war.getEconomy().depositPlayer(player.getName(), econReward);
                         } else {
-                            r = War.war.getEconomy().withdrawPlayer(player.getName(), ecoReward);
+                            r = War.war.getEconomy().withdrawPlayer(player.getName(), econReward);
                         }
                         if (!r.transactionSuccess()) {
-                            War.war.getLogger().log(Level.WARNING, "Failed to reward player {0} ${1}. Error: {2}", new Object[]{player.getName(), ecoReward, r.errorMessage});
+                            War.war.getLogger().log(Level.WARNING, "Failed to reward player {0} ${1}. Error: {2}", new Object[]{player.getName(), econReward, r.errorMessage});
                         }
                     }
                 } else {

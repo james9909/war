@@ -18,7 +18,7 @@ public enum TeamConfig {
     BLOCKWHITELIST(String.class, "Block Whitelist", "Comma-separated list of blocks players may break or place, 'all' removes this limit"),
     PLACEBLOCK(Boolean.class, "Place Blocks", "If true, players can place blocks"),
     APPLYPOTION(String.class, "Apply Potion Effect", "Give players a potion effect after each death, Format: EFFECT;DURATION;STRENGTH"),
-    ECOREWARD(Double.class, "Economy Reward", "Give the winning team this much money, requires Vault plugin"),
+    ECOREWARD(Double.class, "Economy Reward", "Base amount of money to give players on the winning team, requires Vault plugin"),
     INVENTORYDROP(Boolean.class, "Drop Inventory", "If true, players will drop items on death"),
     BORDERDROP(Boolean.class, "Drop Near Border", "If true, players can drop items near the border\nUsually enabled to prevent duping");
 

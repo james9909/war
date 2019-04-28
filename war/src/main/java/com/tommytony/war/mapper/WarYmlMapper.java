@@ -11,9 +11,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class WarYmlMapper {
 
@@ -68,9 +68,15 @@ public class WarYmlMapper {
             War.war.getDefaultInventories().setLossReward(lossReward);
         }
 
-        // default loadouts
+        // Global loadouts
         ConfigurationSection loadoutsSection = warRootSection.getConfigurationSection("classes");
-        War.war.getDefaultInventories().setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection));
+        War.war.setLoadouts(LoadoutYmlMapper.fromConfigToLoadouts(loadoutsSection));
+
+        // Default loadouts
+        Set<String> defaultLoadouts = War.war.getLoadouts().entrySet().stream()
+                .filter(e -> e.getValue().getDefault())
+                .map(Map.Entry::getKey).collect(Collectors.toSet());
+        War.war.getDefaultInventories().setLoadouts(defaultLoadouts);
 
         // War settings
         ConfigurationSection warConfigSection = warRootSection.getConfigurationSection("war.config");
@@ -100,9 +106,9 @@ public class WarYmlMapper {
         (new File(War.war.getDataFolder().getPath())).mkdir();
         (new File(War.war.getDataFolder().getPath() + "/dat")).mkdir();
 
-        // default loadouts
+        // Global loadouts
         ConfigurationSection loadoutsSection = warRootSection.createSection("classes");
-        LoadoutYmlMapper.fromLoadoutsToConfig(War.war.getDefaultInventories().getLoadouts(), loadoutsSection);
+        LoadoutYmlMapper.fromLoadoutsToConfig(War.war.getLoadouts(), loadoutsSection);
 
         // War settings
         ConfigurationSection warConfigSection = warRootSection.createSection("war.config");

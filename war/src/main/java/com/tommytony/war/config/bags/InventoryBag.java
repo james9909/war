@@ -2,15 +2,15 @@ package com.tommytony.war.config.bags;
 
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
-import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.Reward;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class InventoryBag {
 
-    private Map<String, Loadout> loadouts = new HashMap<>();
+    private Set<String> loadouts = new TreeSet<>();
     private Reward winReward = null;
     private Reward lossReward = null;
 
@@ -24,38 +24,27 @@ public class InventoryBag {
         this.warzone = null;
     }
 
-    public void addLoadout(Loadout newLoadout) {
-        String name = newLoadout.getName();
-        if (containsLoadout(name)) {
-            Loadout loadout = getLoadout(name);
-            loadout.setItems(newLoadout.getItems());
-            loadout.setHelmet(newLoadout.getHelmet());
-            loadout.setChestplate(newLoadout.getChestplate());
-            loadout.setLeggings(newLoadout.getLeggings());
-            loadout.setBoots(newLoadout.getBoots());
-            loadout.setOffhand(newLoadout.getOffhand());
-            return;
-        }
-        this.loadouts.put(name.toLowerCase(), newLoadout);
+    public void addLoadout(String name) {
+        this.loadouts.add(name);
     }
 
     public void removeLoadout(String name) {
-        loadouts.remove(name.toLowerCase());
+        loadouts.remove(name);
     }
 
     public boolean hasLoadouts() {
         return loadouts.size() > 0;
     }
 
-    public Map<String, Loadout> getLoadouts() {
+    public Set<String> getLoadouts() {
         return loadouts;
     }
 
-    public void setLoadouts(Map<String, Loadout> loadouts) {
+    public void setLoadouts(Set<String> loadouts) {
         this.loadouts = loadouts;
     }
 
-    public Map<String, Loadout> resolveLoadouts() {
+    public Set<String> resolveLoadouts() {
         if (this.hasLoadouts()) {
             return this.getLoadouts();
         } else if (warzone != null && warzone.getDefaultInventories().hasLoadouts()) {
@@ -63,7 +52,7 @@ public class InventoryBag {
         } else if (War.war.getDefaultInventories().hasLoadouts()) {
             return War.war.getDefaultInventories().getLoadouts();
         } else {
-            return new HashMap<>();
+            return new HashSet<>();
         }
     }
 
@@ -119,11 +108,7 @@ public class InventoryBag {
         this.loadouts.clear();
     }
 
-    public Loadout getLoadout(String loadoutName) {
-        return resolveLoadouts().getOrDefault(loadoutName.toLowerCase(), null);
-    }
-
     public boolean containsLoadout(String name) {
-        return resolveLoadouts().containsKey(name.toLowerCase());
+        return resolveLoadouts().contains(name);
     }
 }

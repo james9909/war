@@ -27,6 +27,8 @@ public class Loadout implements Comparable<Loadout> {
     private ItemStack leggings;
     private ItemStack boots;
 
+    private boolean isDefault;
+
     private static HashSet<Material> HELMETS = new HashSet<>();
     private static HashSet<Material> CHESTPLATES = new HashSet<>();
     private static HashSet<Material> LEGGINGS = new HashSet<>();
@@ -70,12 +72,14 @@ public class Loadout implements Comparable<Loadout> {
 
     public Loadout(String name, Inventory inventory) {
         this.name = name;
+        this.isDefault = false;
         setItemsFromInventory(inventory);
     }
 
     public Loadout(String name, ItemStack[] items) {
         this.name = name;
         this.items = items;
+        this.isDefault = false;
     }
 
     public int compareTo(Loadout other) {
@@ -185,5 +189,13 @@ public class Loadout implements Comparable<Loadout> {
 
     public void setBoots(ItemStack boots) {
         this.boots = boots;
+    }
+
+    public void setDefault(boolean isDefault) {
+        this.isDefault = isDefault;
+    }
+
+    public boolean getDefault() {
+        return isDefault;
     }
 }

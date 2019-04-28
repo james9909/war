@@ -38,7 +38,8 @@ public class ClassChestCommand extends AbstractZoneMakerCommand {
                     return true;
                 }
                 Inventory chestInventory = ((Chest) state).getBlockInventory();
-                War.war.getDefaultInventories().addLoadout(new Loadout(loadoutName, chestInventory));
+                Loadout loadout = new Loadout(loadoutName, chestInventory);
+                War.war.addLoadout(loadout);
                 WarConfigBag.afterUpdate(player, loadoutName + " set", false);
                 this.msg("classchest.set");
                 break;

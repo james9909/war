@@ -1,11 +1,7 @@
 package com.tommytony.war.ui;
 
-import com.tommytony.war.Team;
 import com.tommytony.war.War;
-import com.tommytony.war.Warzone;
-import com.tommytony.war.config.bags.TeamConfigBag;
 import com.tommytony.war.config.bags.WarConfigBag;
-import com.tommytony.war.config.bags.WarzoneConfigBag;
 import com.tommytony.war.utility.Loadout;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -15,15 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 
 public class CreateLoadoutUI extends ChestUI {
-
-    private Team team;
-    private Warzone zone;
-
-    CreateLoadoutUI(Warzone zone, Team team) {
-        this.zone = zone;
-        this.team = team;
-    }
-
     @Override
     public void build(Player player, Inventory inv) {
         ItemStack item = createSaveItem();
@@ -41,16 +28,8 @@ public class CreateLoadoutUI extends ChestUI {
                     newLoadout.setArmor(armor);
                     newLoadout.setOffhand(offhand);
 
-                    if (zone != null) {
-                        zone.getDefaultInventories().addLoadout(newLoadout);
-                        WarzoneConfigBag.afterUpdate(zone, player, "Loadout saved", false);
-                    } else if (team != null) {
-                        team.getInventories().addLoadout(newLoadout);
-                        TeamConfigBag.afterUpdate(team, player, "Loadout saved", false);
-                    } else {
-                        War.war.getDefaultInventories().addLoadout(newLoadout);
-                        WarConfigBag.afterUpdate(player, "Loadout saved", false);
-                    }
+                    War.war.addLoadout(newLoadout);
+                    WarConfigBag.afterUpdate(player, "Loadout saved", false);
                 }
             });
         });

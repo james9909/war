@@ -38,9 +38,11 @@ public class EditRewardsUI extends ChestUI {
         if (reward != null) {
             items = reward.getRewards();
         }
-        for (ItemStack item : items) {
-            if (item != null) {
-                inv.addItem(item);
+        if (items != null) {
+            for (ItemStack item : items) {
+                if (item != null) {
+                    inv.addItem(item);
+                }
             }
         }
 

@@ -1390,7 +1390,7 @@ public class Warzone {
             InventoryBag inventoryBag = team.getInventories();
 
             String loadoutName = selection.getSelectedLoadout();
-            Loadout loadout = inventoryBag.getLoadout(loadoutName);
+            Loadout loadout = War.war.getLoadout(loadoutName);
             if (loadout == null) {
                 warPlayer.resetInventory(null);
                 War.war.msg(player, "Class not found");

@@ -51,9 +51,14 @@ public class ChooseClassCommand extends AbstractWarCommand {
         if (loadoutSelection.isStillInSpawn()) {
             String loadoutName = args[0];
 
-            Loadout loadout = team.getInventories().getLoadout(loadoutName);
+            if (!team.getInventories().containsLoadout(loadoutName)) {
+                // this.badMsg("zone.class.notfound");
+                return true;
+            }
+
+            Loadout loadout = War.war.getLoadout(loadoutName);
             if (loadout == null) {
-                this.badMsg("zone.class.notfound");
+                // this.badMsg("zone.class.notfound");
                 return true;
             }
 

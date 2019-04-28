@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class LoadoutYmlMapper {
 
@@ -19,14 +20,14 @@ public class LoadoutYmlMapper {
      */
     public static Map<String, Loadout> fromConfigToLoadouts(ConfigurationSection config) {
         if (config == null) {
-            return new HashMap<>();
+            return new TreeMap<>();
         }
         Set<String> loadoutNames = config.getKeys(false);
-        Map<String, Loadout> loadouts = new HashMap<>();
+        Map<String, Loadout> loadouts = new TreeMap<>();
         for (String name : loadoutNames) {
             Loadout loadout = fromConfigToLoadout(config, name);
             if (loadout != null) {
-                loadouts.put(name.toLowerCase(), loadout);
+                loadouts.put(name, loadout);
                 War.war.getLogger().info("Loaded class " + loadout.getName());
             } else {
                 War.war.getLogger().warning("Failed to load class" + name);
@@ -73,6 +74,7 @@ public class LoadoutYmlMapper {
         Loadout loadout = new Loadout(loadoutName, items);
         loadout.setArmor(new ItemStack[]{helmet, chestplate, leggings, boots});
         loadout.setOffhand(offhand);
+        loadout.setDefault(section.getBoolean("default"));
 
         return loadout;
     }
@@ -110,6 +112,7 @@ public class LoadoutYmlMapper {
             loadoutSection.set("leggings", loadout.getLeggings());
             loadoutSection.set("boots", loadout.getBoots());
             loadoutSection.set("offhand", loadout.getOffhand());
+            loadoutSection.set("default", loadout.getDefault());
         }
     }
 

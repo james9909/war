@@ -1,28 +1,24 @@
 package com.tommytony.war.ui;
 
-import com.tommytony.war.Team;
+import com.google.common.collect.ImmutableList;
 import com.tommytony.war.War;
-import com.tommytony.war.Warzone;
-import com.tommytony.war.config.bags.TeamConfigBag;
 import com.tommytony.war.config.bags.WarConfigBag;
-import com.tommytony.war.config.bags.WarzoneConfigBag;
 import com.tommytony.war.utility.Loadout;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.Dye;
 
 import java.util.Arrays;
 
 public class EditLoadoutUI extends ChestUI {
 
-    private Warzone zone;
-    private Team team;
     private Loadout loadout;
 
-    EditLoadoutUI(Warzone zone, Team team, Loadout loadout) {
-        this.zone = zone;
-        this.team = team;
+    EditLoadoutUI(Loadout loadout) {
         this.loadout = loadout;
     }
 
@@ -40,34 +36,37 @@ public class EditLoadoutUI extends ChestUI {
         this.addItem(inv, 9*4+3, loadout.getLeggings(), null);
         this.addItem(inv, 9*4+4, loadout.getBoots(), null);
 
-        ItemStack item = createSaveItem();
+        ItemStack item = new Dye(loadout.getDefault() ? DyeColor.LIME : DyeColor.GRAY).toItemStack(1);
+        ItemMeta meta = item.getItemMeta();
+        String name = "Value: " + (loadout.getDefault() ? ChatColor.GREEN + "true" : ChatColor.DARK_GRAY + "false");
+        meta.setDisplayName("Default");
+        meta.setLore(new ImmutableList.Builder<String>().add(name).build());
+        item.setItemMeta(meta);
+        this.addItem(inv, getSize() - 3, item, () -> {
+            loadout.setDefault(!loadout.getDefault());
+            if (loadout.getDefault()) {
+                War.war.getDefaultInventories().addLoadout(loadout.getName());
+            } else {
+                War.war.getDefaultInventories().removeLoadout(loadout.getName());
+            }
+            WarConfigBag.afterUpdate(player, "Loadout updated", false);
+            War.war.getUIManager().assignUI(player, new EditLoadoutUI(loadout));
+        });
+
+        item = createSaveItem();
         this.addItem(inv, getSize() - 2, item, () -> {
             ItemStack[] contents = inv.getContents();
             contents = Arrays.copyOfRange(contents, 0, 9*4+5);
 
             loadout.setItemsFromItemList(contents);
 
-            if (zone != null) {
-                WarzoneConfigBag.afterUpdate(zone, player, "Loadout updated", false);
-            } else if (team != null) {
-                TeamConfigBag.afterUpdate(team, player, "Loadout updated", false);
-            } else {
-                WarConfigBag.afterUpdate(player, "Loadout updated", false);
-            }
+            WarConfigBag.afterUpdate(player, "Loadout updated", false);
         });
 
         item = createDeleteItem();
         this.addItem(inv, getSize() - 1, item, () -> {
-            if (zone != null) {
-                zone.getDefaultInventories().removeLoadout(loadout.getName());
-                WarzoneConfigBag.afterUpdate(zone, player, "Loadout deleted", false);
-            } else if (team != null) {
-                team.getInventories().removeLoadout(loadout.getName());
-                TeamConfigBag.afterUpdate(team, player, "Loadout deleted", false);
-            } else {
-                War.war.getDefaultInventories().removeLoadout(loadout.getName());
-                WarConfigBag.afterUpdate(player, "Loadout deleted", false);
-            }
+            War.war.getDefaultInventories().removeLoadout(loadout.getName());
+            WarConfigBag.afterUpdate(player, "Loadout deleted", false);
         });
     }
 

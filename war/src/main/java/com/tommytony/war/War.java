@@ -14,13 +14,12 @@ import com.tommytony.war.mapper.WarYmlMapper;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
 import com.tommytony.war.runnable.HelmetProtectionTask;
 import com.tommytony.war.runnable.UpdateScoreboardJob;
+import com.tommytony.war.spells.WarDeathListener;
+import com.tommytony.war.spells.WarKillListener;
 import com.tommytony.war.stats.StatManager;
 import com.tommytony.war.structure.ZonePortal;
 import com.tommytony.war.ui.UIManager;
-import com.tommytony.war.utility.InventoryManager;
-import com.tommytony.war.utility.Reward;
-import com.tommytony.war.utility.SizeCounter;
-import com.tommytony.war.utility.WarLogFormatter;
+import com.tommytony.war.utility.*;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -69,6 +68,7 @@ public class War extends JavaPlugin {
     private final WarConfigBag warConfig = new WarConfigBag();
     private final WarzoneConfigBag warzoneDefaultConfig = new WarzoneConfigBag();
     private final TeamConfigBag teamDefaultConfig = new TeamConfigBag();
+
     // general
     private WarPlayerListener playerListener = new WarPlayerListener();
     private WarEntityListener entityListener = new WarEntityListener();
@@ -83,7 +83,8 @@ public class War extends JavaPlugin {
     private MySQLConfig mysqlConfig;
     private Economy econ = null;
     private UIManager UIManager;
-    private HashMap<String, ZonePortal> portals = new HashMap<>();
+    private Map<String, ZonePortal> portals = new HashMap<>();
+    private Map<String, Loadout> loadouts = new TreeMap<>();
 
     public War() {
         super();
@@ -932,5 +933,36 @@ public class War extends JavaPlugin {
 
     public InventoryManager getInventoryManager() {
         return inventoryManager;
+    }
+
+    public Loadout getLoadout(String name) {
+        return loadouts.getOrDefault(name, null);
+    }
+
+    public void addLoadout(Loadout newLoadout) {
+        String name = newLoadout.getName();
+        if (containsLoadout(name)) {
+            Loadout loadout = getLoadout(name);
+            loadout.setItems(newLoadout.getItems());
+            loadout.setHelmet(newLoadout.getHelmet());
+            loadout.setChestplate(newLoadout.getChestplate());
+            loadout.setLeggings(newLoadout.getLeggings());
+            loadout.setBoots(newLoadout.getBoots());
+            loadout.setOffhand(newLoadout.getOffhand());
+            return;
+        }
+        loadouts.put(name, newLoadout);
+    }
+
+    public boolean containsLoadout(String name) {
+        return loadouts.containsKey(name);
+    }
+
+    public Map<String, Loadout> getLoadouts() {
+        return loadouts;
+    }
+
+    public void setLoadouts(Map<String, Loadout> loadouts) {
+        this.loadouts = loadouts;
     }
 }

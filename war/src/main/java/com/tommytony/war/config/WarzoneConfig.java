@@ -28,7 +28,8 @@ public enum WarzoneConfig {
     RESETBLOCKS(Boolean.class, "Reset Blocks", "If true, reset warzone blocks each battle"),
     CAPTUREPOINTTIME(Integer.class, "Capture Control Time", "Time, in seconds, required to gain control of a capture point"),
     PREPTIME(Integer.class, "Preparation Time", "Time, in seconds, before players are allowed to fight"),
-    DEFAULTCLASS(String.class, "Default class", "Default class selected when joining a warzone for the first time");
+    DEFAULTCLASS(String.class, "Default class", "Default class selected when joining a warzone for the first time"),
+    LOADOUTCMD(String.class, "Loadout command", "Command to run for selecting loadouts");
 
     private final Class<?> configType;
     private final String title;

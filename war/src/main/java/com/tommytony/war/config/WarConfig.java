@@ -14,7 +14,6 @@ public enum WarConfig {
     LANGUAGE(String.class, "Language", "Preferred server language"),
     AUTOJOIN(String.class, "Auto-join", "Name of warzone to send players to upon join"),
     TPWARMUP(Integer.class, "TP warmup", "Amount of seconds a player must wait after requesting a teleport"),
-    LOADOUTCMD(String.class, "Loadout command", "Command to run for selecting loadouts"),
     MAXMIMUMHP(Integer.class, "Maximum HP", "Maximum amount of HP for War players");
 
     private final Class<?> configType;

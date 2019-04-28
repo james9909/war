@@ -154,7 +154,6 @@ public class War extends JavaPlugin {
         warConfig.put(WarConfig.LANGUAGE, Locale.getDefault().toString());
         warConfig.put(WarConfig.AUTOJOIN, "");
         warConfig.put(WarConfig.TPWARMUP, 0);
-        warConfig.put(WarConfig.LOADOUTCMD, "");
         warConfig.put(WarConfig.MAXMIMUMHP, 20);
 
         warzoneDefaultConfig.put(WarzoneConfig.AUTOASSIGN, false);
@@ -185,6 +184,7 @@ public class War extends JavaPlugin {
         warzoneDefaultConfig.put(WarzoneConfig.CAPTUREPOINTTIME, 21);
         warzoneDefaultConfig.put(WarzoneConfig.PREPTIME, 0);
         warzoneDefaultConfig.put(WarzoneConfig.DEFAULTCLASS, "Sorcerer");
+        warzoneDefaultConfig.put(WarzoneConfig.LOADOUTCMD, "");
 
         teamDefaultConfig.put(TeamConfig.FLAGMUSTBEHOME, true);
         teamDefaultConfig.put(TeamConfig.FLAGPOINTSONLY, false);

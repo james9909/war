@@ -725,7 +725,7 @@ public class WarPlayerListener implements Listener {
         if (team.isSpawnLocation(player.getLocation())) {
             LoadoutSelection selection = warPlayer.getLoadoutSelection();
             if (selection.isStillInSpawn()) {
-                player.performCommand(War.war.getWarConfig().getString(WarConfig.LOADOUTCMD));
+                player.performCommand(zone.getWarzoneConfig().getString(WarzoneConfig.LOADOUTCMD));
             } else {
                 War.war.badMsg(player, "zone.class.reenter");
             }

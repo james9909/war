@@ -50,7 +50,10 @@ public class WarPlayer {
         totalPlayers.put(uuid, this);
         this.lastDamager = new LastDamager();
         this.spectating = false;
-        this.permissions = getPlayer().addAttachment(War.war);
+        Player player = getPlayer();
+        if (player != null) {
+            this.permissions = player.addAttachment(War.war);
+        }
     }
 
     public static WarPlayer getPlayer(UUID uuid) {

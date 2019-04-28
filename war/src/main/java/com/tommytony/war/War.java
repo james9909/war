@@ -1,5 +1,6 @@
 package com.tommytony.war;
 
+import com.nisovin.magicspells.spells.passive.PassiveTrigger;
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.config.*;
 import com.tommytony.war.config.bags.InventoryBag;
@@ -284,6 +285,10 @@ public class War extends JavaPlugin {
         }
 
         this.log("War v" + this.desc.getVersion() + " is on.", Level.INFO);
+
+        // MagicSpells config
+        PassiveTrigger.addTrigger("warkill", WarKillListener.class);
+        PassiveTrigger.addTrigger("wardeath", WarDeathListener.class);
     }
 
     /**

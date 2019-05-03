@@ -102,6 +102,8 @@ public class WarzoneConfigBag {
                     this.put(config, warzoneConfigSection.getInt(config.toString()));
                 } else if (config.getConfigType().equals(Boolean.class)) {
                     this.put(config, warzoneConfigSection.getBoolean(config.toString()));
+                } else if (config.getConfigType().equals(String.class)) {
+                    this.put(config, warzoneConfigSection.getString(config.toString()));
                 }
             }
         }

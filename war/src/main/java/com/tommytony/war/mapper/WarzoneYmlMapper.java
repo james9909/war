@@ -56,7 +56,7 @@ public class WarzoneYmlMapper {
             // defaultLoadouts
             if (warzoneRootSection.contains("classes")) {
                 Set<String> names = new HashSet<>();
-                for (Object o : warzoneRootSection.getList("classes")) {
+                for (Object o : warzoneRootSection.getStringList("classes")) {
                     if (!(o instanceof String)) {
                         continue;
                     }
@@ -279,7 +279,7 @@ public class WarzoneYmlMapper {
                     if (warzoneRootSection.contains(teamLoadoutPrefix)) {
                         // team specific loadouts
                         Set<String> names = new HashSet<>();
-                        for (Object o : warzoneRootSection.getList(teamLoadoutPrefix)) {
+                        for (Object o : warzoneRootSection.getStringList(teamLoadoutPrefix)) {
                             if (!(o instanceof String)) {
                                 continue;
                             }
@@ -544,7 +544,8 @@ public class WarzoneYmlMapper {
 
         // enabled loadouts
         if (warzone.getDefaultInventories().hasLoadouts()) {
-            warzoneRootSection.set("classes", warzone.getDefaultInventories().getLoadouts());
+            ArrayList<String> loadouts = new ArrayList<>(warzone.getDefaultInventories().getLoadouts());
+            warzoneRootSection.set("classes", loadouts);
         }
 
         ConfigurationSection teamsSection = warzoneRootSection.createSection("team");
@@ -591,7 +592,8 @@ public class WarzoneYmlMapper {
 
             if (team.getInventories().hasLoadouts()) {
                 // team specific loadouts
-                teamsSection.set(team.getName() + ".classes", warzone.getDefaultInventories().getLoadouts());
+                ArrayList<String> loadouts = new ArrayList<>(warzone.getDefaultInventories().getLoadouts());
+                teamsSection.set(team.getName() + ".classes", loadouts);
             }
 
             if (team.getInventories().hasWinReward()) {

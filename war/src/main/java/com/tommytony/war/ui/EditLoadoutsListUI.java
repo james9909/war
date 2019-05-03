@@ -50,28 +50,34 @@ public class EditLoadoutsListUI extends ChestUI {
             for (String loadoutName : War.war.getLoadouts().keySet()) {
                 Loadout loadout = War.war.getLoadout(loadoutName);
 
-                ItemStack item = new Dye(loadout.getDefault() ? DyeColor.LIME : DyeColor.GRAY).toItemStack(1);
+                boolean enabled;
+                if (team != null) {
+                    enabled = team.getInventories().getLoadouts().contains(loadoutName);
+                } else {
+                    enabled = zone.getDefaultInventories().getLoadouts().contains(loadoutName);
+                }
+                ItemStack item = new Dye(enabled ? DyeColor.LIME : DyeColor.GRAY).toItemStack(1);
                 ItemMeta meta = item.getItemMeta();
-                String name = "Enabled: " + (loadout.getDefault() ? ChatColor.GREEN + "true" : ChatColor.DARK_GRAY + "false");
+                String name = "Enabled: " + (enabled ? ChatColor.GREEN + "true" : ChatColor.DARK_GRAY + "false");
                 meta.setDisplayName(loadoutName);
                 meta.setLore(new ImmutableList.Builder<String>().add(name).build());
                 item.setItemMeta(meta);
                 this.addItem(inv, i++, item, () -> {
-                    loadout.setDefault(!loadout.getDefault());
-                    if (loadout.getDefault()) {
-                        if (team != null) {
-                            team.getInventories().addLoadout(loadoutName);
-                            TeamConfigBag.afterUpdate(team, player, "Loadout updated", false);
-                        } else if (zone != null) {
-                            zone.getDefaultInventories().addLoadout(loadoutName);
-                            WarzoneConfigBag.afterUpdate(zone, player, "Loadout updated", false);
-                        }
-                    } else {
+                    if (enabled) {
+                        // Previously enabled, so remove it!
                         if (team != null) {
                             team.getInventories().removeLoadout(loadoutName);
                             TeamConfigBag.afterUpdate(team, player, "Loadout updated", false);
                         } else if (zone != null) {
                             zone.getDefaultInventories().removeLoadout(loadoutName);
+                            WarzoneConfigBag.afterUpdate(zone, player, "Loadout updated", false);
+                        }
+                    } else {
+                        if (team != null) {
+                            team.getInventories().addLoadout(loadoutName);
+                            TeamConfigBag.afterUpdate(team, player, "Loadout updated", false);
+                        } else if (zone != null) {
+                            zone.getDefaultInventories().addLoadout(loadoutName);
                             WarzoneConfigBag.afterUpdate(zone, player, "Loadout updated", false);
                         }
                     }

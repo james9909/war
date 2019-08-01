@@ -26,7 +26,7 @@ class EditTeamUI extends ChestUI {
     @Override
     public void build(final Player player, Inventory inv) {
         int i = 0;
-        ItemStack item = createItem(Material.GOLD_SPADE, ChatColor.GREEN + "Add additional spawn", null);
+        ItemStack item = createItem(Material.GOLDEN_SHOVEL, ChatColor.GREEN + "Add additional spawn", null);
         this.addItem(inv, i++, item, () -> {
             if (team.getZone().getVolume().contains(player.getLocation())) {
                 team.addTeamSpawn(player.getLocation());

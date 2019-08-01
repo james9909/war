@@ -1,8 +1,11 @@
 package com.tommytony.war.ui;
 
+import com.sk89q.worldedit.IncompleteRegionException;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
-import com.sk89q.worldedit.bukkit.selections.Selection;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.regions.Region;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.ZoneSetter;
@@ -26,7 +29,7 @@ public class EditOrCreateZoneUI extends ChestUI {
         int i = 0;
         List<String> lore = Collections.singletonList(ChatColor.GRAY + "Click to create a " + ChatColor.AQUA + "Warzone");
         String title = ChatColor.BOLD + "" + ChatColor.YELLOW + "Create Warzone";
-        ItemStack item = createItem(Material.WOOD_AXE, title, lore);
+        ItemStack item = createItem(Material.WOODEN_AXE, title, lore);
         this.addItem(inv, i++, item, new Runnable() {
             @Override
             public void run() {
@@ -34,19 +37,26 @@ public class EditOrCreateZoneUI extends ChestUI {
                     player.sendTitle("", ChatColor.RED + "This feature requires WorldEdit.", 10, 20, 10);
                     return;
                 }
-                player.getInventory().addItem(new ItemStack(Material.WOOD_AXE, 1));
+                player.getInventory().addItem(new ItemStack(Material.WOODEN_AXE, 1));
                 War.war.getUIManager().getPlayerMessage(player, "Select region for zone using WorldEdit and then type a name:", new StringRunnable() {
                     @Override
                     public void run() {
                         WorldEditPlugin worldEdit = (WorldEditPlugin) War.war.getServer().getPluginManager().getPlugin("WorldEdit");
-                        Selection selection = worldEdit.getSelection(player);
-                        if (selection != null && selection instanceof CuboidSelection) {
-                            Location min = selection.getMinimumPoint();
-                            Location max = selection.getMaximumPoint();
-                            ZoneSetter setter = new ZoneSetter(player, this.getValue());
-                            setter.placeCorner1(min.getBlock());
-                            setter.placeCorner2(max.getBlock());
+                        if (worldEdit == null) {
+                            return;
                         }
+                        try {
+                            Region selection = worldEdit.getSession(player).getSelection(BukkitAdapter.adapt(player.getWorld()));
+                            if (selection instanceof CuboidRegion) {
+                                BlockVector3 minBlockVector = selection.getMinimumPoint();
+                                BlockVector3 maxBlockVector = selection.getMaximumPoint();
+                                Location min = new Location(player.getWorld(), minBlockVector.getBlockX(), minBlockVector.getBlockY(), minBlockVector.getBlockZ());
+                                Location max = new Location(player.getWorld(), maxBlockVector.getBlockX(), maxBlockVector.getBlockY(), maxBlockVector.getBlockZ());
+                                ZoneSetter setter = new ZoneSetter(player, this.getValue());
+                                setter.placeCorner1(min.getBlock());
+                                setter.placeCorner2(max.getBlock());
+                            }
+                        } catch (IncompleteRegionException ignored) { }
                     }
                 });
             }
@@ -58,7 +68,7 @@ public class EditOrCreateZoneUI extends ChestUI {
             }
             title = ChatColor.YELLOW + "" + ChatColor.BOLD + zone.getName();
             lore = Collections.singletonList(ChatColor.GRAY + "Click to edit");
-            item = createItem(Material.BOOK_AND_QUILL, title, lore);
+            item = createItem(Material.WRITABLE_BOOK, title, lore);
             this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new EditZoneUI(zone)));
         }
     }

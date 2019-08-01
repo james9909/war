@@ -30,7 +30,7 @@ public class EditZoneConfigUI extends ChestUI {
 
         if (zone != null) {
             String title = ChatColor.GRAY + "" + ChatColor.BOLD + "Restore Defaults";
-            ItemStack item = createItem(Material.SNOW_BALL, title, null);
+            ItemStack item = createItem(Material.SNOWBALL, title, null);
             this.addItem(inv, getSize() - 1, item, () -> {
                 zone.getWarzoneConfig().reset();
                 WarzoneConfigBag.afterUpdate(zone, player, "All warzone options set to defaults in warzone " + zone.getName() + " by " + player.getName(), false);

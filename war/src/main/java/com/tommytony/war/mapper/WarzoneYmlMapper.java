@@ -11,6 +11,7 @@ import com.tommytony.war.utility.Loadout;
 import com.tommytony.war.utility.Reward;
 import com.tommytony.war.volume.Volume;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -379,32 +380,6 @@ public class WarzoneYmlMapper {
                     } catch (SQLException e) {
                         War.war.getLogger().log(Level.WARNING, "Failed to load warzone structures volume", e);
                     }
-                }
-            }
-
-            // warzone materials
-            if (warzoneRootSection.isItemStack(zoneInfoPrefix + "materials.main")) {
-                warzone.getWarzoneMaterials().setMainBlock(warzoneRootSection.getItemStack(zoneInfoPrefix + "materials.main"));
-            } else {
-                ConfigurationSection floorMaterialSection = warzoneRootSection.getConfigurationSection(zoneInfoPrefix + "materials.main");
-                if (floorMaterialSection != null) {
-                    warzone.getWarzoneMaterials().setMainBlock(new ItemStack(floorMaterialSection.getInt("id"), 1, (short) floorMaterialSection.getInt("data")));
-                }
-            }
-            if (warzoneRootSection.isItemStack(zoneInfoPrefix + "materials.stand")) {
-                warzone.getWarzoneMaterials().setStandBlock(warzoneRootSection.getItemStack(zoneInfoPrefix + "materials.stand"));
-            } else {
-                ConfigurationSection floorMaterialSection = warzoneRootSection.getConfigurationSection(zoneInfoPrefix + "materials.stand");
-                if (floorMaterialSection != null) {
-                    warzone.getWarzoneMaterials().setStandBlock(new ItemStack(floorMaterialSection.getInt("id"), 1, (short) floorMaterialSection.getInt("data")));
-                }
-            }
-            if (warzoneRootSection.isItemStack(zoneInfoPrefix + "materials.light")) {
-                warzone.getWarzoneMaterials().setLightBlock(warzoneRootSection.getItemStack(zoneInfoPrefix + "materials.light"));
-            } else {
-                ConfigurationSection floorMaterialSection = warzoneRootSection.getConfigurationSection(zoneInfoPrefix + "materials.light");
-                if (floorMaterialSection != null) {
-                    warzone.getWarzoneMaterials().setLightBlock(new ItemStack(floorMaterialSection.getInt("id"), 1, (short) floorMaterialSection.getInt("data")));
                 }
             }
 

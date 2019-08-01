@@ -1,8 +1,11 @@
 package com.tommytony.war.command.zonemaker;
 
+import com.sk89q.worldedit.IncompleteRegionException;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
-import com.sk89q.worldedit.bukkit.selections.Selection;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.regions.Region;
 import com.tommytony.war.War;
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.command.ZoneSetter;
@@ -29,15 +32,22 @@ public class SetZoneCommand extends AbstractZoneMakerCommand {
         if (this.args.length == 1) {
             if (War.war.getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
                 WorldEditPlugin worldEdit = (WorldEditPlugin) War.war.getServer().getPluginManager().getPlugin("WorldEdit");
-                Selection selection = worldEdit.getSelection(player);
-                if (selection != null && selection instanceof CuboidSelection) {
-                    Location min = selection.getMinimumPoint();
-                    Location max = selection.getMaximumPoint();
-                    ZoneSetter setter = new ZoneSetter(player, this.args[0]);
-                    setter.placeCorner1(min.getBlock());
-                    setter.placeCorner2(max.getBlock());
+                if (worldEdit == null) {
                     return true;
                 }
+                try {
+                    Region selection = worldEdit.getSession(player).getSelection(BukkitAdapter.adapt(player.getWorld()));
+                    if (selection instanceof CuboidRegion) {
+                        BlockVector3 minBlockVector = selection.getMinimumPoint();
+                        BlockVector3 maxBlockVector = selection.getMaximumPoint();
+                        Location min = new Location(player.getWorld(), minBlockVector.getBlockX(), minBlockVector.getBlockY(), minBlockVector.getBlockZ());
+                        Location max = new Location(player.getWorld(), maxBlockVector.getBlockX(), maxBlockVector.getBlockY(), maxBlockVector.getBlockZ());
+                        ZoneSetter setter = new ZoneSetter(player, this.args[0]);
+                        setter.placeCorner1(min.getBlock());
+                        setter.placeCorner2(max.getBlock());
+                        return true;
+                    }
+                } catch (IncompleteRegionException ignored) { }
             }
             War.war.addWandBearer(player, this.args[0]);
         } else if (this.args.length == 2) {

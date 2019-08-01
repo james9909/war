@@ -81,7 +81,7 @@ public class Warzone {
     private InventoryBag defaultInventories = new InventoryBag();
     private List<ZonePortal> portals = new ArrayList<>();
 
-    private WarzoneMaterials warzoneMaterials = new WarzoneMaterials(new ItemStack(Material.OBSIDIAN), new ItemStack(Material.FENCE), new ItemStack(Material.GLOWSTONE));
+    private WarzoneMaterials warzoneMaterials = new WarzoneMaterials(new ItemStack(Material.OBSIDIAN), new ItemStack(Material.OAK_FENCE), new ItemStack(Material.GLOWSTONE));
 
     private boolean isEndOfGame = false;
     private boolean isReinitializing = false;
@@ -1463,10 +1463,6 @@ public class Warzone {
 
     public WarzoneMaterials getWarzoneMaterials() {
         return warzoneMaterials;
-    }
-
-    public void setWarzoneMaterials(WarzoneMaterials warzoneMaterials) {
-        this.warzoneMaterials = warzoneMaterials;
     }
 
     /**

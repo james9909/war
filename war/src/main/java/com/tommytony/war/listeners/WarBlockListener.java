@@ -39,7 +39,7 @@ public class WarBlockListener implements Listener {
     private static final HashMap<Material, String> DROP_NAMES = new HashMap<>();
     static {
         DROP_NAMES.put(Material.TNT, ChatColor.translateAlternateColorCodes('&', "&4Explosives"));
-        DROP_NAMES.put(Material.SMOOTH_BRICK, ChatColor.translateAlternateColorCodes('&', "&7Stone Bricks"));
+        DROP_NAMES.put(Material.STONE_BRICKS, ChatColor.translateAlternateColorCodes('&', "&7Stone Bricks"));
     }
 
     @EventHandler

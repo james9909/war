@@ -1,13 +1,16 @@
 package com.tommytony.war.mapper;
 
 import com.tommytony.war.War;
+import com.tommytony.war.utility.XMaterial;
 import com.tommytony.war.volume.Volume;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -128,8 +131,7 @@ public class VolumeMapper {
                                         byte data = Byte.parseByte(blockSplit[1]);
 
                                         BlockState dummy = volume.getWorld().getBlockAt(x1 + i, y1 + j, z1 + k).getState();
-                                        dummy.setTypeId(typeID);
-                                        dummy.setRawData(data);
+                                        dummy.setType(XMaterial.matchXMaterial(typeID, data).parseMaterial());
                                         volume.getBlocks().add(dummy);
                                     }
                                     blockReads++;
@@ -214,7 +216,7 @@ public class VolumeMapper {
     /**
      * Parses an inventory string
      *
-     * @param String invString string to parse
+     * @param @String invString string to parse
      * @return List<ItemStack> Parsed items
      */
     @Deprecated
@@ -224,25 +226,23 @@ public class VolumeMapper {
             String[] itemsStrSplit = invString.split(";;");
             for (String itemStr : itemsStrSplit) {
                 String[] itemStrSplit = itemStr.split(";");
+                ItemStack stack = new ItemStack(Material.getMaterial(itemStrSplit[0]), Integer.parseInt(itemStrSplit[1]));
                 switch (itemStrSplit.length) {
                     case 3: {
-                        ItemStack stack = new ItemStack(Integer.parseInt(itemStrSplit[0]), Integer.parseInt(itemStrSplit[1]));
                         short durability = (short) Integer.parseInt(itemStrSplit[2]);
                         stack.setDurability(durability);
                         items.add(stack);
                         break;
                     }
                     case 4: {
-                        ItemStack stack = new ItemStack(Integer.parseInt(itemStrSplit[0]), Integer.parseInt(itemStrSplit[1]));
-                        stack.setData(new MaterialData(stack.getTypeId(), Byte.parseByte(itemStrSplit[3])));
+                        stack.setData(new MaterialData(stack.getType(), Byte.parseByte(itemStrSplit[3])));
                         short durability = (short) Integer.parseInt(itemStrSplit[2]);
                         stack.setDurability(durability);
                         items.add(stack);
                         break;
                     }
                     case 5: {
-                        ItemStack stack = new ItemStack(Integer.parseInt(itemStrSplit[0]), Integer.parseInt(itemStrSplit[1]));
-                        stack.setData(new MaterialData(stack.getTypeId(), Byte.parseByte(itemStrSplit[3])));
+                        stack.setData(new MaterialData(stack.getType(), Byte.parseByte(itemStrSplit[3])));
                         short durability = (short) Integer.parseInt(itemStrSplit[2]);
                         stack.setDurability(durability);
 
@@ -251,9 +251,9 @@ public class VolumeMapper {
                         for (String enchantmentStr : enchantmentsSplit) {
                             if (!enchantmentStr.equals("")) {
                                 String[] enchantmentSplit = enchantmentStr.split(":");
-                                int enchantId = Integer.parseInt(enchantmentSplit[0]);
+                                String name = enchantmentSplit[0];
                                 int level = Integer.parseInt(enchantmentSplit[1]);
-                                War.war.safelyEnchant(stack, Enchantment.getById(enchantId), level);
+                                War.war.safelyEnchant(stack, new EnchantmentWrapper(name), level);
                             }
                         }
 
@@ -261,7 +261,7 @@ public class VolumeMapper {
                         break;
                     }
                     default:
-                        items.add(new ItemStack(Integer.parseInt(itemStrSplit[0]), Integer.parseInt(itemStrSplit[1])));
+                        items.add(stack);
                         break;
                 }
             }
@@ -280,14 +280,14 @@ public class VolumeMapper {
         String extra = "";
         for (ItemStack item : items) {
             if (item != null) {
-                extra += item.getTypeId() + ";" + item.getAmount() + ";" + item.getDurability();
+                extra += item.getType() + ";" + item.getAmount() + ";" + item.getDurability();
                 if (item.getData() != null) {
                     extra += ";" + item.getData().getData();
                 }
                 if (item.getEnchantments().keySet().size() > 0) {
                     String enchantmentsStr = "";
                     for (Enchantment enchantment : item.getEnchantments().keySet()) {
-                        enchantmentsStr += enchantment.getId() + ":" + item.getEnchantments().get(enchantment) + "::";
+                        enchantmentsStr += enchantment.getKey() + ":" + item.getEnchantments().get(enchantment) + "::";
                     }
                     extra += ";" + enchantmentsStr;
                 }

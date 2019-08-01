@@ -3,28 +3,29 @@ package com.tommytony.war.config;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.BlockState;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Wool;
 
 public enum TeamKind {
-    WHITE(DyeColor.WHITE, Material.WOOL, ChatColor.WHITE, 450),
-    ORANGE(DyeColor.ORANGE, Material.WOOL, ChatColor.GOLD, 51),
-    MAGENTA(DyeColor.MAGENTA, Material.WOOL, ChatColor.LIGHT_PURPLE, 353),
-    BLUE(DyeColor.LIGHT_BLUE, Material.WOOL, ChatColor.BLUE, 23),
-    GOLD(DyeColor.YELLOW, Material.WOOL, ChatColor.YELLOW, 403), // yellow = gold
-    GREEN(DyeColor.LIME, Material.WOOL, ChatColor.GREEN, 612),
-    PINK(DyeColor.PINK, Material.WOOL, ChatColor.LIGHT_PURPLE, 929),
-    GRAY(DyeColor.GRAY, Material.WOOL, ChatColor.DARK_GRAY, 600),
-    IRON(DyeColor.SILVER, Material.WOOL, ChatColor.GRAY, 154), // lightgrey = iron
-    DIAMOND(DyeColor.CYAN, Material.WOOL, ChatColor.DARK_AQUA, 738), // cyan = diamond
-    PURPLE(DyeColor.PURPLE, Material.WOOL, ChatColor.DARK_PURPLE, 153),
-    NAVY(DyeColor.BLUE, Material.WOOL, ChatColor.DARK_BLUE, 939),
-    BROWN(DyeColor.BROWN, Material.WOOL, ChatColor.DARK_RED, 908),
-    DARKGREEN(DyeColor.GREEN, Material.WOOL, ChatColor.DARK_GREEN, 612),
-    RED(DyeColor.RED, Material.WOOL, ChatColor.RED, 245),
-    BLACK(DyeColor.BLACK, Material.WOOL, ChatColor.BLACK, 0);
+    WHITE(DyeColor.WHITE, Material.WHITE_WOOL, ChatColor.WHITE, 450),
+    ORANGE(DyeColor.ORANGE, Material.ORANGE_WOOL, ChatColor.GOLD, 51),
+    MAGENTA(DyeColor.MAGENTA, Material.MAGENTA_WOOL, ChatColor.LIGHT_PURPLE, 353),
+    BLUE(DyeColor.LIGHT_BLUE, Material.LIGHT_BLUE_WOOL, ChatColor.BLUE, 23),
+    GOLD(DyeColor.YELLOW, Material.YELLOW_WOOL, ChatColor.YELLOW, 403), // yellow = gold
+    GREEN(DyeColor.LIME, Material.LIME_WOOL, ChatColor.GREEN, 612),
+    PINK(DyeColor.PINK, Material.PINK_WOOL, ChatColor.LIGHT_PURPLE, 929),
+    GRAY(DyeColor.GRAY, Material.GRAY_WOOL, ChatColor.DARK_GRAY, 600),
+    IRON(DyeColor.LIGHT_GRAY, Material.LIGHT_GRAY_WOOL, ChatColor.GRAY, 154), // lightgrey = iron
+    DIAMOND(DyeColor.CYAN, Material.CYAN_WOOL, ChatColor.DARK_AQUA, 738), // cyan = diamond
+    PURPLE(DyeColor.PURPLE, Material.PURPLE_WOOL, ChatColor.DARK_PURPLE, 153),
+    NAVY(DyeColor.BLUE, Material.BLUE_WOOL, ChatColor.DARK_BLUE, 939),
+    BROWN(DyeColor.BROWN, Material.BROWN_WOOL, ChatColor.DARK_RED, 908),
+    DARKGREEN(DyeColor.GREEN, Material.GREEN_WOOL, ChatColor.DARK_GREEN, 612),
+    RED(DyeColor.RED, Material.RED_WOOL, ChatColor.RED, 245),
+    BLACK(DyeColor.BLACK, Material.BLACK_WOOL, ChatColor.BLACK, 0);
 
     private final DyeColor dyeColor;
     private final ChatColor chatColor;
@@ -95,7 +96,7 @@ public enum TeamKind {
     }
 
     /**
-     * Get head block material. Should always be {@link Material#WOOL}.
+     * Get head block material. Should always be some type of wool.
      *
      * @return team head block material.
      */
@@ -142,7 +143,7 @@ public enum TeamKind {
      * @return true if block is this team's color.
      */
     public boolean isTeamBlock(BlockState block) {
-        if (block.getType() != Material.WOOL || !(block.getData() instanceof Wool)) {
+        if (Tag.WOOL.isTagged(block.getType()) || !(block.getData() instanceof Wool)) {
             return false;
         }
         Wool wool = (Wool) block.getData();
@@ -156,7 +157,7 @@ public enum TeamKind {
      * @return true if item is this team's color.
      */
     public boolean isTeamItem(ItemStack item) {
-        if (item.getType() != Material.WOOL || !(item.getData() instanceof Wool)) {
+        if (Tag.WOOL.isTagged(item.getType()) || !(item.getData() instanceof Wool)) {
             return false;
         }
         Wool wool = (Wool) item.getData();

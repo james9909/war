@@ -2,15 +2,12 @@ package com.tommytony.war.volume;
 
 import com.tommytony.war.War;
 import com.tommytony.war.runnable.BlockResetJob;
-import com.tommytony.war.utility.Direction;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -221,93 +218,6 @@ public class Volume {
             for (int y = this.getMinY(); y <= this.getMaxY(); y++) {
                 for (int z = this.getMinZ(); z <= this.getMaxZ(); z++) {
                     this.getWorld().getBlockAt(x, y, z).setType(material);
-                }
-            }
-        }
-    }
-
-    public void setFaceMaterial(BlockFace face, ItemStack faceBlock) {
-        Validate.isTrue(this.hasTwoCorners(), "Incomplete volume");
-        for (int x = this.getMinX(); x <= this.getMaxX(); x++) {
-            for (int y = this.getMinY(); y <= this.getMaxY(); y++) {
-                for (int z = this.getMinZ(); z <= this.getMaxZ(); z++) {
-                    if ((face == BlockFace.DOWN && y == this.getMinY()) || (face == BlockFace.UP && y == this.getMaxY()) || (face == Direction.NORTH() && x == this.getMinX()) || (
-                        face == Direction.EAST() && z == this.getMinZ()) || (face == Direction.SOUTH() && x == this.getMaxX()) || (face == Direction.WEST() && z == this.getMaxZ())) {
-                        BlockState currentBlock = this.getWorld().getBlockAt(x, y, z).getState();
-                        currentBlock.setType(faceBlock.getType());
-                        currentBlock.setData(faceBlock.getData());
-                        currentBlock.update(true);
-                    }
-                }
-            }
-        }
-    }
-
-    public void setFloorOutline(ItemStack outlineBlock) {
-        Validate.isTrue(this.hasTwoCorners(), "Incomplete volume");
-        for (int x = this.getMinX(); x <= this.getMaxX(); x++) {
-            for (int z = this.getMinZ(); z <= this.getMaxZ(); z++) {
-                if (x == this.getMinX() || x == this.getMaxX() || z == this.getMinZ() || z == this.getMaxZ()) {
-                    BlockState currentBlock = this.getWorld().getBlockAt(x, this.getMinY(), z).getState();
-                    currentBlock.setType(outlineBlock.getType());
-                    currentBlock.setData(outlineBlock.getData());
-                    currentBlock.update(true);
-                }
-            }
-        }
-    }
-
-    public void replaceMaterial(Material original, Material replacement) {
-        Validate.isTrue(this.hasTwoCorners(), "Incomplete volume");
-        for (int x = this.getMinX(); x <= this.getMaxX(); x++) {
-            for (int y = this.getMinY(); y <= this.getMaxY(); y++) {
-                for (int z = this.getMinZ(); z <= this.getMaxZ(); z++) {
-                    if (this.getWorld().getBlockAt(x, y, z).getType() == original) {
-                        this.getWorld().getBlockAt(x, y, z).setType(replacement);
-                    }
-                }
-            }
-        }
-    }
-
-    public void replaceMaterials(Material[] materials, Material replacement) {
-        for (Material mat : materials) {
-            this.replaceMaterial(mat, replacement);
-        }
-    }
-
-    public void clearBlocksThatDontFloat() {
-        Validate.isTrue(this.hasTwoCorners(), "Incomplete volume");
-        for (int x = this.getMinX(); x <= this.getMaxX(); x++) {
-            for (int y = this.getMinY(); y <= this.getMaxY(); y++) {
-                for (int z = this.getMinZ(); z <= this.getMaxZ(); z++) {
-                    switch (this.getWorld().getBlockAt(x, y, z).getType()) {
-                        case SIGN_POST:
-                        case WALL_SIGN:
-                        case IRON_DOOR:
-                        case WOOD_DOOR:
-                        case LADDER:
-                        case YELLOW_FLOWER:
-                        case RED_ROSE:
-                        case RED_MUSHROOM:
-                        case BROWN_MUSHROOM:
-                        case SAPLING:
-                        case TORCH:
-                        case RAILS:
-                        case STONE_BUTTON:
-                        case STONE_PLATE:
-                        case WOOD_PLATE:
-                        case LEVER:
-                        case REDSTONE:
-                        case REDSTONE_TORCH_ON:
-                        case REDSTONE_TORCH_OFF:
-                        case CACTUS:
-                        case SNOW:
-                        case ICE:
-                            this.getWorld().getBlockAt(x, y, z).setType(Material.AIR);
-                        default:
-                            break;
-                    }
                 }
             }
         }

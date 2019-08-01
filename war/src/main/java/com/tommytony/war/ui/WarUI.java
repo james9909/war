@@ -37,7 +37,7 @@ public class WarUI extends ChestUI {
     private ItemStack getCreateWarzoneItem() {
         String title = ChatColor.YELLOW + "" + ChatColor.BOLD + "Create Warzone";
         List<String> lore = Collections.singletonList(ChatColor.GRAY + "Click to create, or edit a " + ChatColor.AQUA + "Warzone" + ChatColor.GRAY + ".");
-        return createItem(Material.WOOD_AXE, title, lore);
+        return createItem(Material.WOODEN_AXE, title, lore);
     }
 
     private ItemStack getJoinWarzoneItem() {
@@ -55,7 +55,7 @@ public class WarUI extends ChestUI {
             ChatColor.GRAY + "Click to display " + ChatColor.DARK_RED + "Admin" + ChatColor.GRAY + " access panel",
             ChatColor.GRAY + "Includes: " + ChatColor.DARK_GRAY + "Permissions, managing warzones, configs, etc."
         );
-        return createItem(Material.EYE_OF_ENDER, title, lore);
+        return createItem(Material.ENDER_EYE, title, lore);
     }
 
     @Override

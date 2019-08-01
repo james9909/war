@@ -147,7 +147,7 @@ public class WarPlayerListener implements Listener {
 
             if (War.war.isWandBearer(player)) {
                 Item item = event.getItemDrop();
-                if (item.getItemStack().getType() == Material.WOOD_SWORD) {
+                if (item.getItemStack().getType() == Material.WOODEN_SWORD) {
                     String zoneName = War.war.getWandBearerZone(player);
                     War.war.removeWandBearer(player);
                     War.war.msg(player, "drop.wand", zoneName);
@@ -235,7 +235,7 @@ public class WarPlayerListener implements Listener {
         Action action = event.getAction();
         Block clickedBlock = event.getClickedBlock();
 
-        if (item != null && item.getType() == Material.WOOD_SWORD && War.war.isWandBearer(player)) {
+        if (item != null && item.getType() == Material.WOODEN_SWORD && War.war.isWandBearer(player)) {
             String zoneName = War.war.getWandBearerZone(player);
             ZoneSetter setter = new ZoneSetter(player, zoneName);
             switch (action) {
@@ -278,7 +278,7 @@ public class WarPlayerListener implements Listener {
             Team team = warPlayer.getTeam();
             if (team != null) {
                 boolean xpKillMeter = team.getTeamConfig().resolveBoolean(TeamConfig.XPKILLMETER);
-                if (action == Action.RIGHT_CLICK_BLOCK && clickedBlock.getType() == Material.ENCHANTMENT_TABLE && xpKillMeter) {
+                if (action == Action.RIGHT_CLICK_BLOCK && clickedBlock.getType() == Material.ENCHANTING_TABLE && xpKillMeter) {
                     event.setCancelled(true);
                     War.war.badMsg(player, "use.enchant");
                     if (zone.getAuthors().contains(player.getName())) {
@@ -302,7 +302,7 @@ public class WarPlayerListener implements Listener {
 
             if (zone.getWarzoneConfig().getBoolean(WarzoneConfig.SOUPHEALING)) {
                 if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
-                    if (item != null && item.getType() == Material.MUSHROOM_SOUP) {
+                    if (item != null && item.getType() == Material.MUSHROOM_STEW) {
                         if (player.getHealth() < 20) {
                             player.setHealth(Math.min(20, player.getHealth() + 7));
                             item.setType(Material.BOWL);

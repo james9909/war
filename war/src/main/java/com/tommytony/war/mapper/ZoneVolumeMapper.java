@@ -297,7 +297,7 @@ public class ZoneVolumeMapper {
             case SUNSET:    // Use same as 4x3
 
                 // 4x3
-            case DONKEYKONG:
+            case DONKEY_KONG:
             case SKELETON:
                 switch (facing) {
                     case WEST:
@@ -320,7 +320,7 @@ public class ZoneVolumeMapper {
             case FIGHTERS:  // Use same as 4x4
 
                 // 4x4
-            case BURNINGSKULL:
+            case BURNING_SKULL:
             case PIGSCENE:
             case POINTER:
                 switch (facing) {

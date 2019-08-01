@@ -19,8 +19,8 @@ import java.util.List;
  */
 public class ZoneWallGuard {
 
-    public static final Material[] glassifyBlocks = {Material.AIR, Material.WATER, Material.LONG_GRASS, Material.VINE, Material.WATER_LILY, Material.YELLOW_FLOWER, Material.RED_ROSE,
-        Material.RED_MUSHROOM, Material.BROWN_MUSHROOM, Material.DEAD_BUSH, Material.SUGAR_CANE_BLOCK};
+    public static final Material[] glassifyBlocks = {Material.AIR, Material.WATER, Material.TALL_GRASS, Material.VINE, Material.LILY_PAD, Material.DANDELION, Material.RED_TULIP,
+        Material.RED_MUSHROOM, Material.BROWN_MUSHROOM, Material.DEAD_BUSH, Material.SUGAR_CANE};
     private Player player;
     private Warzone warzone;
     private Location playerLocation;

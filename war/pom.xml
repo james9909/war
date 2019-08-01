@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.tommytony</groupId>
   <artifactId>war</artifactId>
-  <version>1.12-SNAPSHOT</version>
+  <version>1.13-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>War</name>
   <url>http://war.tommytony.com</url>
@@ -100,15 +100,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.bukkit</groupId>
-      <artifactId>bukkit</artifactId>
-      <version>1.12.2-R0.1-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.12.2-R0.1-SNAPSHOT</version>
+      <version>1.13.2-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
 
@@ -123,7 +117,7 @@
     <dependency>
       <groupId>com.sk89q.worldedit</groupId>
       <artifactId>worldedit-bukkit</artifactId>
-      <version>6.1.5</version>
+      <version>7.0.0</version>
       <type>jar</type>
     </dependency>
 

@@ -753,7 +753,7 @@ public class War extends JavaPlugin {
     public void addWandBearer(Player player, String zoneName) {
         if (this.wandBearers.containsKey(player.getUniqueId())) {
             String alreadyHaveWand = this.wandBearers.get(player.getUniqueId());
-            if (player.getInventory().first(Material.WOOD_SWORD) != -1) {
+            if (player.getInventory().first(Material.WOODEN_SWORD) != -1) {
                 if (zoneName.equals(alreadyHaveWand)) {
                     this.badMsg(player, "You already have a wand for zone " + alreadyHaveWand + ". Drop the wooden sword first.");
                 } else {
@@ -766,7 +766,7 @@ public class War extends JavaPlugin {
                 // lost his sword, or new warzone
                 if (zoneName.equals(alreadyHaveWand)) {
                     // same zone, give him a new sword
-                    player.getInventory().addItem(new ItemStack(Material.WOOD_SWORD, 1, (byte) 8));
+                    player.getInventory().addItem(new ItemStack(Material.WOODEN_SWORD, 1, (byte) 8));
                     this.msg(player, "Here's a new sword for zone " + zoneName + ".");
                 }
             }
@@ -775,8 +775,8 @@ public class War extends JavaPlugin {
                 this.badMsg(player, "Your inventory is full. Please drop an item and try again.");
             } else {
                 this.wandBearers.put(player.getUniqueId(), zoneName);
-                player.getInventory().addItem(new ItemStack(Material.WOOD_SWORD, 1, (byte) 8));
-                // player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.WOOD_SWORD));
+                player.getInventory().addItem(new ItemStack(Material.WOODEN_SWORD, 1, (byte) 8));
+                // player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.WOODEN_SWORD));
                 this.msg(player, "You now have a wand for zone " + zoneName + ". Left-click with wooden sword for corner 1. Right-click for corner 2.");
                 War.war.log(player.getName() + " now has a wand for warzone " + zoneName, Level.INFO);
             }

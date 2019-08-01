@@ -36,7 +36,7 @@ public class EditTeamConfigUI extends ChestUI {
 
         if (zone != null || team != null) {
             String title = ChatColor.GRAY + "" + ChatColor.BOLD + "Restore Defaults";
-            ItemStack item = createItem(Material.SNOW_BALL, title, null);
+            ItemStack item = createItem(Material.SNOWBALL, title, null);
             this.addItem(inv, getSize() - 1, item, () -> {
                 config.reset();
                 if (team != null) {

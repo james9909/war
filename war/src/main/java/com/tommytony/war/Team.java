@@ -300,7 +300,7 @@ public class Team {
             } else {
                 lines = MessageFormat.format(War.war.getString("sign.team.limited"), this.name, this.players.size(), this.getTeamConfig().resolveInt(TeamConfig.TEAMSIZE), this.points, this.getTeamConfig().resolveInt(TeamConfig.MAXSCORE), this.remainingLives, this.getTeamConfig().resolveInt(TeamConfig.LIFEPOOL)).split("\n");
             }
-            signBlock.setType(Material.SIGN_POST);
+            signBlock.setType(Material.SIGN);
             org.bukkit.block.Sign block = (org.bukkit.block.Sign) signBlock.getState();
             org.bukkit.material.Sign data = (Sign) block.getData();
             data.setFacingDirection(signDirection);

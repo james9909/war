@@ -8,6 +8,7 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.utility.LoadoutSelection;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -40,7 +41,7 @@ public class HelmetProtectionTask implements Runnable {
 
                         LoadoutSelection loadout = warPlayer.getLoadoutSelection();
                         // 1) Replace missing block head
-                        if (playerInv.getHelmet() == null || playerInv.getHelmet().getType() != Material.WOOL) {
+                        if (playerInv.getHelmet() == null || Tag.WOOL.isTagged(playerInv.getHelmet().getType())) {
                             ItemStack helmet = team.getKind().getBlockHead();
                             playerInv.setHelmet(helmet);
                         }
@@ -86,7 +87,7 @@ public class HelmetProtectionTask implements Runnable {
                         player.getInventory().setItemInMainHand(null);
                         player.getInventory().setItemInOffHand(null);
                         player.getInventory().setHeldItemSlot(0);
-                        player.getInventory().addItem(new ItemStack(Material.CAKE_BLOCK, 2240));
+                        player.getInventory().addItem(new ItemStack(Material.CAKE, 2240));
                     }
                 }
             }

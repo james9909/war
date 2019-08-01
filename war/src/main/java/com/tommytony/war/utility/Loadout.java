@@ -36,31 +36,48 @@ public class Loadout implements Comparable<Loadout> {
 
     static {
         HELMETS.add(Material.LEATHER_HELMET);
-        HELMETS.add(Material.GOLD_HELMET);
+        HELMETS.add(Material.GOLDEN_HELMET);
         HELMETS.add(Material.CHAINMAIL_HELMET);
         HELMETS.add(Material.IRON_HELMET);
         HELMETS.add(Material.DIAMOND_HELMET);
 
-        HELMETS.add(Material.WOOL);
+        HELMETS.add(Material.WHITE_WOOL);
+        HELMETS.add(Material.BLACK_WOOL);
+        HELMETS.add(Material.BLUE_WOOL);
+        HELMETS.add(Material.BROWN_WOOL);
+        HELMETS.add(Material.CYAN_WOOL);
+        HELMETS.add(Material.GRAY_WOOL);
+        HELMETS.add(Material.GREEN_WOOL);
+        HELMETS.add(Material.LIGHT_BLUE_WOOL);
+        HELMETS.add(Material.LIGHT_GRAY_WOOL);
+        HELMETS.add(Material.YELLOW_WOOL);
+        HELMETS.add(Material.RED_WOOL);
+        HELMETS.add(Material.ORANGE_WOOL);
+        HELMETS.add(Material.MAGENTA_WOOL);
+        HELMETS.add(Material.PINK_WOOL);
+        HELMETS.add(Material.LIME_WOOL);
+        HELMETS.add(Material.PURPLE_WOOL);
+
         HELMETS.add(Material.PUMPKIN);
         HELMETS.add(Material.JACK_O_LANTERN);
-        HELMETS.add(Material.SKULL_ITEM);
+        HELMETS.add(Material.SKELETON_SKULL);
+        HELMETS.add(Material.WITHER_SKELETON_SKULL);
 
         CHESTPLATES.add(Material.LEATHER_CHESTPLATE);
-        CHESTPLATES.add(Material.GOLD_CHESTPLATE);
+        CHESTPLATES.add(Material.GOLDEN_CHESTPLATE);
         CHESTPLATES.add(Material.CHAINMAIL_CHESTPLATE);
         CHESTPLATES.add(Material.IRON_CHESTPLATE);
         CHESTPLATES.add(Material.DIAMOND_CHESTPLATE);
         CHESTPLATES.add(Material.ELYTRA);
 
         LEGGINGS.add(Material.LEATHER_LEGGINGS);
-        LEGGINGS.add(Material.GOLD_LEGGINGS);
+        LEGGINGS.add(Material.GOLDEN_LEGGINGS);
         LEGGINGS.add(Material.CHAINMAIL_LEGGINGS);
         LEGGINGS.add(Material.IRON_LEGGINGS);
         LEGGINGS.add(Material.DIAMOND_LEGGINGS);
 
         BOOTS.add(Material.LEATHER_BOOTS);
-        BOOTS.add(Material.GOLD_BOOTS);
+        BOOTS.add(Material.GOLDEN_BOOTS);
         BOOTS.add(Material.CHAINMAIL_BOOTS);
         BOOTS.add(Material.IRON_BOOTS);
         BOOTS.add(Material.DIAMOND_BOOTS);

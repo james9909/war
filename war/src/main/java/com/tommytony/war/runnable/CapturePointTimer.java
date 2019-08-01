@@ -7,6 +7,7 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.structure.CapturePoint;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -49,7 +50,7 @@ public class CapturePointTimer extends BukkitRunnable {
                 Team team = warPlayer.getTeam();
 
                 Block standing = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
-                boolean valid = standing.getType().equals(Material.WOOL) || standing.getType().equals(Material.DOUBLE_STEP);
+                boolean valid = Tag.WOOL.isTagged(standing.getType()) || standing.getType().equals(Material.STONE_SLAB);
                 if (valid && cp.getVolume().contains(standing)) {
                     cp.addActiveTeam(team.getKind());
                     it.remove();

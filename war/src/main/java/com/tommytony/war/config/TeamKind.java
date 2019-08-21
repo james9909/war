@@ -143,7 +143,7 @@ public enum TeamKind {
      * @return true if block is this team's color.
      */
     public boolean isTeamBlock(BlockState block) {
-        if (Tag.WOOL.isTagged(block.getType()) || !(block.getData() instanceof Wool)) {
+        if (!Tag.WOOL.isTagged(block.getType()) || !(block.getData() instanceof Wool)) {
             return false;
         }
         Wool wool = (Wool) block.getData();
@@ -157,7 +157,7 @@ public enum TeamKind {
      * @return true if item is this team's color.
      */
     public boolean isTeamItem(ItemStack item) {
-        if (Tag.WOOL.isTagged(item.getType()) || !(item.getData() instanceof Wool)) {
+        if (!Tag.WOOL.isTagged(item.getType()) || !(item.getData() instanceof Wool)) {
             return false;
         }
         Wool wool = (Wool) item.getData();

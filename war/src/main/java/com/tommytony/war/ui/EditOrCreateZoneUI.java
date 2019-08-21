@@ -9,9 +9,11 @@ import com.sk89q.worldedit.regions.Region;
 import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.command.ZoneSetter;
+import com.tommytony.war.utility.Compat;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -41,22 +43,14 @@ public class EditOrCreateZoneUI extends ChestUI {
                 War.war.getUIManager().getPlayerMessage(player, "Select region for zone using WorldEdit and then type a name:", new StringRunnable() {
                     @Override
                     public void run() {
-                        WorldEditPlugin worldEdit = (WorldEditPlugin) War.war.getServer().getPluginManager().getPlugin("WorldEdit");
-                        if (worldEdit == null) {
-                            return;
+                        Compat.BlockPair pair = Compat.getWorldEditSelection(player);
+                        if (pair != null) {
+                            ZoneSetter setter = new ZoneSetter(player, this.getValue());
+                            setter.placeCorner1(pair.getBlock1());
+                            setter.placeCorner2(pair.getBlock2());
+                        } else {
+                            War.war.badMsg(player, "Invalid selection. Creation cancelled.");
                         }
-                        try {
-                            Region selection = worldEdit.getSession(player).getSelection(BukkitAdapter.adapt(player.getWorld()));
-                            if (selection instanceof CuboidRegion) {
-                                BlockVector3 minBlockVector = selection.getMinimumPoint();
-                                BlockVector3 maxBlockVector = selection.getMaximumPoint();
-                                Location min = new Location(player.getWorld(), minBlockVector.getBlockX(), minBlockVector.getBlockY(), minBlockVector.getBlockZ());
-                                Location max = new Location(player.getWorld(), maxBlockVector.getBlockX(), maxBlockVector.getBlockY(), maxBlockVector.getBlockZ());
-                                ZoneSetter setter = new ZoneSetter(player, this.getValue());
-                                setter.placeCorner1(min.getBlock());
-                                setter.placeCorner2(max.getBlock());
-                            }
-                        } catch (IncompleteRegionException ignored) { }
                     }
                 });
             }

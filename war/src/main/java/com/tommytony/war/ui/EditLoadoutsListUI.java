@@ -56,7 +56,7 @@ public class EditLoadoutsListUI extends ChestUI {
                 } else {
                     enabled = zone.getDefaultInventories().getLoadouts().contains(loadoutName);
                 }
-                ItemStack item = new Dye(enabled ? DyeColor.LIME : DyeColor.GRAY).toItemStack(1);
+                ItemStack item = new ItemStack(enabled ? Material.LIME_DYE : Material.GRAY_DYE, 1);
                 ItemMeta meta = item.getItemMeta();
                 String name = "Enabled: " + (enabled ? ChatColor.GREEN + "true" : ChatColor.DARK_GRAY + "false");
                 meta.setDisplayName(loadoutName);

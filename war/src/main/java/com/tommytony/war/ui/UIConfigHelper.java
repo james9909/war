@@ -45,7 +45,7 @@ public class UIConfigHelper {
             }
             if (option.getConfigType() == Boolean.class) {
                 status += config.resolveBoolean(option) ? ChatColor.GREEN + "true" : ChatColor.DARK_GRAY + "false";
-                item = new Dye(config.resolveBoolean(option) ? DyeColor.LIME : DyeColor.GRAY).toItemStack(1);
+                item = new ItemStack(config.resolveBoolean(option) ? Material.LIME_DYE : Material.GRAY_DYE, 1);
                 meta = item.getItemMeta();
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).add(inheritance).build());
@@ -56,7 +56,7 @@ public class UIConfigHelper {
                 });
             } else if (option.getConfigType() == Integer.class || option.getConfigType() == Double.class || option.getConfigType() == String.class) {
                 status += ChatColor.LIGHT_PURPLE + config.resolveValue(option).toString();
-                item = new Dye(DyeColor.PURPLE).toItemStack(1);
+                item = new ItemStack(Material.PURPLE_DYE, 1);
                 meta = item.getItemMeta();
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).add(inheritance).build());
@@ -81,7 +81,7 @@ public class UIConfigHelper {
                 });
             } else if (option.getConfigType() == FlagReturn.class) {
                 status += ChatColor.YELLOW + config.resolveValue(option).toString();
-                item = new Dye(DyeColor.PINK).toItemStack(1);
+                item = new ItemStack(Material.PINK_DYE, 1);
                 meta = item.getItemMeta();
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).add(inheritance).build());
@@ -101,7 +101,7 @@ public class UIConfigHelper {
                 });
             } else if (option.getConfigType() == TeamSpawnStyle.class) {
                 status += ChatColor.YELLOW + config.resolveValue(option).toString();
-                item = new Dye(DyeColor.PINK).toItemStack(1);
+                item = new ItemStack(Material.PINK_DYE, 1);
                 meta = item.getItemMeta();
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).add(inheritance).build());
@@ -164,7 +164,7 @@ public class UIConfigHelper {
             }
             if (option.getConfigType() == Boolean.class) {
                 status += config.getBoolean(option) ? ChatColor.GREEN + "true" : ChatColor.DARK_GRAY + "false";
-                item = new Dye(config.getBoolean(option) ? DyeColor.LIME : DyeColor.GRAY).toItemStack(1);
+                item = new ItemStack(config.getBoolean(option) ? Material.LIME_DYE : Material.GRAY_DYE, 1);
                 meta = item.getItemMeta();
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).add(inheritance).build());
@@ -175,7 +175,7 @@ public class UIConfigHelper {
                 });
             } else if (option.getConfigType() == Integer.class || option.getConfigType() == Double.class || option.getConfigType() == String.class) {
                 status += ChatColor.LIGHT_PURPLE + config.getValue(option).toString();
-                item = new Dye(DyeColor.PURPLE).toItemStack(1);
+                item = new ItemStack(Material.PURPLE_DYE, 1);
                 meta = item.getItemMeta();
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).add(inheritance).build());
@@ -237,7 +237,7 @@ public class UIConfigHelper {
             }
             if (option.getConfigType() == Boolean.class) {
                 status += config.getBoolean(option) ? ChatColor.GREEN + "true" : ChatColor.DARK_GRAY + "false";
-                item = new Dye(config.getBoolean(option) ? DyeColor.LIME : DyeColor.GRAY).toItemStack(1);
+                item = new ItemStack(config.getBoolean(option) ? Material.LIME_DYE : Material.GRAY_DYE, 1);
                 meta = item.getItemMeta();
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).build());
@@ -248,7 +248,7 @@ public class UIConfigHelper {
                 });
             } else if (option.getConfigType() == Integer.class || option.getConfigType() == Double.class || option.getConfigType() == String.class) {
                 status += ChatColor.LIGHT_PURPLE + config.getValue(option).toString();
-                item = new Dye(DyeColor.PURPLE).toItemStack(1);
+                item = new ItemStack(Material.PURPLE_DYE, 1);
                 meta = item.getItemMeta();
                 meta.setDisplayName(name);
                 meta.setLore(new ImmutableList.Builder<String>().add(desc).add(status).build());

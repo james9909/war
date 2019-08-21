@@ -6,6 +6,7 @@ import com.tommytony.war.config.bags.WarConfigBag;
 import com.tommytony.war.utility.Loadout;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -36,7 +37,7 @@ public class EditLoadoutUI extends ChestUI {
         this.addItem(inv, 9*4+3, loadout.getLeggings(), null);
         this.addItem(inv, 9*4+4, loadout.getBoots(), null);
 
-        ItemStack item = new Dye(loadout.getDefault() ? DyeColor.LIME : DyeColor.GRAY).toItemStack(1);
+        ItemStack item = new ItemStack(loadout.getDefault() ? Material.LIME_DYE : Material.GRAY_DYE, 1);
         ItemMeta meta = item.getItemMeta();
         String name = "Value: " + (loadout.getDefault() ? ChatColor.GREEN + "true" : ChatColor.DARK_GRAY + "false");
         meta.setDisplayName("Default");

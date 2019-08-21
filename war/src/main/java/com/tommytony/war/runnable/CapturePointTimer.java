@@ -50,7 +50,7 @@ public class CapturePointTimer extends BukkitRunnable {
                 Team team = warPlayer.getTeam();
 
                 Block standing = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
-                boolean valid = Tag.WOOL.isTagged(standing.getType()) || standing.getType().equals(Material.STONE_SLAB);
+                boolean valid = Tag.WOOL.isTagged(standing.getType()) || standing.getType().equals(Material.SMOOTH_STONE);
                 if (valid && cp.getVolume().contains(standing)) {
                     cp.addActiveTeam(team.getKind());
                     it.remove();

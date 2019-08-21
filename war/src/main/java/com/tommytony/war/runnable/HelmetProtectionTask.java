@@ -41,7 +41,7 @@ public class HelmetProtectionTask implements Runnable {
 
                         LoadoutSelection loadout = warPlayer.getLoadoutSelection();
                         // 1) Replace missing block head
-                        if (playerInv.getHelmet() == null || Tag.WOOL.isTagged(playerInv.getHelmet().getType())) {
+                        if (playerInv.getHelmet() == null || !Tag.WOOL.isTagged(playerInv.getHelmet().getType())) {
                             ItemStack helmet = team.getKind().getBlockHead();
                             playerInv.setHelmet(helmet);
                         }

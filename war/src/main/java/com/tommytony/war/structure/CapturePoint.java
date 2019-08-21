@@ -89,7 +89,7 @@ public class CapturePoint {
                         state.setType(Material.OBSIDIAN);
                         break;
                     case 2:
-                        state.setType(Material.STONE_BRICK_SLAB);
+                        state.setType(Material.SMOOTH_STONE);
                         neutralBlocks.add(state);
                         break;
                     default:
@@ -211,7 +211,7 @@ public class CapturePoint {
 
         BlockState target = removeRandomBlock(coloredBlocks);
         if (target != null) {
-            target.setType(Material.STONE_SLAB);
+            target.setType(Material.SMOOTH_STONE);
             target.update(true);
             neutralBlocks.add(target);
         }

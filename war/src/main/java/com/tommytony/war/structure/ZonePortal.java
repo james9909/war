@@ -15,6 +15,8 @@ import java.text.MessageFormat;
 
 public class ZonePortal {
 
+    public static final BlockFace[] axis = { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
+
     private String name;
     private Warzone zone;
     private Location location;
@@ -63,16 +65,7 @@ public class ZonePortal {
 
     private BlockFace getOrientation() {
         float yaw = location.getYaw();
-        if ((yaw >= 0 && yaw < 45) || (yaw >= 315 && yaw <= 360)) {
-            return Direction.WEST();
-        } else if (yaw >= 45 && yaw < 135) {
-            return Direction.NORTH();
-        } else if (yaw >= 135 && yaw < 225) {
-            return Direction.EAST();
-        } else if (yaw >= 225 && yaw < 315) {
-            return Direction.SOUTH();
-        }
-        return Direction.SOUTH();
+        return axis[Math.round(yaw / 90f) & 0x3];
     }
 
     public String getName() {
@@ -121,7 +114,7 @@ public class ZonePortal {
         }
     }
 
-    private  void setDirections() {
+    private void setDirections() {
         if (orientation == Direction.SOUTH()) {
             left = Direction.EAST();
             back = Direction.NORTH();

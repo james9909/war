@@ -25,11 +25,11 @@ public class InventoryBag {
     }
 
     public void addLoadout(String name) {
-        this.loadouts.add(name);
+        this.loadouts.add(name.toLowerCase());
     }
 
     public void removeLoadout(String name) {
-        loadouts.remove(name);
+        loadouts.remove(name.toLowerCase());
     }
 
     public boolean hasLoadouts() {
@@ -109,6 +109,6 @@ public class InventoryBag {
     }
 
     public boolean containsLoadout(String name) {
-        return resolveLoadouts().contains(name);
+        return resolveLoadouts().contains(name.toLowerCase());
     }
 }

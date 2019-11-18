@@ -941,7 +941,7 @@ public class War extends JavaPlugin {
     }
 
     public Loadout getLoadout(String name) {
-        return loadouts.getOrDefault(name, null);
+        return loadouts.getOrDefault(name.toLowerCase(), null);
     }
 
     public void addLoadout(Loadout newLoadout) {
@@ -956,11 +956,15 @@ public class War extends JavaPlugin {
             loadout.setOffhand(newLoadout.getOffhand());
             return;
         }
-        loadouts.put(name, newLoadout);
+        loadouts.put(name.toLowerCase(), newLoadout);
     }
 
     public boolean containsLoadout(String name) {
-        return loadouts.containsKey(name);
+        return loadouts.containsKey(name.toLowerCase());
+    }
+
+    public void removeLoadout(String name) {
+        this.loadouts.remove(name.toLowerCase());
     }
 
     public Map<String, Loadout> getLoadouts() {

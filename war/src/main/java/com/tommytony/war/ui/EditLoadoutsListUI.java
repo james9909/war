@@ -41,7 +41,7 @@ public class EditLoadoutsListUI extends ChestUI {
             Map<String, Loadout> loadouts = War.war.getLoadouts();
             for (String loadoutName: loadouts.keySet()) {
                 Loadout loadout = loadouts.get(loadoutName);
-                String title = ChatColor.GREEN + String.format("Edit loadout %s", loadoutName);
+                String title = ChatColor.GREEN + String.format("Edit loadout %s", loadout.getName());
                 item = createItem(Material.CHEST, title, null);
                 this.addItem(inv, i++, item, () -> War.war.getUIManager().assignUI(player, new EditLoadoutUI(loadout)));
             }
@@ -52,14 +52,14 @@ public class EditLoadoutsListUI extends ChestUI {
 
                 boolean enabled;
                 if (team != null) {
-                    enabled = team.getInventories().getLoadouts().contains(loadoutName);
+                    enabled = team.getInventories().containsLoadout(loadoutName);
                 } else {
-                    enabled = zone.getDefaultInventories().getLoadouts().contains(loadoutName);
+                    enabled = zone.getDefaultInventories().containsLoadout(loadoutName);
                 }
                 ItemStack item = new ItemStack(enabled ? Material.LIME_DYE : Material.GRAY_DYE, 1);
                 ItemMeta meta = item.getItemMeta();
                 String name = "Enabled: " + (enabled ? ChatColor.GREEN + "true" : ChatColor.DARK_GRAY + "false");
-                meta.setDisplayName(loadoutName);
+                meta.setDisplayName(loadout.getName());
                 meta.setLore(new ImmutableList.Builder<String>().add(name).build());
                 item.setItemMeta(meta);
                 this.addItem(inv, i++, item, () -> {

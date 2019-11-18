@@ -5,13 +5,11 @@ import com.tommytony.war.War;
 import com.tommytony.war.config.bags.WarConfigBag;
 import com.tommytony.war.utility.Loadout;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.Dye;
 
 import java.util.Arrays;
 
@@ -25,9 +23,10 @@ public class EditLoadoutUI extends ChestUI {
 
     @Override
     public void build(Player player, Inventory inv) {
-        for (ItemStack loadoutItem : loadout.getItems()) {
-            if (loadoutItem != null) {
-                inv.addItem(loadoutItem);
+        ItemStack[] items = loadout.getItems();
+        for (int i = 0; i < items.length; i++) {
+            if (items[i] != null) {
+                inv.setItem(i, items[i]);
             }
         }
 
@@ -46,9 +45,9 @@ public class EditLoadoutUI extends ChestUI {
         this.addItem(inv, getSize() - 3, item, () -> {
             loadout.setDefault(!loadout.getDefault());
             if (loadout.getDefault()) {
-                War.war.getDefaultInventories().addLoadout(loadout.getName());
+                War.war.addLoadout(loadout);
             } else {
-                War.war.getDefaultInventories().removeLoadout(loadout.getName());
+                War.war.removeLoadout(loadout.getName());
             }
             WarConfigBag.afterUpdate(player, "Loadout updated", false);
             War.war.getUIManager().assignUI(player, new EditLoadoutUI(loadout));
@@ -66,7 +65,7 @@ public class EditLoadoutUI extends ChestUI {
 
         item = createDeleteItem();
         this.addItem(inv, getSize() - 1, item, () -> {
-            War.war.getDefaultInventories().removeLoadout(loadout.getName());
+            War.war.removeLoadout(loadout.getName());
             WarConfigBag.afterUpdate(player, "Loadout deleted", false);
         });
     }

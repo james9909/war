@@ -7,7 +7,7 @@ public class LoadoutSelection {
 
     public LoadoutSelection(boolean stillInSpawn, String selectedLoadout) {
         this.stillInSpawn = stillInSpawn;
-        this.selectedLoadout = selectedLoadout;
+        this.selectedLoadout = selectedLoadout.toLowerCase();
     }
 
     public boolean isStillInSpawn() {
@@ -23,6 +23,6 @@ public class LoadoutSelection {
     }
 
     public void setSelectedLoadout(String selectedLoadout) {
-        this.selectedLoadout = selectedLoadout;
+        this.selectedLoadout = selectedLoadout.toLowerCase();
     }
 }

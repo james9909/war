@@ -21,10 +21,6 @@
       <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
     </repository>
     <repository>
-      <id>cma-repo</id>
-      <url>http://ftp.cmastudios.me/maven/</url>
-    </repository>
-    <repository>
       <id>sk89q-repo</id>
       <url>http://maven.sk89q.com/repo/</url>
     </repository>
@@ -48,12 +44,6 @@
     <tag>HEAD</tag>
     <url>https://github.com/taoneill/war</url>
   </scm>
-  <distributionManagement>
-    <repository>
-      <id>cma-repo</id>
-      <url>ftp://ftp.cmastudios.me/srv/ftp/maven</url>
-    </repository>
-  </distributionManagement>
   <build>
     <plugins>
       <plugin>

@@ -416,7 +416,10 @@ public class Warzone {
         player.setFlying(false);
 
         // Restore the player to maximum mana
-        int maxMana = MagicSpells.getManaHandler().getMaxMana(player);
+        int maxMana = 100;
+        try {
+            maxMana = MagicSpells.getManaHandler().getMaxMana(player);
+        } catch (Exception e) { }
         MagicSpells.getManaHandler().setMana(player, maxMana, ManaChangeReason.POTION);
 
         if (player.getGameMode() != GameMode.SURVIVAL) {

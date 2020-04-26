@@ -64,7 +64,10 @@ public class MagicSpellsListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onSpellCast(SpellCastEvent event) {
-        Player caster = event.getCaster();
+        LivingEntity caster = event.getCaster();
+        if (!(caster instanceof Player)) {
+            return;
+        }
 
         WarPlayer casterWarPlayer = WarPlayer.getPlayer(caster.getUniqueId());
         Team team = casterWarPlayer.getTeam();
@@ -86,7 +89,11 @@ public class MagicSpellsListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onSpellTarget(SpellTargetEvent event) {
-        Player caster = event.getCaster();
+        LivingEntity caster = event.getCaster();
+        if (!(caster instanceof Player)) {
+            return;
+        }
+
         LivingEntity livingEntity = event.getTarget();
         if (!(livingEntity instanceof Player)) {
             return;

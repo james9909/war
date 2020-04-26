@@ -419,8 +419,8 @@ public class Warzone {
         int maxMana = 100;
         try {
             maxMana = MagicSpells.getManaHandler().getMaxMana(player);
+            MagicSpells.getManaHandler().setMana(player, maxMana, ManaChangeReason.POTION);
         } catch (Exception e) { }
-        MagicSpells.getManaHandler().setMana(player, maxMana, ManaChangeReason.POTION);
 
         if (player.getGameMode() != GameMode.SURVIVAL) {
             // Players are always in survival mode in warzones

@@ -7,6 +7,7 @@ import com.tommytony.war.WarPlayer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
@@ -23,11 +24,15 @@ public class StealthTNT extends InstantSpell {
     }
 
     @Override
-    public PostCastAction castSpell(Player player, SpellCastState state, float v, String[] args) {
+    public PostCastAction castSpell(LivingEntity livingEntity, SpellCastState state, float v, String[] args) {
+        if (!(livingEntity instanceof Player)) {
+            return PostCastAction.HANDLE_NORMALLY;
+        }
         if (state != SpellCastState.NORMAL) {
             return PostCastAction.HANDLE_NORMALLY;
         }
 
+        Player player = (Player) livingEntity;
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
         Team playerTeam = warPlayer.getTeam();
 

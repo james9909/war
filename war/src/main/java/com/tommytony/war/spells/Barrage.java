@@ -4,6 +4,7 @@ import com.nisovin.magicspells.spells.InstantSpell;
 import com.nisovin.magicspells.util.MagicConfig;
 import com.tommytony.war.War;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -36,9 +37,9 @@ public class Barrage extends InstantSpell {
     }
 
     @Override
-    public PostCastAction castSpell(Player player, SpellCastState spellCastState, float v, String[] strings) {
+    public PostCastAction castSpell(LivingEntity livingEntity, SpellCastState spellCastState, float v, String[] strings) {
         if (spellCastState == SpellCastState.NORMAL) {
-            barrage(player);
+            barrage(livingEntity);
         }
         return PostCastAction.HANDLE_NORMALLY;
     }
@@ -52,7 +53,7 @@ public class Barrage extends InstantSpell {
         handler.turnOff();
     }
 
-    private void barrage(Player p) {
+    private void barrage(LivingEntity e) {
         double tau = 2 * Math.PI;
         double arc = tau / arrowAmount;
         for (double a = 0; a < tau; a += arc) {
@@ -60,10 +61,10 @@ public class Barrage extends InstantSpell {
             double z = Math.sin(a);
 
             Vector direction = new Vector(x, this.yOffset, z).normalize();
-            Arrow arrow = p.getWorld().spawn(p.getEyeLocation(), Arrow.class);
+            Arrow arrow = e.getWorld().spawn(e.getEyeLocation(), Arrow.class);
             arrow.setMetadata("barrage", new FixedMetadataValue(War.war, true));
             arrow.setVelocity(direction.multiply(velocity));
-            arrow.setShooter(p);
+            arrow.setShooter(e);
         }
     }
 

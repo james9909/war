@@ -99,6 +99,11 @@ public class WarPlayerListener implements Listener {
         if (War.war.isLoaded()) {
             Player player = event.getPlayer();
             WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+            if (warPlayer.isSpectating()) {
+                event.setCancelled(true);
+                return;
+            }
+
             Team team = warPlayer.getTeam();
             if (team != null) {
                 Warzone zone = warPlayer.getZone();
@@ -162,20 +167,25 @@ public class WarPlayerListener implements Listener {
             Player player = event.getPlayer();
             WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
             Team team = warPlayer.getTeam();
-            if (team != null) {
-                Warzone zone = warPlayer.getZone();
+            if (warPlayer.isSpectating()) {
+                event.setCancelled(true);
+                return;
+            }
 
-                if (zone.isFlagThief(warPlayer)) {
-                    // a flag thief can't pick up anything
-                    event.setCancelled(true);
-                } else {
-                    Item item = event.getItem();
-                    if (item != null) {
-                        ItemStack itemStack = item.getItemStack();
-                        if (itemStack != null && team.getKind().isTeamItem(itemStack) && player.getInventory().containsAtLeast(team.getKind().getBlockHead(), MINIMUM_TEAM_BLOCKS)) {
-                            // Can't pick up a second precious block
-                            event.setCancelled(true);
-                        }
+            if (team == null) {
+                return;
+            }
+            Warzone zone = warPlayer.getZone();
+            if (zone.isFlagThief(warPlayer)) {
+                // a flag thief can't pick up anything
+                event.setCancelled(true);
+            } else {
+                Item item = event.getItem();
+                if (item != null) {
+                    ItemStack itemStack = item.getItemStack();
+                    if (itemStack != null && team.getKind().isTeamItem(itemStack) && player.getInventory().containsAtLeast(team.getKind().getBlockHead(), MINIMUM_TEAM_BLOCKS)) {
+                        // Can't pick up a second precious block
+                        event.setCancelled(true);
                     }
                 }
             }
@@ -229,6 +239,10 @@ public class WarPlayerListener implements Listener {
         }
         Player player = event.getPlayer();
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        if (warPlayer.isSpectating()) {
+            event.setCancelled(true);
+            return;
+        }
 
         // Event info
         ItemStack item = event.getItem();
@@ -316,7 +330,7 @@ public class WarPlayerListener implements Listener {
             }
 
             if (action == Action.RIGHT_CLICK_BLOCK && (clickedBlock.getType() == Material.CHEST || clickedBlock.getType() == Material.TRAPPED_CHEST)
-                && Warzone.getZoneByLocation(clickedBlock.getLocation()) != null && !War.war.isZoneMaker(player)) {
+                    && Warzone.getZoneByLocation(clickedBlock.getLocation()) != null && !War.war.isZoneMaker(player)) {
                 // prevent opening chests inside a warzone if a player is not a zone maker
                 event.setCancelled(true);
                 player.playSound(player.getLocation(), Sound.BLOCK_CHEST_LOCKED, 1, 0);
@@ -338,7 +352,7 @@ public class WarPlayerListener implements Listener {
 
         Location previousLocation = latestLocations.get(player.getName());
         if (previousLocation != null && playerLoc.getBlockX() == previousLocation.getBlockX() && playerLoc.getBlockY() == previousLocation.getBlockY() && playerLoc.getBlockZ() == previousLocation
-            .getBlockZ() && playerLoc.getWorld() == previousLocation.getWorld()) {
+                .getBlockZ() && playerLoc.getWorld() == previousLocation.getWorld()) {
             // we only care when people change location
             return;
         }
@@ -416,7 +430,7 @@ public class WarPlayerListener implements Listener {
                     }
 
                     event.setTo(new Location(playerLoc.getWorld(), playerLoc.getX() + northSouthMove, playerLoc.getY() + upDownMove, playerLoc.getZ() + eastWestMove, playerLoc.getYaw(),
-                        playerLoc.getPitch()));
+                            playerLoc.getPitch()));
                     return;
 
                     // Otherwise, send him to spawn (first make sure he drops his flag/cake/bomb to prevent auto-cap and as punishment)
@@ -648,7 +662,7 @@ public class WarPlayerListener implements Listener {
                             // Notify everyone
                             for (Team t : playerWarzone.getTeams()) {
                                 t.teamcast("zone.cake.broadcast", playerTeam.getKind().getColor() + player.getName() + ChatColor.WHITE, ChatColor.GREEN + cake.getName() + ChatColor.WHITE,
-                                    playerTeam.getName());
+                                        playerTeam.getName());
                             }
 
                             // Detect win conditions

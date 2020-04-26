@@ -1311,7 +1311,7 @@ public class Warzone {
             for (Iterator<WarPlayer> it = this.spectators.iterator(); it.hasNext();) {
                 WarPlayer spectator = it.next();
                 it.remove();
-                spectator.restorePlayerState();
+                removeSpectator(spectator);
             }
             t.resetPoints();
             t.getPlayers().clear(); // empty the team
@@ -1732,11 +1732,10 @@ public class Warzone {
     }
 
     public void removeSpectator(WarPlayer warPlayer) {
-        warPlayer.setZone(null);
-        warPlayer.setSpectating(false);
         warPlayer.getPermissions().unsetPermission("magicspells.notarget");
 
         this.spectators.remove(warPlayer);
+        warPlayer.reset();
         warPlayer.restorePlayerState();
     }
 }

@@ -133,6 +133,7 @@ public class WarPlayer {
     public void reset() {
         this.team = null;
         this.zone = null;
+        this.spectating = false;
         resetStats();
     }
 

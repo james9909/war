@@ -54,8 +54,13 @@ public class WarBlockListener implements Listener {
             return;
         }
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
-        Team team = warPlayer.getTeam();
+        if (warPlayer.isSpectating()) {
+            War.war.badMsg(player, "build.denied.location");
+            cancelAndKeepItem(event);
+            return;
+        }
 
+        Team team = warPlayer.getTeam();
         Warzone zone = Warzone.getZoneByLocation(player);
         // Monument capturing
         if (team != null && zone != null && zone.isMonumentCenterBlock(block) && team.getKind().isTeamBlock(block.getState())) {
@@ -228,6 +233,12 @@ public class WarBlockListener implements Listener {
 
     private void handleBreakOrDamage(Player player, Block block, Cancellable event) {
         WarPlayer warPlayer = WarPlayer.getPlayer(player.getUniqueId());
+        if (warPlayer.isSpectating()) {
+            War.war.badMsg(player, "build.denied.zone.outside");
+            event.setCancelled(true);
+            return;
+        }
+
         Warzone zone = warPlayer.getZone();
         Team team = warPlayer.getTeam();
         boolean isZoneMaker = War.war.isZoneMaker(player);
